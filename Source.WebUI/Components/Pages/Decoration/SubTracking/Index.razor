@@ -1,0 +1,345 @@
+﻿@page "/Decoration/SubTracking"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.Decoration.SubTracking.Components
+
+<PageTitle>Sub Tracking</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Sub Tracking"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "8. Decoration", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "8.1 Sub Tracking", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter" dropdownScan="_dropdownScan" dropdownStatus="_dropdownStatus" dropdownSubs="_dropdownSubs"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((SubTrackingParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 mb-1">
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                            <div class="d-flex">
+                                <div style="width: 3%" class="text-center">
+                                    <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                                </div>
+                                <div class="d-flex" style="width: 350px;">
+                                    <input type="text" style="height:28px;background-color: #f9f9f9;border: 1px solid #e2e2e2;"
+                                           value="Selected @_barcodesSelected.Count rows" class="form-control form-control-sm rounded-0 w-50" readonly>
+                                    <AuthorizeView Roles="man,dec,pla">
+                                        <Authorized>
+                                            <button class="btn btn-sm btn-action rounded-0 w-75" @onclick="async() => await HandleDeleteItems()" style="height: 28px">
+                                                <i class="fas fa-trash fa-fw text-danger"></i>
+                                                Delete
+                                            </button>
+                                        </Authorized>
+                                        <NotAuthorized>
+                                            <button class="btn btn-sm btn-action rounded-0 w-75" disabled style="height: 28px">
+                                                <i class="fas fa-trash fa-fw text-danger"></i>
+                                                Delete
+                                            </button>
+                                        </NotAuthorized>
+                                    </AuthorizeView>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 text-end">
+                            <div class="row">
+                                <div class="col-lg-6 offset-sm-2">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control form-control-sm" style="height: 28px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                        <div class="input-group-append">
+                                            <button id="btn" class="btn btn-action w-100 btn-sm rounded-1" @onclick="async() => await DownloadTemplate()" style="height:28px">
+                                                <i class="fas fa-download fa-fw text-secondary"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-sm btn-action w-100" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                        <i class="fa fa-file-excel fa-fw text-success"></i>
+                                        Export Excel
+                                    </button>     
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-sm btn-action w-100" @onclick="() =>  HandleOpenForm()">
+                                        <i class="fa fa-file-import fa-fw text-primary"></i>
+                                        Import Excel
+                                    </button>
+                                </div> 
+                            </div>        
+                        </div>
+                    </div>
+                </div>
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <Table objs="_objs"
+                           page="_page" OnSetPage="(arg) => _page = (int)arg"
+                           barcodes="_barcodesSelected" OnSetSelected="(arg) => _barcodesSelected = (List<string>)arg" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+@if (_isShow)
+{
+    <Import OnCloseForm="() => _isShow = false" SubNames="_dropdownSubs"
+            OnSetImport="(arg) => _import = (SubControlImportDTO)arg" OnSubmitImport="async () => await HandleImportExcel()" />
+}
+
+@code {
+    protected bool _isShow = false;
+    protected int _page = 1;
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected List<SubControl> _objs = new List<SubControl>();
+    protected List<string> _barcodesSelected = new List<string>();
+    protected SubControlImportDTO _import = new SubControlImportDTO();
+    protected SubTrackingParameter _parameter = new SubTrackingParameter();
+    protected List<DropDowList> _dropdownScan = new List<DropDowList>();
+    protected List<DropDowList> _dropdownStatus = new List<DropDowList>();
+    protected List<DropDowList> _dropdownSubs = new List<DropDowList>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter = new SubTrackingParameter();
+        _dropdownScan = await _wrapper.KVTWL.ScanStatusLoadDropdown("Scan");
+        _dropdownStatus = await _wrapper.KVTWL.ScanStatusLoadDropdown("Status");
+        _dropdownSubs = await _wrapper.KVTWL.ScanStatusLoadDropdown("SubName");
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task HandleChangeSearch(SubTrackingParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new SubTrackingParameter();
+        _objs = new List<SubControl>();
+        _barcodesSelected = new List<string>();
+        _inputFileId = Guid.NewGuid().ToString();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _barcodesSelected = new List<string>();
+            _objs = await _wrapper.Deco.GetListSubTracking(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleDeleteItems()
+    {
+        if (_barcodesSelected.Count > 0)
+        {
+            await _js.Loading(true);
+
+            var _error = _objs.Where(o => _barcodesSelected.Contains(o.fBarcode!) && (!string.IsNullOrEmpty(o.Status) && o.Status != "D1")).ToList();
+            if(_error.Count > 0)
+            {
+                _barcodesSelected = new List<string>();
+                await _js.Aleft("Can only delete rows with status is null or status is 'D1'");
+            }
+            else
+            {
+                bool _confirm = await _js.Confirm($"Are you sure you want to delete {_barcodesSelected.Count} records?");
+                if (_confirm)
+                {
+                    try
+                    {
+                        var _member = await _user.GetUserAsync();
+                        await _wrapper.Deco.DeleteSubTracking(string.Join(",", _barcodesSelected), _member!.UserName);
+                        await FetchData();
+                        await _js.Notification("Delete successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        await _js.Aleft(ex.Message);
+                    }
+                }
+            } 
+            await _js.Loading(false);
+        }
+    }
+
+    protected void HandleOpenForm()
+    {
+        _import = new SubControlImportDTO();
+        _isShow = true;
+    }
+
+    protected async Task HandleImportExcel()
+    {
+        if (!string.IsNullOrEmpty(_import.DateTransfer) && _import.Barcodes.Count() > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                var _member = await _user.GetUserAsync();
+                var _result = await _wrapper.Deco.ImportSubTracking(string.Join(",", _import.Barcodes), _import.SubTransfer, _import.DateTransfer, _member!.UserName);
+                if(_result.Error == 1)
+                {
+                    await _js.Aleft(_result.Msg!);
+                }
+                else
+                {
+                    _isShow = false;
+                    await FetchData();
+                    await _js.Notification(_result.Msg!);
+                }       
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            _import = new SubControlImportDTO();
+            await _js.Loading(false);
+        }
+        else
+        {
+            await _js.Aleft($"No selected date or no barcode.");
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("SubName", typeof(string));
+                dt.Columns.Add("DateTransfer", typeof(string));
+                dt.Columns.Add("PackingNo", typeof(string));
+                dt.Columns.Add("Barcode", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("FG", typeof(string));
+                dt.Columns.Add("DE", typeof(string));
+                dt.Columns.Add("PT", typeof(string)); 
+                dt.Columns.Add("TitelCustomer", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.SubName;
+                    row[1] = item.DateTransfer != null ? item.DateTransfer.Value.ToString("yyyy-MM-dd") : "";
+                    row[2] = item.PackingNo;
+                    row[3] = item.fBarcode;
+                    row[4] = item.ItemFullCode;
+                    row[5] = item.ItemName;
+                    row[6] = item.ColorName;
+                    row[7] = item.SizeName;
+                    row[8] = (item.QtyOrder ?? 0).ToString();
+                    row[9] = item.FGScan;
+                    row[10] = item.PPScan;
+                    row[11] = item.Status;
+                    row[12] = item.TitelCustomer;
+                    row[13] = item.OrderNumber;
+                    row[14] = item.StyleNo;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "SubTrackingOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task DownloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "Barcode_Filter_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("Barcode_Filter_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            _parameter.Barcode = "";
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> _barcodes = new List<string>();
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? Barcode = dt.Rows[i]["Barcode"].ToString();
+                        if (!string.IsNullOrEmpty(Barcode))
+                        {
+                            _barcodes.Add(Barcode);
+                        }
+                    }
+                    _parameter.BarcodeImport = String.Join(",", _barcodes);
+                    await FetchData();
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            _inputFileId = Guid.NewGuid().ToString();
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+}

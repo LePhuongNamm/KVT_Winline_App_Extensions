@@ -1,0 +1,441 @@
+﻿@page "/ACSFilm/OrderRegister"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.AcsFilm.OrderRegister.Components
+
+<PageTitle>Order Register</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Order Register"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "6. ACSFilm", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "6.1 Order Register", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+         <div class="col-lg-12 mb-1">
+            <div class="search-bar">
+                <div class="simple">
+                    <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-file-import"></i></div></div>
+                    <div class="search-fields">
+                        <div class="row">
+                            <div class="col-12 col-lg-2">
+                                <div class="form-group">
+                                    <label for="Item">
+                                        Order Type :
+                                    </label>
+                                    <select class="form-select form-select-sm" style="height: 30px;" value="@_type" @onchange="(ChangeEventArgs args) => HandleTypeChange(args)">
+                                        <option value="">-- none --</option>
+                                        <option value="1">Main</option>
+                                        <option value="2">Loss Prod</option>
+                                        <option value="3">Loss Sub</option>
+                                        <option value="4">Sub Request</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(_type))
+                            {
+                                if (_type == "1")
+                                {
+                                    <div class="col-12 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="Item">
+                                                File import :
+                                            </label>
+                                            <input type="file" class="form-control form-control-sm" style="height: 30px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-12 col-lg-4">
+                                        <div class="form-group">
+                                            <label for="Item">
+                                                Packing No :
+                                            </label>
+                                            <input value="@_packingNo" class="form-control form-control-sm" style="height: 30px;" 
+                                                        @onchange="@(async(ChangeEventArgs EventArgs) => await HandlePackingNoChange(EventArgs))" />
+
+
+                                        </div>
+                                    </div>
+                                }
+                                @if (_imports.Count > 0 || _ppicOrders.Count > 0)
+                                {
+                                    <div class="col-12 col-lg-1">
+                                        <label class="clear-search" for="btn"></label>
+                                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" style="height: 29px;" @onclick="async () => await HandleSubMitForm()">
+                                            <i class="fas fa-plus-square fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Register
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="col-12 col-lg-1">
+                                        <label class="clear-search" for="btn"></label>
+                                        <button type="submit" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" style="height: 29px;" @onclick="async () => await HandleResetForm()">
+                                            <i class="fas fa-ban fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Cancel
+                                            </span>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-12 col-lg-1">
+                                        <label class="clear-search" for="btn"></label>
+                                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" disabled style="height: 29px;">
+                                            <i class="fas fa-plus-square fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Register
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="col-12 col-lg-1">
+                                        <label class="clear-search" for="btn"></label>
+                                        <button type="submit" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" disabled style="height: 29px;">
+                                            <i class="fas fa-ban fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Cancel
+                                            </span>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="row">    
+                @if (_type == "" && _prodOrders.Count > 0)
+                {
+                    <div class="col-12 col-lg-12 mb-1 text-end">
+                        <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()">
+                            <i class="fa fa-file-export fa-fw text-success"></i>
+                            Export Excel
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    if (_type == "1")
+                    {
+                        <div class="col-12 col-lg-12 mb-1 text-end">
+                            <button class="btn btn-sm btn-action" @onclick="async() => await DowloadTemplate()">
+                                <i class="fa fa-file-download fa-fw text-success"></i>
+                                Download Template
+                            </button>
+                        </div>
+                    }
+                }
+                @if (_prodOrders.Count > 0 || _imports.Count > 0 || _ppicOrders.Count > 0)
+                {
+                    if (_type == "" && _prodOrders.Count > 0)
+                    {
+                        <TableOrder objs="_prodOrders" />
+                    }
+                    else
+                    {
+                        if (_type == "1")
+                        {
+                            <TableMain objs="_imports" />
+                        }
+                        else
+                        {
+                            <TableLoss objs="_ppicOrders" />
+                        }
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+@code {
+    protected List<V_PACKING> _imports = new List<V_PACKING>();
+    protected List<FilmPPICOrder> _ppicOrders = new List<FilmPPICOrder>();
+    protected List<FilmProdOrder> _prodOrders { get; set; } = new List<FilmProdOrder>();
+
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected string _type = "";
+    protected string _packingNo = "";
+
+
+    protected async Task HandlePackingNoChange(ChangeEventArgs EventArgs)
+    {
+        string? value = EventArgs?.Value?.ToString();
+        if (!string.IsNullOrEmpty(value))
+        {
+            await _js.Loading(true);
+            try
+            {
+                _packingNo = value;
+                _ppicOrders = await _wrapper.AcsFilm.PPICOrderLoad(new OrderRegisterLossParameter { Type = _type, PackingNo = _packingNo });
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+        else
+        {
+            _ppicOrders = new List<FilmPPICOrder>();
+        }
+    }
+
+    protected void HandleTypeChange(ChangeEventArgs args)
+    {
+        _type = args.Value?.ToString() ?? "";
+        _inputFileId = Guid.NewGuid().ToString();
+        _packingNo = "";
+        _imports = new List<V_PACKING>();
+        _ppicOrders = new List<FilmPPICOrder>();
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            _imports = new List<V_PACKING>();
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> error = new List<string>();
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? PakingNo = dt.Rows[i]["PackingNo"].ToString();
+
+                        if (!string.IsNullOrEmpty(PakingNo))
+                        {
+                            var _objs = await _wrapper.AcsFilm.GetPackingInfo(PakingNo);
+                            if (_objs.Count > 0)
+                            {
+                                _objs.ForEach(_obj =>
+                               {
+                                   _obj.OrderType = _type;
+                                   _imports.Add(_obj);
+                               });
+                            }
+                            else
+                                error.Add(PakingNo);
+                        }
+                        else
+                        {
+                            _inputFileId = Guid.NewGuid().ToString();
+                            await _js.Aleft($"Row : {i + 2} PakingNo is empty!");
+                        }
+                    }
+                    if (error.Count > 0)
+                    {
+                        string errorMessage = string.Join(",", (error.Select(x => x).ToList()));
+                        await _js.Aleft($"PakingNo was not found : {errorMessage}");
+                    }
+                }
+                else
+                {
+                    _inputFileId = Guid.NewGuid().ToString();
+                    await _js.Aleft("No data.");
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetForm()
+    {
+        await Task.Delay(1);
+        _type = "";
+        _inputFileId = Guid.NewGuid().ToString();
+        _imports = new List<V_PACKING>();
+        _ppicOrders = new List<FilmPPICOrder>();
+    }
+
+    protected async Task HandleSubMitForm()
+    {
+        await _js.Loading(true);
+        try
+        {
+            switch (_type)
+            {
+                case "1":
+                    if (_imports != null && _imports.Count() > 0)
+                        await ImportOrderMan(_imports);
+                    break;
+                default:
+                    if (_ppicOrders != null && _ppicOrders.Count() > 0)
+                    {
+                        _ppicOrders.ForEach(_obj =>
+                              {
+                                  _obj.OrderType = int.Parse(_type);
+                                  _obj.MainOrder = _packingNo;
+                              });
+                        await ImportOrderLoss(_ppicOrders);
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task ImportOrderMan(List<V_PACKING> objs)
+    {
+        var _inputM = await _user.GetUserAsync();
+        var packingNo = await _wrapper.AcsFilm.GetPackingNo("1");
+        if (!string.IsNullOrEmpty(packingNo))
+        {
+            foreach (var obj in objs)
+            {
+                await _wrapper.AcsFilm.PPICOrderDetailInsert(packingNo, obj, _inputM?.UserName ?? "");
+            }
+            var _resultPPICOrder = await _wrapper.AcsFilm.PPICOrderInsertMan(packingNo, _inputM?.UserName ?? "");
+            if (_resultPPICOrder?.Error == 0)
+            {
+                var _resultProdOrder = await _wrapper.AcsFilm.ProdOrderInsert(packingNo, _inputM?.UserName ?? "");
+                if (_resultProdOrder?.Error != 0)
+                {
+                    await _wrapper.AcsFilm.PPICOrderDetailDelete(packingNo);
+                    await _js.Aleft(_resultProdOrder?.Msg ?? "");
+                }
+                else
+                {
+                    await HandleResetForm();
+                    _prodOrders = await _wrapper.AcsFilm.ProdOrderLoad(new FilmProdOrderParameter { ProdOrderNo = _resultProdOrder?.Msg });
+                    await _js.Notification("Import successfully.");
+                }
+            }
+            else
+            {
+                await _js.Aleft(_resultPPICOrder?.Msg ?? "");
+            }
+        }
+        else
+        {
+            await _js.Aleft("Can not get PackingNo.");
+        }
+    }
+
+    protected async Task ImportOrderLoss(List<FilmPPICOrder> objs)
+    {
+        var _inputM = await _user.GetUserAsync();
+        if (objs != null && objs.Count > 0 && objs.Where(x => x.OrderQtyNew > 0).Count() > 0)
+        {
+            var packingNo = await _wrapper.AcsFilm.GetPackingNo(objs?.FirstOrDefault()?.OrderType.ToString() ?? "");
+            if (!string.IsNullOrEmpty(packingNo))
+            {
+                foreach (var obj in objs!.Where(x => x.OrderQtyNew > 0))
+                {
+                    await _wrapper.AcsFilm.PPICOrderInsertLoss(packingNo, _inputM?.UserName ?? "", obj);
+                }
+                var _resultProdOrder = await _wrapper.AcsFilm.ProdOrderInsert(packingNo, _inputM?.UserName ?? "");
+                if (_resultProdOrder?.Error != 0)
+                {
+                    await _js.Aleft(_resultProdOrder?.Msg ?? "");
+                }
+                else
+                {
+                    await HandleResetForm();
+                    _prodOrders = await _wrapper.AcsFilm.ProdOrderLoad(new FilmProdOrderParameter { ProdOrderNo = _resultProdOrder?.Msg });
+                    await _js.Notification("Import successfully.");
+                }
+            }
+            else
+            {
+                await _js.Aleft("Can not get PackingNo.");
+            }
+        }
+    }
+
+    protected async Task DowloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "Import_PPICOrder_Firm_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("Import_PPICOrder_Firm_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_prodOrders != null && _prodOrders.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("ProdOrderNo", typeof(string));
+                dt.Columns.Add("PackingNo", typeof(string));
+                dt.Columns.Add("Barcode", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                foreach (var item in _prodOrders)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.ProdOrderNo;
+                    row[1] = item.PackingNo;
+                    row[2] = item.Barcode;
+                    row[3] = item.ItemFullCode;
+                    row[4] = item.ItemName;
+                    row[5] = item.ColorName;
+                    row[6] = item.SizeName;
+                    row[7] = item?.OrderQty != null ? item?.OrderQty.Value.ToString("#,##0.##") : "0";
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Labtest Overview"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", $"ACS2Film_ProdOrder_{_prodOrders[0].ProdOrderNo}.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

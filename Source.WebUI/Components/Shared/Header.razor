@@ -1,0 +1,25 @@
+﻿
+<a href="/" class="logo text-decoration-none"><img class="logo-img" src="img/framas.png" width="100"></a>
+<nav class="navbar navbar-static-top">
+    <a href="javascript:void(0);" class="sidebar-toggle" @onclick="async() => await Toggle()">
+        <i class="fa fa-bars"></i>
+    </a>
+    <AuthorizeView>
+        <Authorized>
+            <a @onclick="@(() => _nav.NavigateTo($"/Account/Logout",true))" style="cursor: pointer" class="sidebar-toggle" title="Thoát">
+                <i class="fa fa-power-off"></i>
+            </a>
+        </Authorized>
+    </AuthorizeView>
+</nav>
+
+@code {
+    [Parameter]
+    public EventCallback ToggleNavMenu { get; set; }
+
+    protected async Task Toggle()
+    {
+        await ToggleNavMenu.InvokeAsync();
+    }
+
+}

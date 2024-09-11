@@ -1,0 +1,55 @@
+﻿<BlazorTable Class="datatable w-100 mb-0" Items="objs" Context="item">
+    <TableHeadTemplate>
+        <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+            <th class="text-center" style="min-width: 150px">ProdNo </th>
+            <th class="text-center" style="min-width: 70px">Seq</th>
+            <th class="text-center" style="min-width: 70px">Sub</th>
+            <th class="text-center" style="min-width: 70px">BoxCt</th>
+            <th class="text-center" style="min-width: 70px">BoxDV</th>
+            <th class="text-center" style="min-width: 70px">BoxTT</th>
+            <th class="text-center" style="min-width: 250px">ItemName</th>
+            <th class="text-center" style="min-width: 400px">ColorName</th>
+            <th class="text-center" style="min-width: 200px">SizeName</th>
+            <th class="text-center">Qty</th>
+
+            <th class="text-center" style="min-width: 100px">PackingNo</th>
+            <th class="text-center">Cus</th>
+            <th class="text-center">DeliveryDate</th>
+            <th class="text-center" style="min-width: 200px">OrderNumber</th>
+            <th class="text-center">BoxType</th>
+            <th class="text-center" style="min-width: 150px">StyleNo</th>
+        </tr>
+    </TableHeadTemplate>
+    <TableRowTemplate>
+        <tr>
+            <td class="text-center">@item.ProdOrderNo</td>
+            <td class="text-center">@item.Seq</td>
+            <td class="text-center">@item.SubSeq</td>
+            <td class="text-center">@item.BoxCount</td>
+            <td class="text-center">@item.BoxDV</td>
+            <td class="text-center">@item.BoxTotalCount</td>
+            <td>@item.ItemName</td>
+            <td>@item.ColorName</td>
+            <td>@item.SizeName</td>
+            <td class="text-center">@((item.QtyOrder ?? 0).ToString("#,##0.##"))</td>
+            <td class="text-center">@item.PackingNo</td>
+            <td class="text-center">@item.TitelCustomer</td>
+            <td class="text-center">@item.DeliveryDate</td>
+            <td class="text-center">@item.OrderNumber</td>
+            <td class="text-center">@item.BoxType</td>
+            <td class="text-center">@item.StyleNo</td>
+        </tr>
+    </TableRowTemplate>
+    <TableFootTemplate>
+        <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+            <td colspan="9"><b>Total: </b> </td>
+            <td class="text-center"><b>@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</b></td>
+            <td colspan="6"></td>
+        </tr>
+    </TableFootTemplate>
+</BlazorTable>
+
+@code {
+    [Parameter]
+    public List<TbProdOrder> objs { get; set; } = new List<TbProdOrder>();
+}

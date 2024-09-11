@@ -1,0 +1,75 @@
+﻿<div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 800px);">
+    <BlazorTable Class="datatable w-100 mb-0" Items="objs" Context="item">
+        <TableHeadTemplate>
+            <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                <th class="text-center" style="min-width: 100px">PackingNo</th>
+                <th class="text-center" style="min-width: 50px">PkSeq</th>
+                <th class="text-center" style="min-width: 100px">Indate</th>
+                <th class="text-center" style="min-width: 50px">Cus</th>
+                <th class="text-center" style="min-width: 100px">DNKV No</th>
+                <th class="text-center" style="min-width: 100px">OCKV No</th>
+                <th class="text-center" style="min-width: 400px">DPO</th>
+                <th class="text-center" style="min-width: 200px">StyleNo</th>
+                <th class="text-center" style="min-width: 50px">QtyOrder</th>
+                <th class="text-center" style="min-width: 250px">ItemName</th>
+                <th class="text-center" style="min-width: 350px">ColorName</th>
+                <th class="text-center" style="min-width: 250px">SizeName</th>
+                <th class="text-center" style="min-width: 250px">Customer</th>
+                <th class="text-center" style="min-width: 100px">CreateDate</th>
+                <th class="text-center" style="min-width: 100px">DeliveryDate</th>
+                <th class="text-center" style="min-width: 150px">Ordered</th>
+                <th class="text-center" style="min-width: 50px">UmSales</th>
+                <th class="text-center" style="min-width: 50px">Weight</th>
+                <th class="text-center" style="min-width: 50px">BX1</th>
+                <th class="text-center" style="min-width: 50px">BX2</th>
+                <th class="text-center" style="min-width: 50px">BX3</th>
+                <th class="text-center" style="min-width: 50px">BX4</th>
+                <th class="text-center" style="min-width: 50px">BX5</th>
+                <th class="text-center" style="min-width: 50px">BX6</th>
+                <th class="text-center" style="min-width: 50px">PPBag</th>
+                <th class="text-center" style="min-width: 50px">PB</th>
+            </tr>
+        </TableHeadTemplate>
+        <TableRowTemplate>
+            <tr class="@(item.IsGeneral.ToString() == "1" ? "" : "gray")">
+                <td class="text-center">@item.PackingNo</td>
+                <td class="text-center">@item.PackSeq</td>
+                <td class="text-center">@(item.Indate != null ? item.Indate.Value.ToString("MM/dd/yyyy") : "")</td>
+                <td class="text-center">@item.CustomerCo</td>
+                <td class="text-center">@item.DeliveryNote</td>
+                <td class="text-center">@item.OrderNo</td>
+                <td>@item.OrderNumber</td>
+                <td>@item.StyleNo</td>
+                <td class="text-center">@(item.QtyOrder != null ? item.QtyOrder.Value.ToString("#,##0.##") : "0")</td>
+                <td>@item.ItemName</td>
+                <td>@item.ColorName</td>
+                <td>@item.SizeName</td>
+                <td>@item.Customer</td>
+                <td class="text-center">@(item.CreateDate != null ? item.CreateDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                <td class="text-center">@(item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                <td>@item.Ordered</td>
+                <td>@item.UMSales</td>
+                <td class="text-center">@item.Weight</td>
+                <td class="text-center">@item.BX1</td>
+                <td class="text-center">@item.BX2</td>
+                <td class="text-center">@item.BX3</td>
+                <td class="text-center">@item.BX4</td>
+                <td class="text-center">@item.BX5</td>
+                <td class="text-center">@item.BX6</td>
+                <td class="text-center">@item.PPbag</td>
+                <td class="text-center">@item.PB</td>
+            </tr>
+        </TableRowTemplate>
+        <TableFootTemplate>
+            <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                <td colspan="8"><b>Total: </b> </td>
+                <td class="text-center"><b>@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</b></td>
+                <td colspan="17"></td>
+            </tr>
+        </TableFootTemplate>
+    </BlazorTable>
+</div>
+
+@code {
+    [Parameter] public List<WHS_Packing_Details> objs { get; set; } = new List<WHS_Packing_Details>();
+}

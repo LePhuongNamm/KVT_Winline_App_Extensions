@@ -1,0 +1,51 @@
+﻿
+<div class="search-bar">
+    <div class="simple">
+        <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+        <div class="search-fields">
+            <form @onsubmit="async () => await OnSearchChange.InvokeAsync(parameter)" @formname="filter-form">
+                <div class="row">
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="IsYear">
+                                IsYear
+                            </label>
+                            <InputText @bind-Value="parameter"
+                                       id="IsYear" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-ban fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string? parameter { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSearchChange { get; set; }
+
+    [Parameter]
+    public EventCallback OnResetSearch { get; set; }
+}

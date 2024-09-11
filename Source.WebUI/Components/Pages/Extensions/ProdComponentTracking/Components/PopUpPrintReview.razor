@@ -1,0 +1,49 @@
+﻿<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-file-import"></i>&ensp;
+                    Barcode Review
+                </h5>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() =>await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+
+                <div id="@($"invoice-POS-{obj.TrackNo}")" style="width: 3.9in; height : 1.9in; padding: 10px">
+                    <div style="display: flex !important;">
+                        <div style="float: left;padding-top: 7px">
+                            <img style="width: 130px; height: 130px; float: left;" src="@String.Format("data:image/png;base64,{0}", BarcodeHandleExtensions.Generator($"{obj.TrackNo}"))" />
+                        </div>
+                        <div style="float: left; text-align: left; font-size: 11.5pt;padding-top: 5px;margin-left: 5px">
+                            <p>
+                                <b>Item</b>:  @obj.ItemName<br />
+                                <b>Color</b>:  @obj.ColorName<br />
+                                <b>Size</b>:   @obj.SizeName<br />
+                                <b>Q'ty</b> : @obj.Qty <br />
+                                <b>Print Date</b>: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="@(async () => await OnSubmitForm.InvokeAsync($"invoice-POS-{obj.TrackNo}"))">
+                    <i class="fa fa-save fa-fw"></i>
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Component obj { get; set; } = new Component();
+
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSubmitForm { get; set; }
+}
+

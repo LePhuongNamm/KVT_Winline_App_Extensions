@@ -1,0 +1,102 @@
+﻿<page id="printable" style="padding: 19px;width: 582px;height: 393px;margin-bottom: 10px">
+    <div style="width: 100%; height: 100%; border : 2px solid #000; padding: 0px">
+        <div class="w-100 d-flex">
+            <div class="w-20 text-center" style="border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 30px; font-weight: bold;height: 1.4cm; display: flex;flex-direction: column;justify-content: center;">
+                fKV
+            </div>
+            <div class="w-50" style="border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 22px;font-weight: bold;height: 1.4cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                ACS Film
+            </div>
+            <div class="w-30 text-center" style="border-bottom : 1px solid #000;height: 1.4cm;">
+                <div class="w-100 d-flex h-100">
+                    <div class="w-50" style="border-right : 1px solid #000;">
+                        <div class="w-100 text-center" style="border-bottom : 1px solid #000;height: 0.7cm;">
+                            @obj.BoxType
+                        </div>
+                        <div class="w-100 text-center" style="height: 0.7cm;">
+                            @obj.PackingNo
+                        </div>
+                    </div>
+                    <div class="w-50">
+                        <img src="/img/framas-korea-vina.png" style="margin-top: 10%" width="70" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex">
+            <div class="w-20" style="border-bottom : 1px solid #000;border-right : 1px solid #000;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                Item
+            </div>
+            <div class="w-50" style="border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 16px;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                @obj.ItemName
+            </div>
+            <div class="w-30" style="height: 0.8cm;border-bottom : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+            </div>
+        </div>
+        <div class="w-100 d-flex">
+            <div class="w-20" style="border-bottom : 1px solid #000;border-right : 1px solid #000;height: 3.6cm;">
+                <div class="w-100" style="border-bottom : 1px solid #000;height: 1.4cm;padding-left: 7px">
+                    Color
+                </div>
+                <div class="w-100" style="height: 2.2cm;padding-left: 7px">
+                    QC Check
+                </div>
+            </div>
+            <div class="w-50" style="border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 16px;height: 3.6cm;padding-left: 7px; font-weight: bold">
+                @obj.ColorName
+            </div>
+            <div class="w-30" style="height: 3.6cm;border-bottom : 1px solid #000;">
+                <div class="w-100" style="height: 0.8cm;padding-left: 7px">
+                    Prod Date
+                </div>
+                <div class="w-100" style="height: 1.2cm">
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex">
+            <div class="w-20" style="border-bottom : 1px solid #000;border-right : 1px solid #000;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                Size
+            </div>
+            <div class="w-50" style="border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 20px;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                @obj.SizeName
+            </div>
+            <div class="w-30" style="border-bottom : 1px solid #000;height: 0.8cm">
+                <div class="w-100 d-flex">
+                    <div class="w-40" style="border-bottom : 1px solid #000;border-right : 1px solid #000;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                        Bags
+                    </div>
+                    <div class="w-60" style="font-size: 16px;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                        @obj.Bags
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 d-flex">
+            <div class="w-70" style="height: 2.8cm;">
+                <div class="w-100 d-flex">
+                    <div style="width: 28.6%;border-bottom : 1px solid #000;border-right : 1px solid #000;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px">
+                        Q'ty
+                    </div>
+                    <div style="width: 71.5%;border-bottom : 1px solid #000;border-right : 1px solid #000;height: 0.8cm; display: flex;flex-direction: column;justify-content: center;padding-left: 7px;font-weight: bold">
+                        @obj.OrderQty Prs
+                    </div>
+                </div>
+                <div class="w-100 d-flex" style="height: 2cm;border-right : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 7px;font-size: 22px;font-weight: bold">
+                    @obj.Barcode
+                </div>
+            </div>
+            <div class="w-30  text-center" style="height: 2.8cm; padding: 15px">
+                @if (obj.Barcode != null)
+                {
+                    <img src="@string.Format("data:image/png;base64,{0}", BarcodeHandleExtensions.Generator(obj.Barcode))" style="width: 100%;height: 100%" />
+                }
+            </div>
+        </div>
+    </div>
+</page>
+
+@code {
+    [Parameter]
+    public FilmProdOrder obj { get; set; } = new FilmProdOrder();
+}
+

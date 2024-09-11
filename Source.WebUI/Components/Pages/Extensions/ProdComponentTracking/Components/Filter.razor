@@ -1,0 +1,145 @@
+﻿<div class="search-bar">
+    <form @onsubmit="async () => await OnChangeSearch.InvokeAsync(parameter)" @formname="filter-form">
+        <div class="simple">
+            <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+            <div class="search-fields">
+                <div class="row">
+                    <div class="col-12 col-lg-3">
+                        <div class="row">
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Type">
+                                        Whs Type
+                                    </label>
+                                    <InputSelect @bind-Value="parameter.Whs" class="form-select form-select-sm" style="height: 30px;">
+                                        <option value="In">Whs In</option>
+                                        <option value="Out">Whs Out</option>
+                                        <option value="Inv">Inventory</option>
+                                    </InputSelect>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Type">
+                                        CompType
+                                    </label>
+                                    <DropDownList Id="Type" dropdowns="@dropdownCompType"
+                                                  initData="@parameter.Type" OnSetValue="@((arg) => parameter.Type = (string?)arg ?? "")" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="MachineNo">
+                                        MachineNo
+                                    </label>
+                                    <InputText @bind-Value="parameter.MachineNo"
+                                               id="MachineNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="row">
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Item">
+                                        Item
+                                    </label>
+                                    @{
+                                        var _dropdownItem = dropdownItemFullCode.DistinctBy(x => $"{x.ItemCode}-{x.ItemName}")
+                                        .Select(x => new DropDowList { StrValue = $"{x.ItemCode}-{x.ItemName}", Label = $"{x.ItemCode} - {x.ItemName}" }).ToList();
+                                    }
+                                    <DropDownList Id="Item" dropdowns="@_dropdownItem"
+                                                  initData="@parameter.Item" OnSetValue="@((arg) => parameter.Item = (string?)arg ?? "")" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Color">
+                                        Color
+                                    </label>
+                                    @{
+                                        var _dropdownColor = !string.IsNullOrEmpty(parameter.Item) ?
+                                        dropdownItemFullCode.Where(x => $"{x.ItemCode}-{x.ItemName}" == parameter.Item).DistinctBy(x => $"{x.ColorCode}-{x.ColorName}")
+                                        .Select(x => new DropDowList { StrValue = $"{x.ColorCode}-{x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList() :
+                                        dropdownItemFullCode.DistinctBy(x => $"{x.ColorCode}-{x.ColorName}").Select(x => new DropDowList { StrValue = $"{x.ColorCode}-{x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList();
+                                    }
+                                    <DropDownList Id="Color" dropdowns="@_dropdownColor"
+                                                  initData="@parameter.Color" OnSetValue="@((arg) => parameter.Color = (string?)arg ?? "")" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Size">
+                                        Size
+                                    </label>
+                                    @{
+                                        var _dropdownSize = !string.IsNullOrEmpty(parameter.Item) ?
+                                        dropdownItemFullCode.Where(x => $"{x.ItemCode}-{x.ItemName}" == parameter.Item).DistinctBy(x => $"{x.SizeCode}-{x.SizeName}")
+                                        .Select(x => new DropDowList { StrValue = $"{x.SizeCode}-{x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList() :
+                                        dropdownItemFullCode.DistinctBy(x => $"{x.SizeCode}-{x.SizeName}")
+                                        .Select(x => new DropDowList { StrValue = $"{x.SizeCode}-{x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList();
+                                    }
+                                    <DropDownList Id="Size" dropdowns="@_dropdownSize"
+                                                  initData="@parameter.Size" OnSetValue="@((arg) => parameter.Size = (string?)arg ?? "")" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="form-group">
+                                    <label for="FromDate">
+                                        FromDate
+                                    </label>
+                                    <InputText @bind-Value="parameter.FromDate"
+                                               id="FromDate" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="form-group">
+                                    <label for="ToDate">
+                                        ToDate
+                                    </label>
+                                    <InputText @bind-Value="parameter.ToDate"
+                                               id="ToDate" type="Date" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-ban fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </form>
+</div>
+@code {
+    [Parameter] public ComponentParameter parameter { get; set; } = new ComponentParameter();
+
+    [Parameter] public List<DropDowList> dropdownCompType { get; set; } = new List<DropDowList>();
+    [Parameter] public List<ItemFullCodeDropdown> dropdownItemFullCode { get; set; } = new List<ItemFullCodeDropdown>();
+
+
+    [Parameter] public EventCallback<ComponentParameter> OnChangeSearch { get; set; }
+    [Parameter] public EventCallback OnResetSearch { get; set; }
+}

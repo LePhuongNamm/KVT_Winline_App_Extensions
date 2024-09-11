@@ -1,0 +1,130 @@
+﻿@page "/Qac/ColorSwatchPlan"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.Qac.ColorSwatchPlan.Components
+
+<PageTitle>Color Swatch Prepartion Plan</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Color Swatch Prepartion Plan"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "7. Reports", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "7.2 Color Swatch Plan", IsActive = true}})" />
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="_parameter" dropdownItemFullCode="_dropdownItemFullCode"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((ColorPrepartionPlanParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 mb-1">
+                    <div class="row">
+                        <div class="col-12 col-lg-6"></div>
+                        <div class="col-12 col-lg-6 text-end">
+                            <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                <i class="fa fa-file-excel fa-fw text-success"></i>
+                                Export Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <Table objs="_objs"
+                       page="_page" OnSetPage="(arg) => _page = (int)arg"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected int _page = 1;
+
+    protected ColorPrepartionPlanParameter _parameter = new ColorPrepartionPlanParameter();
+    protected List<ColorPrepartionPlan> _objs = new List<ColorPrepartionPlan>();
+    protected List<ItemFullCodeDropdown> _dropdownItemFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter.FormDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _parameter.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _dropdownItemFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown();
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task HandleChangeSearch(ColorPrepartionPlanParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new ColorPrepartionPlanParameter();
+        _parameter.FormDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _parameter.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _objs = new List<ColorPrepartionPlan>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objs = await _wrapper.Qac.ColorPrepartionPlanReport(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("ItemCode", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorCode", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("TotalProdQty", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("StartTime", typeof(string));
+                dt.Columns.Add("Customer", typeof(string));
+                dt.Columns.Add("ShipETD", typeof(string));
+
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.ItemCode;
+                    row[1] = item.ItemName;
+                    row[2] = item.ColorCode;
+                    row[3] = item.ColorName;
+                    row[4] = item.QtyScanner != null ? item.QtyScanner.Value.ToString("#,##0.##") : "0";
+                    row[5] = item.QtyOrder != null ? item.QtyOrder.Value.ToString("#,##0.##") : "0";
+                    row[6] = item.StartDate;
+                    row[7] = item.Customer;
+                    row[8] = item.ShipETD != null ? item.ShipETD.Value.ToString("MM-dd-yyyy HH:mm") : "";
+
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "ColorSwatchPreparationPlan.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

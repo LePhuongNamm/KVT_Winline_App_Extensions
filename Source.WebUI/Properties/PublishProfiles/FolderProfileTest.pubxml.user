@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>\\192.168.190.6\d$\APP_FKV\03_TEST_ENVIRONMENT\03_KVT_Web_Extension_TEST</_PublishTargetUrl>
+    <History>True|2024-07-05T04:39:50.9223600Z||;False|2024-07-05T11:39:29.5954111+07:00||;True|2024-06-28T09:55:56.0465767+07:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,105 @@
+﻿
+<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((_page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;height: 40px;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center" colspan="4" style="z-index: 10;position: sticky;left: 0;"> </th>
+                    <th class="text-center" colspan="6"> </th>
+                    <th class="text-center" colspan="3"> QUV</th>
+                    <th class="text-center" colspan="5">Color Migration</th>
+                    <th class="text-center" colspan="2">Aging</th>
+                    <th class="text-center" colspan="2">Hydrolysis</th>
+                    <th class="text-center" colspan="2">CRF Test</th>
+                    <th class="text-center" colspan="2">Bonding Test</th>
+                    <th></th>
+                </tr>
+                <tr style="z-index: 50;background: white;position: sticky;top: 40px;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center" style="min-width: 70px;z-index: 10;position: sticky;left: 0;">No</th>
+                    <th class="text-center" style="min-width: 300px;z-index: 10;position: sticky;left: 70px;">Item</th>
+                    <th class="text-center" style="min-width: 300px;z-index: 10;position: sticky;left: 370px;">Color</th>
+                    <th class="text-center" style="min-width: 100px;z-index: 10;position: sticky;left: 670px;">Overall Test result</th>
+                    <th class="text-center" style="min-width: 150px">Date Update</th>
+                    <th class="text-center" style="min-width: 100px">Testing time</th>
+                    <th class="text-center" style="min-width: 70px">Improve</th>
+                    <th class="text-center" style="min-width: 170px">Lab test Result date</th>
+                    <th class="text-center" style="min-width: 200px">Note</th>
+                    <th class="text-center" style="min-width: 100px">Material</th>
+                    <th class="text-center" style="min-width: 100px">QUV. Mark</th>
+                    <th class="text-center" style="min-width: 170px">Internal QUV test result/ 3.0</th>
+                    <th class="text-center" style="min-width: 170px">Nike QUV test result / 3.5</th>
+                    <th class="text-center" style="min-width: 70px">Internal Mark</th>
+                    <th class="text-center" style="min-width: 70px">Result</th>
+                    <th class="text-center" style="min-width: 70px">Nike Mark</th>
+                    <th class="text-center" style="min-width: 70px">Result</th>
+                    <th class="text-center" style="min-width: 70px">Final result</th>
+                    <th class="text-center" style="min-width: 70px">Aging Mark</th>
+                    <th class="text-center" style="min-width: 70px">Result</th>
+                    <th class="text-center" style="min-width: 70px">Mark</th>
+                    <th class="text-center" style="min-width: 70px">Result</th>
+                    <th class="text-center" style="min-width: 200px">Cycle</th>
+                    <th class="text-center" style="min-width: 70px">Result</th>
+                    <th class="text-center" style="min-width: 200px">Score</th>
+                    <th class="text-center" style="min-width: 70px">Result</th>
+                    <th class="text-center" style="min-width: 200px">Box</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="fw-bold" style="z-index: 10;background: #F8F8FF;position: sticky;left: 0;">@item.No</td>
+                    <td class="fw-bold" style="z-index: 10;background: #F8F8FF;position: sticky;left: 70px;">@item.ItemName</td>
+                    <td class="fw-bold" style="z-index: 10;background: #F8F8FF;position: sticky;left: 370px;">@item.ColorName</td>
+                    <td class="fw-bold @(item.OverallTestResult?.ToLower() == "fail" ? "text-danger" : "")" style="z-index: 10;background: #F8F8FF;position: sticky;left: 670px;">@item.OverallTestResult</td>
+                    <td>@(item.InputT != null ? item.InputT.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td>@item.TestingTime</td>
+                    <td>@item.Improve</td>
+                    <td>@item.LabTestResultDate</td>
+                    <td>@item.Note</td>
+                    <td>@item.MaterialName</td>
+                    <td>@item.QUV_QUVMark</td>
+                    <td class="@(item.QUV_InternalQUVTestResult30?.ToLower() == "fail" ? "text-danger" : "")">@item.QUV_InternalQUVTestResult30</td>
+                    <td class="@(item.QUV_NikeQUVTestResult35?.ToLower() == "fail" ? "text-danger" : "")">@item.QUV_NikeQUVTestResult35</td>
+                    <td>@item.CM_InternalMark</td>
+                    <td>@item.CM_IMResult</td>
+                    <td>@item.CM_NikeMark</td>
+                    <td>@item.CM_NMResult</td>
+                    <td>@item.CM_FinalResult</td>
+                    <td>@item.A_AgingMark</td>
+                    <td>@item.A_Result</td>
+                    <td>@item.H_Mark</td>
+                    <td>@item.H_Result</td>
+                    <td>@item.CRF_Cycle</td>
+                    <td>@item.CRF_Result</td>
+                    <td>@item.B_Score</td>
+                    <td>@item.B_Result</td>
+                    <td>@item.Box</td>
+                </tr>
+            </TableRowTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@objs.Count</b> records</span>
+
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="(page) => _page = page"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="_page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<LabTest> objs { get; set; } = new List<LabTest>();
+
+    protected int _page = 1;
+}

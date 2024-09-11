@@ -1,0 +1,160 @@
+﻿@page "/WHS/OverStationTracking"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.WarehouseFG.OverStationTracking.Components
+
+<PageTitle>Over Station Tracking</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Over Station Tracking"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "2. Warehouse FG", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "2.2 Over Station Tracking", IsActive = true}})" />
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="_parameter" isAdvanced="_isAdvanced"
+                    dropdownCustomer="_dropdownCustomer" dropdownReason="_dropdownReason" dropdownItemFullCode="_dropdownFullCode"
+                    OnSetAdvanced="() => _isAdvanced = !_isAdvanced"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((OverStationTrackingParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 mb-1">
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                        </div>
+                        <div class="col-12 col-lg-6 text-end">
+                            <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                <i class="fa fa-file-excel fa-fw text-success"></i>
+                                Export Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <Table objs="_objs" isAdvanced="_isAdvanced"
+                       page="_page" OnSetPage="(arg) => _page = (int)arg" />
+            </div>
+        </div>
+    </div>
+</section>
+@code {
+    protected bool _isAdvanced = false;
+    protected int _page = 1;
+
+    protected List<OverStationTracking> _objs = new List<OverStationTracking>();
+    protected OverStationTrackingParameter _parameter = new OverStationTrackingParameter();
+
+    protected List<DropDowList> _dropdownCustomer = new List<DropDowList>();
+    protected List<DropDowList> _dropdownReason = new List<DropDowList>();
+    protected List<ItemFullCodeDropdown> _dropdownFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Task[] tasks = new Task[]
+        {
+            Task.Run(async () => _dropdownCustomer = await _wrapper.KVTWL.ScanStatusLoadDropdown("Customer")),
+            Task.Run(async () => _dropdownReason = await _wrapper.KVTWL.ScanStatusLoadDropdown("Reason")),
+            Task.Run(async () => _dropdownFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown())
+        };
+
+        await Task.WhenAll(tasks);
+    }
+
+    protected async Task HandleChangeSearch(OverStationTrackingParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new OverStationTrackingParameter();
+        _objs = new List<OverStationTracking>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objs = await _wrapper.WareHouseFG.FindOverTracking(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        await _js.Loading(true);
+        if (_objs.Count > 0)
+        {
+            await _js.Loading(true);
+            await Task.Yield();
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("fBarcode", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(int));
+                dt.Columns.Add("Type", typeof(string));
+                dt.Columns.Add("Reason", typeof(string));
+                dt.Columns.Add("Cus", typeof(string));
+                dt.Columns.Add("FG", typeof(string));
+                dt.Columns.Add("DE", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("OCKV No", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+                dt.Columns.Add("Ordered", typeof(string));
+                dt.Columns.Add("Customer", typeof(string));
+                dt.Columns.Add("ToolingNo", typeof(string));
+                dt.Columns.Add("Gender", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("TakenBy", typeof(string));
+
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.fBarcode;
+                    row[1] = item.QtyOrder;
+                    row[2] = item.AddOpt1;
+                    row[3] = item.Reason;
+                    row[4] = item.TitelCustomer;
+                    row[5] = item.FGScan;
+                    row[6] = item.PPScan;
+                    row[7] = item.ItemName;
+                    row[8] = item.ColorName;
+                    row[9] = item.SizeName;
+                    row[10] = item.PackingNo;
+                    row[11] = item.StyleNo;
+                    row[12] = item.Ordered;
+                    row[13] = item.Customer;
+                    row[14] = item.ToolingNo;
+                    row[15] = item.Gender;
+                    row[16] = item.ItemFullCode;
+                    row[17] = item.OrderNumber;
+                    row[18] = item.TakenBy;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "OverStationTrackingOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+        await _js.Loading(false);
+    }
+}

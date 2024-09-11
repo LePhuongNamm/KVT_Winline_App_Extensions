@@ -1,0 +1,221 @@
+﻿@page "/Extensions/ProductionScanner"
+@using Source.WebUI.Components.Pages.Extensions.ProductionScanner.Components
+
+<PageTitle>Production Scanners Overview</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Production Scanners Overview"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "10. Extensions", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "10.2 Production Scanner", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((ProductionScannerParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex">
+                                    <div style="width: 35px" class="text-center">
+                                        <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="d-flex" style="width: 350px;">
+                                        <input type="text" style="height:28px;background-color: #f9f9f9;border: 1px solid #e2e2e2;"
+                                               value="Selected @_objSelecteds.Count rows" class="form-control form-control-sm rounded-0 w-50" readonly>
+                                        <AuthorizeView Roles="man,lea">
+                                            <Authorized>
+                                                <button class="btn btn-sm btn-action rounded-0 w-75" @onclick="async() => await HandleDelete()" style="height: 28px">
+                                                    <i class="fas fa-trash fa-fw text-danger"></i>
+                                                    Delete
+                                                </button>
+                                            </Authorized>
+                                            <NotAuthorized>
+                                                <button class="btn btn-sm btn-action rounded-0 w-75" disabled style="height: 28px">
+                                                    <i class="fas fa-trash fa-fw text-danger"></i>
+                                                    Delete
+                                                </button>
+                                            </NotAuthorized>
+                                        </AuthorizeView>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs"
+                           page="_page" OnSetPage="(arg) => _page = (int)arg"
+                           objSelected="_objSelecteds" OnSetSelected="(arg) => _objSelecteds = (List<ProdScan>)arg" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected int _page = 1;
+    protected List<ProdScan> _objs = new List<ProdScan>();
+    protected List<ProdScan> _objSelecteds = new List<ProdScan>();
+
+    protected ProductionScannerParameter _parameter = new ProductionScannerParameter();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter = new ProductionScannerParameter()
+            {
+                FromDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ToDate = DateTime.Now.ToString("yyyy-MM-dd")
+            };
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task HandleChangeSearch(ProductionScannerParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _page = 1;
+        _parameter = new ProductionScannerParameter()
+            {
+                FromDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ToDate = DateTime.Now.ToString("yyyy-MM-dd")
+            };
+        _objs = new List<ProdScan>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objSelecteds.Clear();
+            _objs = await _wrapper.Extensions.GetListProdScan(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleDelete()
+    {
+        if (_objSelecteds.Count > 0)
+        {
+            bool _confirm = await _js.Confirm($"Are you sure want to delete {_objSelecteds.Count} record?");
+            if (_confirm)
+            {
+                await _js.Loading(true);
+                try
+                {
+                    foreach (var item in _objSelecteds)
+                    {
+                        await _wrapper.Extensions.DeleteProdScan(item.Barcode!, "");
+                    }
+                    await FetchData();
+                    await _js.Notification("Successfully.");
+                }
+                catch (Exception ex)
+                {
+                    await _js.Aleft(ex.Message);
+                }
+                await _js.Loading(false);
+            }
+            else
+            {
+                _objSelecteds.Clear();
+            }
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Shift Date", typeof(string));
+                dt.Columns.Add("Shift ID", typeof(string));
+                dt.Columns.Add("Machine", typeof(string));
+                dt.Columns.Add("Item", typeof(string));
+                dt.Columns.Add("Color", typeof(string));
+                dt.Columns.Add("Size", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("MesOrderNumber", typeof(string));
+                dt.Columns.Add("ArticleNo", typeof(string));
+                dt.Columns.Add("Barcode", typeof(string));
+                dt.Columns.Add("Qty", typeof(int));
+                dt.Columns.Add("Date Time Scan", typeof(string));
+                dt.Columns.Add("Date Scan", typeof(string));
+                dt.Columns.Add("Time Scan", typeof(string));
+                dt.Columns.Add("Color Level", typeof(string));
+                dt.Columns.Add("UserScan", typeof(string));
+                dt.Columns.Add("InShift", typeof(int));
+                dt.Columns.Add("QtyScanned", typeof(int));
+                dt.Columns.Add("QtyPlan", typeof(int));
+                dt.Columns.Add("QtyReal", typeof(int));
+                dt.Columns.Add("QtyDefect", typeof(int));
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.ShiftDate;
+                    row[1] = item.ShiftID;
+                    row[2] = item.MachineNo;
+                    row[3] = item.ItemName;
+                    row[4] = item.ColorName;
+                    row[5] = item.SizeName;
+                    row[6] = item.OrderNumber;
+                    row[7] = item.MesOrderNumber;
+                    row[8] = item.ArticleNo;
+                    row[9] = item.Barcode;
+                    row[10] = item.QtyOrder;
+                    row[11] = item.DateScan != null ? item.DateScan.Value.ToString("MM/dd/yyyy HH:mm:ss") : "";
+                    row[12] = item.DateScan != null ? item.DateScan.Value.ToString("MM/dd/yyyy") : "";
+                    row[13] = item.DateScan != null ? item.DateScan.Value.ToString("HH:mm:ss") : "";
+                    row[14] = item.ColorLevel;
+                    row[15] = item.CreateUser;
+                    row[16] = item.QtyInShift ?? 0;
+                    row[17] = item.QtyScanned ?? 0;
+                    row[18] = item.QtyTotal ?? 0;
+                    row[19] = item.QtyReal ?? 0;
+                    row[20] = item.QtyDefect ?? 0;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, $"Production Scanners Overview From : {_parameter.FromDate} - To : {_parameter.ToDate}"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "ProductionScannersOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

@@ -1,0 +1,78 @@
+﻿<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-edit"></i>&ensp;
+                    Label Separation
+                </h5>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() => await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+                <div class="row g-3">
+                    <div class="col-12 col-md-12">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-25 bg-white fw-bold">ProdOrderNo</span>
+                            <input type="text" class="form-control w-75" value="@obj.ProdOrderNo" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-25 bg-white fw-bold">PackingNo</span>
+                            <input type="text" class="form-control w-75" value="@obj.PackingNo" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-25 bg-white fw-bold">Barcode</span>
+                            <input type="text" class="form-control w-75" value="@obj.Barcode" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-25 bg-white fw-bold">Original Q'ty</span>
+                            <input type="text" class="form-control w-75" value="@obj.OrderQty" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-25 bg-white fw-bold">Divide Q'ty</span>
+                            <input @ref="inputItemRef" class="form-control w-75" @bind="obj.OrderQtyNew" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="button" class="btn btn-dark btn-sm" @onclick="async() => await OnCloseForm.InvokeAsync()">
+                    <i class="fa fa-ban fa-fw"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="async () => await OnSubmitForm.InvokeAsync(obj)">
+                    <i class="fa fa-save fa-fw"></i>
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public FilmProdOrder obj { get; set; } = new FilmProdOrder();
+
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback<FilmProdOrder> OnSubmitForm { get; set; }
+
+    protected ElementReference inputItemRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (inputItemRef.Context != null)
+        {
+            await inputItemRef.FocusAsync();
+        }
+    }
+}

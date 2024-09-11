@@ -1,0 +1,431 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Source.WebUI
+build_property.RootNamespace = Source.WebUI
+build_property.ProjectDir = D:\KVT_Winline_App_Extensions\Source.WebUI\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\KVT_Winline_App_Extensions\Source.WebUI
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Layout/EmptyLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcRW1wdHlMYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Account/Forbidden.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY2NvdW50XEZvcmJpZGRlbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Account/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY2NvdW50XExvZ2luLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Account/Logout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY2NvdW50XExvZ291dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/OrderRegister/Components/TableLoss.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXE9yZGVyUmVnaXN0ZXJcQ29tcG9uZW50c1xUYWJsZUxvc3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/OrderRegister/Components/TableMain.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXE9yZGVyUmVnaXN0ZXJcQ29tcG9uZW50c1xUYWJsZU1haW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/OrderRegister/Components/TableOrder.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXE9yZGVyUmVnaXN0ZXJcQ29tcG9uZW50c1xUYWJsZU9yZGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/OrderRegister/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXE9yZGVyUmVnaXN0ZXJcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/PublicationBarcode/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXEZpbHRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/PublicationBarcode/Components/Modal.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXE1vZGFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/PublicationBarcode/Components/Printing.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXFByaW50aW5nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/PublicationBarcode/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/PublicationBarcode/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFB1YmxpY2F0aW9uQmFyY29kZVxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/ScantInOut/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFNjYW50SW5PdXRcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/AcsFilm/ScantInOut/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY3NGaWxtXFNjYW50SW5PdXRcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Dashboard/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEYXNoYm9hcmRcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Decoration/SubTracking/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEZWNvcmF0aW9uXFN1YlRyYWNraW5nXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Decoration/SubTracking/Components/Import.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEZWNvcmF0aW9uXFN1YlRyYWNraW5nXENvbXBvbmVudHNcSW1wb3J0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Decoration/SubTracking/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEZWNvcmF0aW9uXFN1YlRyYWNraW5nXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Decoration/SubTracking/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEZWNvcmF0aW9uXFN1YlRyYWNraW5nXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ExportDataScanner/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEV4cG9ydERhdGFTY2FubmVyXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ExportDataScanner/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEV4cG9ydERhdGFTY2FubmVyXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ExportDataScanner/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEV4cG9ydERhdGFTY2FubmVyXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/FeedbackProduction/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEZlZWRiYWNrUHJvZHVjdGlvblxDb21wb25lbnRzXEZpbHRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/FeedbackProduction/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEZlZWRiYWNrUHJvZHVjdGlvblxDb21wb25lbnRzXFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/FeedbackProduction/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEZlZWRiYWNrUHJvZHVjdGlvblxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/FeedbackSSBC/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEZlZWRiYWNrU1NCQ1xDb21wb25lbnRzXEZpbHRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/FeedbackSSBC/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEZlZWRiYWNrU1NCQ1xDb21wb25lbnRzXFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/FeedbackSSBC/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXEZlZWRiYWNrU1NCQ1xJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xDb21wb25lbnRzXEZpbHRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Components/Inventory.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xDb21wb25lbnRzXEludmVudG9yeS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Components/PopUpComp.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xDb21wb25lbnRzXFBvcFVwQ29tcC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Components/PopUpCompOut.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xDb21wb25lbnRzXFBvcFVwQ29tcE91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Components/PopUpPrintReview.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xDb21wb25lbnRzXFBvcFVwUHJpbnRSZXZpZXcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xDb21wb25lbnRzXFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProdComponentTracking/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2RDb21wb25lbnRUcmFja2luZ1xJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProductionScanner/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2R1Y3Rpb25TY2FubmVyXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProductionScanner/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2R1Y3Rpb25TY2FubmVyXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Extensions/ProductionScanner/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHRlbnNpb25zXFByb2R1Y3Rpb25TY2FubmVyXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/OrderManagement/Components/TablePackingInfo.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXE9yZGVyTWFuYWdlbWVudFxDb21wb25lbnRzXFRhYmxlUGFja2luZ0luZm8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/OrderManagement/Components/TableProdOrder.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXE9yZGVyTWFuYWdlbWVudFxDb21wb25lbnRzXFRhYmxlUHJvZE9yZGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/OrderManagement/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXE9yZGVyTWFuYWdlbWVudFxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/PublicationBarcode/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXEZpbHRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/PublicationBarcode/Components/Option.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXE9wdGlvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/PublicationBarcode/Components/PrintReview.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXFByaW50UmV2aWV3LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/PublicationBarcode/Components/Separation.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXFNlcGFyYXRpb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/PublicationBarcode/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFB1YmxpY2F0aW9uQmFyY29kZVxDb21wb25lbnRzXFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/PublicationBarcode/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFB1YmxpY2F0aW9uQmFyY29kZVxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/SeparationRecord/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFNlcGFyYXRpb25SZWNvcmRcQ29tcG9uZW50c1xGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/SeparationRecord/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFNlcGFyYXRpb25SZWNvcmRcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/KVTWinline/SeparationRecord/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xLVlRXaW5saW5lXFNlcGFyYXRpb25SZWNvcmRcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Laboratory/LabTest/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMYWJvcmF0b3J5XExhYlRlc3RcQ29tcG9uZW50c1xGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Laboratory/LabTest/Components/Import.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMYWJvcmF0b3J5XExhYlRlc3RcQ29tcG9uZW50c1xJbXBvcnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Laboratory/LabTest/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMYWJvcmF0b3J5XExhYlRlc3RcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Laboratory/LabTest/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMYWJvcmF0b3J5XExhYlRlc3RcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Qac/ColorSwatchPlan/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRYWNcQ29sb3JTd2F0Y2hQbGFuXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Qac/ColorSwatchPlan/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRYWNcQ29sb3JTd2F0Y2hQbGFuXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Qac/ColorSwatchPlan/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRYWNcQ29sb3JTd2F0Y2hQbGFuXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Qac/SSBCWhsInTracking/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRYWNcU1NCQ1doc0luVHJhY2tpbmdcQ29tcG9uZW50c1xGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Qac/SSBCWhsInTracking/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRYWNcU1NCQ1doc0luVHJhY2tpbmdcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Qac/SSBCWhsInTracking/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRYWNcU1NCQ1doc0luVHJhY2tpbmdcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/OrderChecking/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXE9yZGVyQ2hlY2tpbmdcQ29tcG9uZW50c1xGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/OrderChecking/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXE9yZGVyQ2hlY2tpbmdcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/OrderChecking/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXE9yZGVyQ2hlY2tpbmdcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/ProdOrderArticle/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFByb2RPcmRlckFydGljbGVcQ29tcG9uZW50c1xGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/ProdOrderArticle/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFByb2RPcmRlckFydGljbGVcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/ProdOrderArticle/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFByb2RPcmRlckFydGljbGVcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/ProdPending/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFByb2RQZW5kaW5nXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/ProdPending/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFByb2RQZW5kaW5nXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/ProdPending/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFByb2RQZW5kaW5nXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/RepackingRequest/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFJlcGFja2luZ1JlcXVlc3RcQ29tcG9uZW50c1xGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/RepackingRequest/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFJlcGFja2luZ1JlcXVlc3RcQ29tcG9uZW50c1xUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Reports/RepackingRequest/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXBvcnRzXFJlcGFja2luZ1JlcXVlc3RcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Sales/BoxOverviewSetting/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTYWxlc1xCb3hPdmVydmlld1NldHRpbmdcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/Sales/ChangeETD/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTYWxlc1xDaGFuZ2VFVERcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/GLPrint/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xHTFByaW50XENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/GLPrint/Components/Printing.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xHTFByaW50XENvbXBvbmVudHNcUHJpbnRpbmcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/GLPrint/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xHTFByaW50XENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/GLPrint/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xHTFByaW50XEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/OverStationTracking/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xPdmVyU3RhdGlvblRyYWNraW5nXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/OverStationTracking/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xPdmVyU3RhdGlvblRyYWNraW5nXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/OverStationTracking/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xPdmVyU3RhdGlvblRyYWNraW5nXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/PackingAndBill/Components/DeliveryTable.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xQYWNraW5nQW5kQmlsbFxDb21wb25lbnRzXERlbGl2ZXJ5VGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/PackingAndBill/Components/DetailTable.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xQYWNraW5nQW5kQmlsbFxDb21wb25lbnRzXERldGFpbFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/PackingAndBill/Components/ReportTable.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xQYWNraW5nQW5kQmlsbFxDb21wb25lbnRzXFJlcG9ydFRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/PackingAndBill/Components/SaleOrderTable.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xQYWNraW5nQW5kQmlsbFxDb21wb25lbnRzXFNhbGVPcmRlclRhYmxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/PackingAndBill/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xQYWNraW5nQW5kQmlsbFxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/WhsInTracking/Components/Filter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xXaHNJblRyYWNraW5nXENvbXBvbmVudHNcRmlsdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/WhsInTracking/Components/Modal.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xXaHNJblRyYWNraW5nXENvbXBvbmVudHNcTW9kYWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/WhsInTracking/Components/Table.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xXaHNJblRyYWNraW5nXENvbXBvbmVudHNcVGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Pages/WarehouseFG/WhsInTracking/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VGR1xXaHNJblRyYWNraW5nXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/Breadcrumb.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcQnJlYWRjcnVtYi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/DateTimePicker.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRGF0ZVRpbWVQaWNrZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/DropDownList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRHJvcERvd25MaXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/Header.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcSGVhZGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/RedirectToForbidden.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcUmVkaXJlY3RUb0ZvcmJpZGRlbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/RedirectToLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcUmVkaXJlY3RUb0xvZ2luLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/Shared/Sidebar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcU2lkZWJhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/KVT_Winline_App_Extensions/Source.WebUI/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 

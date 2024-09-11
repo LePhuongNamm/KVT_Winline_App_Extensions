@@ -1,0 +1,96 @@
+﻿
+<div class="search-bar">
+    <div class="simple">
+        <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+        <div class="search-fields">
+            <form @onsubmit="async () => await OnChangeSearch.InvokeAsync(parameter)" @formname="filter-form">
+                <div class="row">
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="Company">
+                                Company
+                            </label>
+                            <InputSelect class="form-select form-select-sm" style="height: 30px;" @bind-Value="parameter.IsCompany">
+                                <option value="">-- No Selected --</option>
+                                <option value="KVL">KVL</option>
+                                <option value="KVT">KVT</option>
+                            </InputSelect>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="DateDeliveryFrom">
+                                Delivery From
+                            </label>
+                            <InputText @bind-Value="parameter.DateDeliveryFrom"
+                                       id="DateDeliveryFrom" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="DeliveryTo">
+                                Delivery To
+                            </label>
+                            <InputText @bind-Value="parameter.DateDeliveryTo"
+                                       id="DeliveryTo" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(parameter.IsCompany))
+                    {
+                        <div class="col-12 col-lg-2">
+                            <div class="form-group">
+                                <label for="Company">
+                                    VoucherType (@(parameter.IsCompany == "KVL" ? "96,99" : "1,2,111,121,123"))
+                                </label>
+                                <InputText @bind-Value="parameter.VoucherType"
+                                           id="Company" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-12 col-lg-2">
+                            <div class="form-group">
+                                <label for="Company">
+                                    VoucherType
+                                </label>
+                                <input class="form-control form-control-sm" style="height: 30px;" disabled />
+                            </div>
+                        </div>
+                    }
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-sync fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public OrderCheckingParameter parameter { get; set; } = new OrderCheckingParameter();
+
+    [Parameter]
+    public EventCallback<OrderCheckingParameter> OnChangeSearch { get; set; }
+
+    [Parameter]
+    public EventCallback OnResetSearch { get; set; }
+}

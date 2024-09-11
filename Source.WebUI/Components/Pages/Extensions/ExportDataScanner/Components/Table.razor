@@ -1,0 +1,77 @@
+﻿
+<div class="row">
+    <div class="col-lg-12 mb-1">
+        <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - @(isAdvanced ? "370" : "275")px);">
+            <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+                <TableHeadTemplate>
+                    <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <th class="text-center">Dept</th>
+                        <th class="text-center">Shift</th>
+                        <th class="text-center" style="min-width: 100px">ShiftDate</th>
+                        <th class="text-center" style="min-width: 150px">Description</th>
+                        <th class="text-center" style="min-width: 160px">QRCode</th>
+                        <th class="text-center">OCKV</th>
+                        <th class="text-center" style="min-width: 200px">ItemName</th>
+                        <th class="text-center" style="min-width: 350px">ColorName</th>
+                        <th class="text-center" style="min-width: 200px">SizeName</th>
+                        <th class="text-center">QtyOrder</th>
+                        <th class="text-center" style="min-width: 500px">OrderNumber</th>
+                        <th class="text-center" style="min-width: 200px">StyleNo</th>
+                        <th class="text-center">UserScan</th>
+                        <th class="text-center" style="min-width: 300px">LastScanDate</th>
+                    </tr>
+                </TableHeadTemplate>
+                <TableRowTemplate>
+                    <tr>
+                        <td class="text-center">@item.Dept</td>
+                        <td class="text-center">@item.Shift</td>
+                        <td>@(item.ShiftDate != null ? item.ShiftDate.Value.ToString("yyyy-MM-dd") : "")</td>
+                        <td>@item.Description</td>
+                        <td>@item.QRCode</td>
+                        <td>@item.PackingNo</td>
+                        <td>@item.ItemName</td>
+                        <td>@item.ColorName</td>
+                        <td>@item.SizeName</td>
+                        <td class="text-center">@item.QtyOrder</td>
+                        <td>@item.OrderNumber</td>
+                        <td>@item.StyleNo</td>
+                        <td>@item.EmpCode</td>
+                        <td>@item.LastScanDate</td>
+                    </tr>
+                </TableRowTemplate>
+                <TableFootTemplate>
+                    <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <td colspan="9" class="fw-bold">Total</td>
+                        <td class="text-center fw-bold" style="background-color: #f5f5f5;">@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</td>
+                        <td colspan="4"></td>
+                    </tr>
+                </TableFootTemplate>
+            </BlazorTable>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-12 col-md-6" style="padding-top: 1rem">
+                <span>Total <b class="text-primary">@objs.Count</b> records</span>
+
+            </div>
+            <div class="col-12 col-md-6">
+                <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                       Class="pagination pagination-sm float-end"
+                                       DisplayTotals="false"
+                                       PagingSize="5"
+                                       ActivePage="page"
+                                       PageSize="100"
+                                       NoOfItems="objs.Count()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public List<DataImex> objs { get; set; } = new List<DataImex>();
+    [Parameter] public bool isAdvanced { get; set; } = false;
+    [Parameter] public int page { get; set; } = 1;
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+}

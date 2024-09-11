@@ -1,0 +1,15 @@
+﻿@page "/Account/Logout"
+
+@code {
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpContext.User != null)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            _nav.NavigateTo("/",true);
+        }
+    }
+}

@@ -1,0 +1,218 @@
+﻿<div class="search-bar">
+    <form @onsubmit="async () => await OnChangeSearch.InvokeAsync(parameter)" @formname="filter-form">
+        <div class="simple">
+            <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+            <div class="search-fields">
+                <div class="row">
+                    <div class="col-12 col-lg-3">
+                        <div class="form-group">
+                            <label for="ProdOrderNo">
+                                ProdNo
+                            </label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <InputText @bind-Value="parameter.ProdOrderNo"
+                                               id="ProdOrderNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                                <div class="col-2">
+                                    <InputText @bind-Value="parameter.Seq"
+                                               id="Seq" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                                <div class="col-2">
+                                    <InputText @bind-Value="parameter.SubSeq"
+                                               id="SubSeq" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                                <div class="col-2">
+                                    <InputText @bind-Value="parameter.BoxCount"
+                                               id="BoxCount" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="row">
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="PackingNo">
+                                        OCKV No
+                                    </label>
+                                    <InputText @bind-Value="parameter.PackingNo"
+                                               id="PackingNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Customer">
+                                        Customer
+                                    </label>
+                                    <InputText @bind-Value="parameter.Customer"
+                                               id="Customer" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="isPrint">
+                                        Printed
+                                    </label>
+                                    <InputSelect id="isPrint" @bind-Value="parameter.isPrint" class="form-select form-select-sm" style="height: 30px;">
+                                        <option value="">-- All --</option>
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </InputSelect>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="OrderNumber">
+                                DPO
+                            </label>
+                            <InputText @bind-Value="parameter.OrderNumber"
+                                       id="OrderNumber" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-ban fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-default w-100 btn-sm rounded-1" @onclick="async() => await OnSetAdvanced.InvokeAsync()">
+                            <i class="fas fa-plus fa-fw"></i>
+                            <span class="hidden-md">
+                                Advanced
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="advanced-search-options" style="display: @(isAdvanced ? "block" : "none");">
+            <div class="row">
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="Item">
+                            Item
+                        </label>
+                        @{
+                            var _dropdownItem = dropdownItemFullCode.DistinctBy(x => $"{x.ItemCode} - {x.ItemName}")
+                            .Select(x => new DropDowList { StrValue = $"{x.ItemCode} - {x.ItemName}", Label = $"{x.ItemCode} - {x.ItemName}" }).ToList();
+                        }
+                        <DropDownList Id="Item" dropdowns="@_dropdownItem"
+                                      initData="@parameter.Item" OnSetValue="@((arg) => parameter.Item = (string?)arg ?? "")" />
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="Color">
+                            Color
+                        </label>
+                        @{
+                            var _dropdownColor = !string.IsNullOrEmpty(parameter.Item) ?
+                            dropdownItemFullCode.Where(x => $"{x.ItemCode} - {x.ItemName}" == parameter.Item).DistinctBy(x => $"{x.ColorCode} - {x.ColorName}")
+                            .Select(x => new DropDowList { StrValue = $"{x.ColorCode} - {x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList() :
+                            dropdownItemFullCode.DistinctBy(x => $"{x.ColorCode} - {x.ColorName}").Select(x => new DropDowList { StrValue = $"{x.ColorCode} - {x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList();
+                        }
+                        <DropDownList Id="Color" dropdowns="@_dropdownColor"
+                                      initData="@parameter.Color" OnSetValue="@((arg) => parameter.Color = (string?)arg ?? "")" />
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="Size">
+                            Size
+                        </label>
+                        @{
+                            var _dropdownSize = !string.IsNullOrEmpty(parameter.Item) ?
+                            dropdownItemFullCode.Where(x => $"{x.ItemCode} - {x.ItemName}" == parameter.Item).DistinctBy(x => $"{x.SizeCode} - {x.SizeName}")
+                                                .Select(x => new DropDowList { StrValue = $"{x.SizeCode} - {x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList() :
+                            dropdownItemFullCode.DistinctBy(x => $"{x.SizeCode} - {x.SizeName}")
+                                                .Select(x => new DropDowList { StrValue = $"{x.SizeCode} - {x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList();
+                        }
+                        <DropDownList Id="Size" dropdowns="@_dropdownSize"
+                                      initData="@parameter.Size" OnSetValue="@((arg) => parameter.Size = (string?)arg ?? "")" />
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="Style">
+                            Style
+                        </label>
+                        <InputText @bind-Value="parameter.Style"
+                                   id="Style" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="FGScan">
+                            By SCAN
+                        </label>
+                        <DropDownList Id="FGScan" dropdowns="@dropdownScan"
+                                      initData="@parameter.FGScan" OnSetValue="@((arg) => parameter.FGScan = (string?)arg ?? "")" />
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="Status">
+                            By PT
+                        </label>
+                        <DropDownList Id="Status" dropdowns="@dropdownStatus"
+                                      initData="@parameter.Status" OnSetValue="@((arg) => parameter.Status = (string?)arg ?? "")" />
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="BoxType">
+                            Box Type
+                        </label>
+                        <InputSelect @bind-Value="parameter.BoxType" id="BoxType" class="form-select form-select-sm" style="height: 30px;">
+                            <option value="">1.ALL</option>
+                            <option value="PB">2.PB</option>
+                        </InputSelect>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    <div class="form-group">
+                        <label for="PB_Cd">
+                            PB_Cd
+                        </label>
+                        <InputText @bind-Value="parameter.PB_Cd"
+                                   id="PB_Cd" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public bool isAdvanced { get; set; } = false;
+
+    [Parameter] public EventCallback OnSetAdvanced { get; set; }
+
+    [Parameter] public TbProdOrderParameter parameter { get; set; } = new TbProdOrderParameter();
+
+    [Parameter] public List<ItemFullCodeDropdown> dropdownItemFullCode { get; set; } = new List<ItemFullCodeDropdown>();
+    [Parameter] public List<DropDowList> dropdownScan { get; set; } = new List<DropDowList>();
+    [Parameter] public List<DropDowList> dropdownStatus { get; set; } = new List<DropDowList>();
+
+    [Parameter] public EventCallback<TbProdOrderParameter> OnChangeSearch { get; set; }
+
+    [Parameter] public EventCallback OnResetSearch { get; set; }
+}

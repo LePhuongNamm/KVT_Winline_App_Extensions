@@ -1,0 +1,24 @@
+﻿
+<Select2 TItem="DropDowList"
+         TSource="List<DropDowList>"
+         IdSelector="item => item.StrValue"
+         TextSelector="item => item.Label"
+         Datasource="dropdowns"
+         Value="selected"
+         MaxItemsPerPage="9999"
+         OnValueChanged="@(async() =>  await OnSetValue.InvokeAsync(selected.FirstOrDefault()?.StrValue ?? ""))"
+         GetElementById="(items, filter, token) => Task.FromResult(items.SingleOrDefault(item => item.StrValue.Equals(filter)))"
+         FilterFunction="(items, filter, token) => Task.FromResult(items.Where(item => item.StrValue.ToLower().Contains(filter.ToLower()) || item.Label.ToLower().Contains(filter.ToLower())).ToList())" id="@Id"></Select2>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public List<DropDowList> dropdowns { get; set; } = new List<DropDowList>();
+    [Parameter] public string initData { get; set; } = "";
+
+    [Parameter] public EventCallback<string?> OnSetValue { get; set; }
+
+
+    protected List<DropDowList> selected { get; set; } = new List<DropDowList>();
+
+    protected override void OnParametersSet() => selected = dropdowns.Where(x => x.StrValue == initData).ToList();
+}

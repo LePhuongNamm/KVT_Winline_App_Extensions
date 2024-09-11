@@ -1,0 +1,150 @@
+﻿<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width: 300px">
+                    <div class="col-6">
+                        <button class="btn btn-sm btn-success w-100 rounded-0" @onclick="() => HandleAddLevel()">
+                            <i class="fa fa-plus "></i>
+                            Add Level
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        @if (SortSelecteds != null && SortSelecteds.Count > 0)
+                        {
+                            <button class="btn btn-sm btn-danger w-100 rounded-0" @onclick="() =>  HandleDeleteLevel()">
+                                <i class="fa fa-trash"></i>
+                                Delete Level
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-danger w-100 rounded-0" disabled>
+                                <i class="fa fa-trash"></i>
+                                Delete Level
+                            </button>
+                        }
+                    </div>
+                </div>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() => await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+                <div class="row g-3">
+                    <div class="col-12 col-md-12">
+                        <div class="data-scrollbar" style="max-height: calc(100vh - 400px);background-color:#f5f5f5">
+                            <table class="datatable w-100 mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50%">Column</th>
+                                        <th style="width: 50%" class="text-center">Order</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (SortSelecteds != null && SortSelecteds.Count > 0)
+                                    {
+                                        foreach (var item in SortSelecteds)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <select value="@item.SortColumn" class="form-select form-select-sm" @onchange="(ChangeEventArgs arg) => HandleSortColumChange(item,arg)">
+                                                        <option value="">None</option>
+                                                        @foreach (var _sort in _sorts)
+                                                        {
+                                                            <option value="@_sort.SortColumn">@_sort.SortColumn</option>
+                                                        }
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select value="@item.SortValue" class="form-select form-select-sm" @onchange="@((ChangeEventArgs arg) => HandleSortValueChange(item,arg))">
+                                                        <option value="asc">Sort Ascending</option>
+                                                        <option value="desc">Sort Descending</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="async() => await OnCloseForm.InvokeAsync()">
+                    <i class="fa fa-save fa-fw"></i>
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<SortDTO> SortSelecteds { set; get; } = new List<SortDTO>();
+
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback<List<SortDTO>> OnSetSorts { get; set; }
+
+    protected List<SortDTO> _sorts = new List<SortDTO>();
+
+    protected override void OnInitialized()
+    {
+        _sorts = new List<SortDTO>()
+        {
+            new SortDTO(){Stt = 0,SortColumn = "ProdOrderNo",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "Seq",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "SubSeq",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "BoxCount",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "BoxDV",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "OrderNumber",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "TitelCustomer",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "Customer",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "ItemFullCode",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "ItemName",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "ColorName",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "SizeID",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "SizeName",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "QtyOrder",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "StyleNo",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "DeliveryDate",SortValue = "asc"},
+        };
+    }
+
+    protected async Task HandleSortColumChange(SortDTO source, ChangeEventArgs arg)
+    {
+        var value = arg?.Value?.ToString() ?? "";
+        var sort = _sorts.Where(x => x.SortColumn == value).FirstOrDefault();
+        if (sort != null)
+        {
+            source.SortColumn = sort.SortColumn;
+            source.SortValue = sort.SortValue;
+        }
+        else
+        {
+            source = new SortDTO();
+        }
+        await OnSetSorts.InvokeAsync(SortSelecteds);
+    }
+
+    protected async Task HandleSortValueChange(SortDTO source, ChangeEventArgs arg)
+    {
+        source.SortValue = arg?.Value?.ToString() ?? "asc";
+        await OnSetSorts.InvokeAsync(SortSelecteds);
+    }
+
+    protected async Task HandleAddLevel()
+    {
+        SortSelecteds.Add(new SortDTO());
+        await OnSetSorts.InvokeAsync(SortSelecteds);
+    }
+
+    protected async Task HandleDeleteLevel()
+    {
+        SortSelecteds.Remove(SortSelecteds.LastOrDefault()!);
+        await OnSetSorts.InvokeAsync(SortSelecteds);
+    }
+}

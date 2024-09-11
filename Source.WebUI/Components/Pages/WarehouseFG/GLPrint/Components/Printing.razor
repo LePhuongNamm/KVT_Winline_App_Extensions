@@ -1,0 +1,88 @@
+﻿
+<div class="row" style="height: 98%">
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;background-color: gray !important;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                CUS.
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @(!string.IsNullOrEmpty(obj.CustomerCo) ? obj.CustomerCo : "-")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                C/N
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @($"{obj.SEQ}/{obj.CtBox} BOXES")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                PO
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @(!string.IsNullOrEmpty(obj.OrderNumber) ? obj.OrderNumber : "-")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                REF.NO
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @(!string.IsNullOrEmpty(obj.RefNo) ? obj.RefNo : "-")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                ITEM
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @(!string.IsNullOrEmpty(obj.ItemName) ? obj.ItemName : "-")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                COLOR
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @(!string.IsNullOrEmpty(obj.ColorName) ? obj.ColorName : "-")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000;border-bottom: none">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                SIZE
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @(!string.IsNullOrEmpty(obj.SizeName) ? obj.SizeName : "-")
+            </div>
+        </div>
+    </div>
+    <div class="col-12" style="height: 12.5%; border: 1px solid #000">
+        <div class="row" style="height: 100%">
+            <div class="col-2" style="border-right: 1px solid #000;height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;background-color: gray !important;">
+                Q'TY
+            </div>
+            <div class="col-10" style="height: 100%;text-align:center;display: flex;justify-content: center;flex-direction: column;">
+                @obj.Qty @obj.UMSales
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public PakingGlLabel obj { get; set; } = new PakingGlLabel();
+}

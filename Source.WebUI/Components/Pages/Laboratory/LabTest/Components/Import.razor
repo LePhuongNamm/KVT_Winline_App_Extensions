@@ -1,0 +1,186 @@
+﻿
+<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog" style="max-width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-file-import"></i>&ensp;
+                    Import Lab Test ---> <a style="color: blue; cursor: pointer" @onclick="async() => await DowloadTemplate()">Download Template</a>
+                </h5>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() =>await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+                <div class="row g-3">
+                    <div class="col-12 col-md-12">
+                        <input type="file" class="form-control" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                    </div>
+                    <div class="col-12 col-md-12 data-scrollbar" style="max-height: calc(100vh - 300px);">
+                        @if (!string.IsNullOrEmpty(_message))
+                        {
+                            <div class="alert alert-primary" role="alert">
+                                @_message
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="button" class="btn btn-dark btn-sm" @onclick="async() =>await OnCloseForm.InvokeAsync()">
+                    <i class="fa fa-ban fa-fw"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="async () => await OnSubmitImport.InvokeAsync()">
+                    <i class="fa fa-save fa-fw"></i>
+                    Import
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback<List<LabTest>> OnSetImport { get; set; }
+
+    [Parameter]
+    public EventCallback OnSubmitImport { get; set; }
+
+    protected string _message = "";
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected override void OnInitialized()
+    {
+        _message = "";
+        _inputFileId = Guid.NewGuid().ToString();
+    }
+
+    protected List<LabTest> _imports = new List<LabTest>();
+
+    protected async Task DowloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "LabTest_Report_template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("LabTest_Report_template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        var _obj = new LabTest();
+
+                        _obj.No = dt.Rows[i]["No"].ToString();
+                        _obj.ItemCode = dt.Rows[i]["ItemCode"].ToString();
+                        _obj.ItemName = dt.Rows[i]["ItemName"].ToString();
+                        _obj.ColorCode = dt.Rows[i]["ColorCode"].ToString();
+                        _obj.ColorName = dt.Rows[i]["ColorName"].ToString();
+
+                        _obj.TestingTime = dt.Rows[i]["TestingTime"].ToString();
+                        _obj.Improve = dt.Rows[i]["Improve"].ToString();
+                        _obj.OverallTestResult = dt.Rows[i]["OverallTestResult"].ToString();
+                        _obj.LabTestResultDate = !string.IsNullOrEmpty(dt.Rows[i]["LabTestResultDate"].ToString()) ? ConvertHelper.ConvertDateFromExcel(dt.Rows[i]["LabTestResultDate"].ToString() ?? "") : "";
+                        _obj.Note = dt.Rows[i]["Note"].ToString();
+
+                        _obj.MaterialCode = dt.Rows[i]["MaterialCode"].ToString();
+                        _obj.QUV_QUVMark = dt.Rows[i]["QUV_QUVMark"].ToString();
+                        _obj.QUV_InternalQUVTestResult30 = dt.Rows[i]["QUV_InternalQUVTestResult30"].ToString();
+                        _obj.QUV_NikeQUVTestResult35 = dt.Rows[i]["QUV_NikeQUVTestResult35"].ToString();
+                        _obj.CM_InternalMark = dt.Rows[i]["CM_InternalMark"].ToString();
+
+                        _obj.CM_IMResult = dt.Rows[i]["CM_IMResult"].ToString();
+                        _obj.CM_NikeMark = dt.Rows[i]["CM_NikeMark"].ToString();
+                        _obj.CM_NMResult = dt.Rows[i]["CM_NMResult"].ToString();
+                        _obj.CM_FinalResult = dt.Rows[i]["CM_FinalResult"].ToString();
+                        _obj.A_AgingMark = dt.Rows[i]["A_AgingMark"].ToString();
+
+                        _obj.A_Result = dt.Rows[i]["A_Result"].ToString();
+                        _obj.H_Mark = dt.Rows[i]["H_Mark"].ToString();
+                        _obj.H_Result = dt.Rows[i]["H_Result"].ToString();
+                        _obj.CRF_Cycle = dt.Rows[i]["CRF_Cycle"].ToString();
+                        _obj.CRF_Result = dt.Rows[i]["CRF_Result"].ToString();
+
+                        _obj.B_Score = dt.Rows[i]["B_Score"].ToString();
+                        _obj.B_Result = dt.Rows[i]["B_Result"].ToString();
+                        _obj.Box = dt.Rows[i]["Box"].ToString();
+                        _imports.Add(_obj);
+                    }
+
+
+                    if (ValidateData(_imports).Count > 0)
+                    {
+                        _inputFileId = Guid.NewGuid().ToString();
+                        _message = $"The rows have one of the three data fields (ItemCode,ColorCode,OverallTestResult) blank : {string.Join(",", (ValidateData(_imports).Select(p => p).ToList()))}";
+                    }
+                    else
+                    {
+                        await OnSetImport.InvokeAsync(_imports);
+                        _message = $"Upload successfully {_imports.Count} rows";
+                    }
+                }
+                else
+                {
+                    await _js.Aleft("No data.");
+                }
+            }
+            else
+            {
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch(Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+
+        await _js.Loading(false);
+    }
+
+    protected List<int> ValidateData(List<LabTest> imports)
+    {
+        List<int> val = new List<int>();
+
+        for (int i = 0; i < imports.Count; i++)
+        {
+            if (string.IsNullOrEmpty(imports[i].ItemCode) ||
+                    string.IsNullOrEmpty(imports[i].ColorCode) ||
+                            string.IsNullOrEmpty(imports[i].OverallTestResult))
+            {
+                val.Add(i + 2);
+            }
+        }
+        return val;
+    }
+}

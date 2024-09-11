@@ -1,0 +1,76 @@
+﻿<div id="simple-bar" class="data-scrollbar table-responsive">
+    <BlazorTable Class="datatable w-100 mb-0" Items="objs" Context="item">
+        <TableHeadTemplate>
+            <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                <th class="text-center" style="min-width: 150px">OCKV No</th>
+                <th class="text-center" style="min-width: 50px">Cus</th>
+                <th class="text-center" style="min-width: 250px">ItemName</th>
+                <th class="text-center" style="min-width: 400px">ColorName</th>
+                <th class="text-center" style="min-width: 200px">SizeName</th>
+                <th class="text-center" style="min-width: 300px">ToolingNo</th>
+
+                <th class="text-center">Qty</th>
+                <th class="text-center" style="min-width: 500px">DPO</th>
+                <th class="text-center" style="min-width: 100px">Ordered</th>
+                <th class="text-center">Customer</th>
+                <th class="text-center">ItemCode</th>
+                <th class="text-center">ColorCode</th>
+                <th class="text-center">SizeCode</th>
+                <th class="text-center">BoxType</th>
+                <th class="text-center" style="min-width: 300px">StyleNo</th>
+                <th class="text-center">Weight</th>
+                <th class="text-center" style="min-width: 300px">T1</th>
+                <th class="text-center">BX1</th>
+                <th class="text-center">BX2</th>
+                <th class="text-center">BX3</th>
+                <th class="text-center">BX4</th>
+                <th class="text-center">BX5</th>
+                <th class="text-center">BX6</th>
+                <th class="text-center">PPbag</th>
+                <th class="text-center">PB</th>
+            </tr>
+        </TableHeadTemplate>
+        <TableRowTemplate>
+            <tr>
+                <td class="text-center">@item.PackingNo</td>
+                <td class="text-center">@item.TitelCustomer</td>
+                <td>@item.ItemName</td>
+                <td>@item.ColorName</td>
+                <td>@item.SizeName</td>
+                <td>@item.ToolingNo</td>
+                <td class="text-center">@(item.QtyOrder != null ? item.QtyOrder.Value.ToString("#,##0.##") : "0")</td>
+                <td>@item.OrderNumber</td>
+                <td class="text-center">@item.Ordered</td>
+                <td>@item.TitelCustomer</td>
+                <td class="text-center">@item.ItemCode</td>
+                <td class="text-center">@item.ColorCode</td>
+                <td class="text-center">@item.SizeCode</td>
+                <td class="text-center">@item.BoxType</td>
+                <td>@item.StyleNo</td>
+                <td class="text-center">@item.Weight</td>
+                <td>@item.T1</td>
+                <td class="text-center">@item.BX1</td>
+                <td class="text-center">@item.BX2</td>
+                <td class="text-center">@item.BX3</td>
+                <td class="text-center">@item.BX4</td>
+                <td class="text-center">@item.BX5</td>
+                <td class="text-center">@item.BX6</td>
+                <td class="text-center">@item.PPbag</td>
+                <td class="text-center">@item.PB</td>
+            </tr>
+        </TableRowTemplate>
+        <TableFootTemplate>
+            <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                <td colspan="6"><b>Total: </b> </td>
+                <td class="text-center"><b>@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</b></td>
+                <td colspan="18"></td>
+            </tr>
+        </TableFootTemplate>
+    </BlazorTable>
+</div>
+
+
+@code {
+    [Parameter]
+    public List<V_PACKING_WL> objs { get; set; } = new List<V_PACKING_WL>();
+}

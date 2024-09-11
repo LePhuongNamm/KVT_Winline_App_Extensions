@@ -1,0 +1,275 @@
+﻿@if (isShow)
+{
+    <div class="modal rounded-0" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 2000px">
+            <div class="modal-content">
+                <div class="modal-header rounded-0" style="background-color: #367fa9; color: #fff">
+                    <h5 class="modal-title">Request</h5>
+                    <button type="button" class="btn-close" style="color: #fff" @onclick="async() => await OnCloseForm.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body rounded-0" style="background-color: #f6f6f6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-3 mb-1">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0 rounded-0">Cus:</span>
+                                            <div class="w-70">
+                                                <DropDownList Id="Customer" dropdowns="@dropdownCustomer"
+                                                              initData="@_packingDeliveryParameter.TitleCustomer" OnSetValue="@((arg) => _packingDeliveryParameter.TitleCustomer = (string?)arg ?? "")" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-1">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0 rounded-0">PO:</span>
+                                            <input value="@_packingDeliveryParameter.DPONo" type="text" class="form-control w-70 rounded-0" style="height: 30px"
+                                                   @onchange="@((ChangeEventArgs args) => _packingDeliveryParameter.DPONo = args.Value?.ToString() ?? "")">
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="col-lg-2 mb-1">
+                                        <div class="input-group input-group-sm text-center">
+                                            <span class="input-group-text w-30  text-center border-0">RTD:</span>
+                                            <input value="@_packingDeliveryParameter.DeliveryDate" type="date" class="form-control w-70 rounded-0" style="height: 30px"
+                                                   @onchange="@((ChangeEventArgs args) => _packingDeliveryParameter.DeliveryDate = args.Value?.ToString() ?? "")">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 mb-1">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0">DN:</span>
+                                            <input value="@_packingDeliveryParameter.DeliveryNote" type="text" class="form-control w-70 rounded-0" style="height: 30px"
+                                                   @onchange="@((ChangeEventArgs args) => _packingDeliveryParameter.DeliveryNote = args.Value?.ToString() ?? "")">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 mb-1">
+                                        <button id="btn" class="btn btn-primary w-100 btn-sm rounded-1" @onclick="async () => await HandleChangeSearch()">
+                                            <i class="fas fa-search fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Search
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-3 col-md-3">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0 rounded-0">Item:</span>
+                                            <div class="w-70">
+                                                @{
+                                                    var _dropdownItem = dropdownItemFullCode.DistinctBy(x => $"{x.ItemCode} - {x.ItemName}")
+                                                    .Select(x => new DropDowList { StrValue = $"{x.ItemCode} - {x.ItemName}", Label = $"{x.ItemCode} - {x.ItemName}" }).ToList();
+                                                }
+                                                <DropDownList Id="Item" dropdowns="@_dropdownItem"
+                                                              initData="@_packingDeliveryParameter.Item" OnSetValue="@((arg) => _packingDeliveryParameter.Item = (string?)arg ?? "")" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 col-md-3">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0 rounded-0">Color:</span>
+                                            <div class="w-70">
+                                                @{
+                                                    var _dropdownColor = !string.IsNullOrEmpty(_packingDeliveryParameter.Item) ?
+                                                    dropdownItemFullCode.Where(x => $"{x.ItemCode} - {x.ItemName}" == _packingDeliveryParameter.Item).DistinctBy(x => $"{x.ColorCode} - {x.ColorName}")
+                                                    .Select(x => new DropDowList { StrValue = $"{x.ColorCode} - {x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList() :
+                                                    dropdownItemFullCode.DistinctBy(x => $"{x.ColorCode} - {x.ColorName}").Select(x => new DropDowList { StrValue = $"{x.ColorCode} - {x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList();
+                                                }
+                                                <DropDownList Id="Color" dropdowns="@_dropdownColor"
+                                                              initData="@_packingDeliveryParameter.Color" OnSetValue="@((arg) => _packingDeliveryParameter.Color = (string?)arg ?? "")" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 col-md-2">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0 rounded-0">Size:</span>
+                                            <div class="w-70">
+                                                @{
+                                                    var _dropdownSize = !string.IsNullOrEmpty(_packingDeliveryParameter.Item) ?
+                                                    dropdownItemFullCode.Where(x => $"{x.ItemCode} - {x.ItemName}" == _packingDeliveryParameter.Item).DistinctBy(x => $"{x.SizeCode} - {x.SizeName}")
+                                                    .Select(x => new DropDowList { StrValue = $"{x.SizeCode} - {x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList() :
+                                                    dropdownItemFullCode.DistinctBy(x => $"{x.SizeCode} - {x.SizeName}")
+                                                    .Select(x => new DropDowList { StrValue = $"{x.SizeCode} - {x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList();
+                                                }
+                                                <DropDownList Id="Size" dropdowns="@_dropdownSize"
+                                                              initData="@_packingDeliveryParameter.Size" OnSetValue="@((arg) => _packingDeliveryParameter.Size = (string?)arg ?? "")" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text w-30  text-center border-0 rounded-0">StyleNo:</span>
+                                            <input value="@_packingDeliveryParameter.StyleNo" type="text" class="form-control w-70 rounded-0" style="height: 30px"
+                                                   @onchange="@((ChangeEventArgs args) => _packingDeliveryParameter.StyleNo = args.Value?.ToString() ?? "")">
+                                        </div>   
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await HandleResetSearch()">
+                                            <i class="fas fa-ban fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Refresh
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="background-color: #f6f6f6;padding: .5rem 1rem">
+                            <div class="row">
+                                <div class="col-lg-12 mb-1">
+                                    <div class="row">
+                                        <div class="col-12 col-lg-6">
+                                            <div class="d-flex">
+                                                <div style="width: 4%" class="text-center">
+                                                    <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="d-flex" style="width: 450px;">
+                                                    <input type="text" style="height:28px;background-color: #fff;border: 1px solid #e2e2e2;"
+                                                           value="Selected @_packingDeliverySelecteds.Count rows / Total Q'ty : @_packingDeliverySelecteds.Sum(x => x.QtyOrder)" class="form-control form-control-sm rounded-0 w-50" readonly>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="data-scrollbar" style="height: calc(100vh - 350px);">
+                                        <table class="datatable w-100 mb-0">
+                                            <thead>
+                                                <tr style="z-index: 10;position: sticky;top: 0;">
+                                                    <th style="width: 2%" class="text-center">
+                                                        <input type="checkbox" class="form-check-input" checked=@((_packingDeliverySelecteds.Count > 0 && _packingDeliverySelecteds.Count == packingDeliveries.Count) ? true : false)
+                                                               @onchange="(EventArgs) =>  HandleCheckBoxAllClick(EventArgs.Value ?? false)" />
+                                                    </th>
+                                                    <th style="width: 5%" class="text-center"> DNKV</th>
+                                                    <th style="width: 5%" class="text-center"> OCKV</th>
+                                                    <th style="width: 20%" class="text-center"> DPO </th>
+                                                    <th style="width: 5%" class="text-center"> Cus </th>
+                                                    <th style="width: 8%" class="text-center"> RTD </th>
+                                                    <th style="width: 15%" class="text-center"> Item </th>
+                                                    <th style="width: 15%" class="text-center"> Color </th>
+                                                    <th style="width: 5%" class="text-center"> Qty </th>
+                                                    <th style="width: 10%" class="text-center"> StyleNo </th>
+                                                    <th style="width: 5%" class="text-center"> Gender </th>
+                                                    <th style="width: 5%" class="text-center">Ordered</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in packingDeliveries)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="form-check-input" checked=@(_packingDeliverySelecteds.Contains(item!) ? true : false)
+                                                                   @onchange="(EventArgs) => HandleCheckBoxItemClick(item!,EventArgs.Value ?? false)" />
+                                                        </td>
+                                                        <td class="text-center">@item.DeliveryNote</td>
+                                                        <td class="text-center">@item.PackingNo</td>
+                                                        <td>@item.OrderNumber</td>
+                                                        <td class="text-center">@item.TitelCustomer</td>
+                                                        <td class="text-center">@(item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("MM-dd-yyyy") : "")</td>
+                                                        <td>@item.ItemName</td>
+                                                        <td>@item.ColorName</td>
+                                                        <td class="text-center">@item.QtyOrder</td>
+                                                        <td>@item.StyleNo</td>
+                                                        <td class="text-center">@item.Gender</td>
+                                                        <td class="text-center">@item.Ordered</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer rounded-0">
+                    <button type="button" class="btn btn-sm btn-secondary" @onclick="async() => await OnCloseForm.InvokeAsync()">
+                        <i class="fa fa-ban fa-fw"></i>
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-primary" @onclick="@(async() => await HandleSetSelected())">
+                        <i class="fa fa-save fa-fw"></i>
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool isShow { get; set; } = false;
+    [Parameter] public string Customer { get; set; } = "";
+    [Parameter] public EventCallback OnCloseForm { get; set; }
+    [Parameter] public List<ItemFullCodeDropdown> dropdownItemFullCode { get; set; } = new List<ItemFullCodeDropdown>();
+    [Parameter] public List<DropDowList> dropdownCustomer { get; set; } = new List<DropDowList>();
+
+    [Parameter] public List<WHS_Packing_Delivery> packingDeliveries { get; set; } = new List<WHS_Packing_Delivery>();
+    [Parameter] public EventCallback<WHS_Packing_Delivery_Parameter> OnGetPackingDeliveries { get; set; }
+
+    [Parameter] public List<string> Selecteds { get; set; } = new List<string>();
+    [Parameter] public EventCallback<List<string>> OnSetSelected { get; set; }
+
+    protected WHS_Packing_Delivery_Parameter _packingDeliveryParameter = new WHS_Packing_Delivery_Parameter();
+    protected List<WHS_Packing_Delivery> _packingDeliverySelecteds = new List<WHS_Packing_Delivery>();
+
+    protected async Task HandleChangeSearch()
+    {
+        await _js.Loading(true);
+        _packingDeliverySelecteds = new List<WHS_Packing_Delivery>();
+        await OnGetPackingDeliveries.InvokeAsync(_packingDeliveryParameter);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _packingDeliveryParameter = new WHS_Packing_Delivery_Parameter();
+        await OnGetPackingDeliveries.InvokeAsync(_packingDeliveryParameter);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleSetSelected()
+    {
+        var _sources = _packingDeliverySelecteds.Select(x => x.DeliveryNote ?? "").ToList();
+        if(_sources.Count > 0)
+        {
+            await OnSetSelected.InvokeAsync(_sources);
+            _packingDeliverySelecteds = new List<WHS_Packing_Delivery>();
+            await OnCloseForm.InvokeAsync();
+        }
+    }
+
+    protected async Task HandleCheckBoxAllClick(object checkValue)
+    {
+        await Task.Delay(1);
+        if ((bool)checkValue)
+        {
+            foreach (var obj in packingDeliveries)
+            {
+                if (!_packingDeliverySelecteds.Contains(obj))
+                    _packingDeliverySelecteds.Add(obj);
+            }
+        }
+        else
+        {
+            _packingDeliverySelecteds.Clear();
+        }
+    }
+
+    protected async Task HandleCheckBoxItemClick(WHS_Packing_Delivery source, object checkValue)
+    {
+        await Task.Delay(1);
+        if ((bool)checkValue)
+        {
+            if (!_packingDeliverySelecteds.Contains(source))
+                _packingDeliverySelecteds.Add(source);
+        }
+        else
+        {
+            if (_packingDeliverySelecteds.Contains(source))
+                _packingDeliverySelecteds.Remove(source);
+        }
+    }
+}

@@ -1,0 +1,93 @@
+﻿<div class="search-bar">
+    <div class="simple">
+        <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+        <div class="search-fields">
+            <form @onsubmit="async () => await OnChangeSearch.InvokeAsync(parameter)" @formname="filter-form">
+                <div class="row">
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="ProdOrderNo">
+                                ProdOrderNo
+                            </label>
+                            <InputText @bind-Value="parameter.ProdOrderNo"
+                                       id="ProdOrderNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="PackingNo">
+                                PackingNo
+                            </label>
+                            <InputText @bind-Value="parameter.PackingNo"
+                                       id="PackingNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="Barcode">
+                                Barcode
+                            </label>
+                            <InputText @bind-Value="parameter.Barcode"
+                                       id="Barcode" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="ScanStatus">
+                                ScanStatus
+                            </label>
+                            <DropDownList Id="ScanStatus" dropdowns="@_selects"
+                                          initData="@parameter.ScanStatus" OnSetValue="@((arg) => parameter.ScanStatus = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-ban fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public FilmProdOrderParameter parameter { get; set; } = new FilmProdOrderParameter();
+
+    [Parameter]
+    public List<string> selects { get; set; } = new List<string>();
+
+    [Parameter]
+    public EventCallback<FilmProdOrderParameter> OnChangeSearch { get; set; }
+
+    [Parameter]
+    public EventCallback OnResetSearch { get; set; }
+
+    protected List<DropDowList> _selects = new List<DropDowList>();
+
+    protected override void OnInitialized()
+    {
+        _selects = new List<DropDowList>
+            {
+                new DropDowList { StrValue = "P", Label = "In Deco"},
+                new DropDowList { StrValue = "S", Label = "Send Sup"},
+                new DropDowList { StrValue = "R", Label = "Receive Sub"},
+                new DropDowList { StrValue = "Q", Label = "Out Deco"},
+            };
+    }
+}

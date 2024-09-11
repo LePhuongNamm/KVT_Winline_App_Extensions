@@ -1,0 +1,59 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        @{
+            var results = from p in objs
+                          group p by new { p.PackingNo, p.ItemName } into g
+                          select new { PackingNo = g.Key.PackingNo, ItemName = g.Key.ItemName, Items = g.ToList() };
+        }
+        <BlazorTable Class="datatable w-100 mb-0" Items="results" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center">PackingNo</th>
+                    <th class="text-center">ItemName</th>
+                    <th class="text-center">QtyOrder</th>
+                    <th class="text-center">ItemFullCode</th>
+                    <th class="text-center">ColorName</th>
+                    <th class="text-center">SizeName</th>
+                    <th class="text-center">StyleNo</th>
+                    <th class="text-center">PositionText</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                @{
+                    var firtRow = item.Items.FirstOrDefault();
+                }
+                <tr>
+                    <td rowspan="@item.Items.Count()">@item.PackingNo</td>
+                    <td rowspan="@item.Items.Count()">@item.ItemName</td>
+                    <td class="text-center">@(firtRow?.QtyOrder != null ? firtRow?.QtyOrder.Value.ToString("#,##0.##") : "0")</td>
+                    <td>@firtRow?.ItemFullCode</td>
+                    <td>@firtRow?.ColorName</td>
+                    <td>@firtRow?.SizeName</td>
+                    <td>@firtRow?.StyleNo</td>
+                    <td>@firtRow?.PositionText</td>
+                </tr>
+                @foreach (var childItem in item.Items.Skip(1))
+                {
+                    <tr>
+                        <td class="text-center">@(childItem?.QtyOrder != null ? childItem?.QtyOrder.Value.ToString("#,##0.##") : "0")</td>
+                        <td>@childItem?.ItemFullCode</td>
+                        <td>@childItem?.ColorName</td>
+                        <td>@childItem?.SizeName</td>
+                        <td>@childItem?.StyleNo</td>
+                        <td>@childItem?.PositionText</td>
+                    </tr>
+                }
+                <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <td colspan="2"><b>Total: </b> </td>
+                    <td class="text-center"><b>@item.Items.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</b></td>
+                    <td colspan="5"></td>
+                </tr>
+            </TableRowTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<V_PACKING> objs { get; set; } = new List<V_PACKING>();
+}

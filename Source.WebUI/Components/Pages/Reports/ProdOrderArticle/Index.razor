@@ -1,0 +1,121 @@
+﻿@page "/Reports/ProdOrderArticle"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.Reports.ProdOrderArticle.Components
+
+<PageTitle>Production Order & Article</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Production Order & Article"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "9. Reports", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "9.2 Prod Order & Article", IsActive = true}})" />
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter"
+                    OnSearchChange="async(arg) => await HandleChangeSearch(arg.ToString())" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6"></div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs"/>
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected List<ProductionOrderArticle> _objs = new List<ProductionOrderArticle>();
+    protected string _parameter = "";
+
+    protected override void OnInitialized()
+    {
+        _parameter = DateTime.Now.Year.ToString();
+    }
+
+    protected async Task HandleChangeSearch(string parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = DateTime.Now.Year.ToString();
+        _objs = new List<ProductionOrderArticle>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _objs = await _wrapper.Report.ProductionOrderArticleReport(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Year", typeof(string));
+                dt.Columns.Add("Month", typeof(string));
+                dt.Columns.Add("Article", typeof(string));
+                dt.Columns.Add("Prod", typeof(string));
+                dt.Columns.Add("TargetQty", typeof(string));
+                dt.Columns.Add("YieldQty", typeof(string));
+
+                foreach (var obj in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = obj.IsYear.ToString();
+                    row[1] = obj.IsMonth.ToString();
+                    row[2] = obj.Article.ToString("#,##0.##");
+                    row[3] = obj.Prod.ToString("#,##0.##");
+                    row[2] = obj.TargetQty.ToString("#,##0.##");
+                    row[3] = obj.YieldQty.ToString("#,##0.##");
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Production Order & Article"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "ProductionOrderArticle.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

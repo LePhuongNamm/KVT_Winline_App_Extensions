@@ -1,0 +1,132 @@
+﻿@page "/Extensions/SSBCFeedback"
+@using Source.WebUI.Components.Pages.Extensions.FeedbackSSBC.Components
+
+<PageTitle>Feedback Information SSBC</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Feedback Information SSBC"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "10. Extensions", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "10.4 SSBC Feedback", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((FeedbackParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6"></div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs" page="_page" OnSetPage="(arg) => _page = (int)arg" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected int _page = 1;
+    protected List<FeedbackSSBC> _objs = new List<FeedbackSSBC>();
+    protected FeedbackParameter _parameter = new FeedbackParameter();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter = new FeedbackParameter()
+            {
+                FromDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ToDate = DateTime.Now.ToString("yyyy-MM-dd")
+            };
+        await base.OnInitializedAsync();
+    }
+    protected async Task HandleChangeSearch(FeedbackParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _page = 1;
+        _parameter = new FeedbackParameter()
+            {
+                FromDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ToDate = DateTime.Now.ToString("yyyy-MM-dd")
+            };
+        _objs = new List<FeedbackSSBC>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objs = await _wrapper.Extensions.GetListSSBCFeedback(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("FBDate", typeof(string));
+                dt.Columns.Add("Shift", typeof(string));
+                dt.Columns.Add("Barcode", typeof(string));
+                dt.Columns.Add("Reason", typeof(string));
+                dt.Columns.Add("Machine", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.FBDate;
+                    row[1] = item.Shift;
+                    row[2] = item.fBarcode;
+                    row[3] = item.Reason;
+                    row[4] = item.MC;
+                    row[5] = item.QtyOrder;
+                    row[6] = item.ItemName;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Feedback SSBC WHS"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "FeedbackSSBCOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

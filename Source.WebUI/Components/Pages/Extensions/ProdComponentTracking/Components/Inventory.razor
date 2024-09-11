@@ -1,0 +1,86 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+
+                    <th class="text-center" style="min-width: 150px">CompType</th>
+                    <th class="text-center" style="min-width: 150px">ItemCode</th>
+                    <th class="text-center" style="min-width: 300px">ItemName</th>
+                    <th class="text-center" style="min-width: 150px">ColorCode</th>
+                    <th class="text-center" style="min-width: 400px">ColorName</th>
+                    <th class="text-center" style="min-width: 150px">SizeCode</th>
+                    <th class="text-center" style="min-width: 300px">SizeName</th>
+                    <th class="text-center" style="min-width: 150px">QtyIn</th>
+                    <th class="text-center" style="min-width: 150px">QtyOut</th>
+                    <th class="text-center" style="min-width: 200px">Balance</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center">@item.CompType</td>
+                    <td class="text-center">@item.ItemCode</td>
+                    <td>@item.ItemName</td>
+                    <td class="text-center">@item.ColorCode</td>
+                    <td>@item.ColorName</td>
+                    <td class="text-center">@item.SizeCode</td>
+                    <td>@item.SizeName</td>
+                    <td class="text-center" style="background-color: #f5f5f5;">@item.Qty</td>
+                    <td class="text-center" style="background-color: #f5f5f5;">@item.QtyOut</td>
+                    <td class="text-center" style="background-color: #f5f5f5;">@item.Qty-@item.QtyOut</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                @if (objs.Count > 0)
+                {
+                    <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <td colspan="8" class="fw-bold">Total In</td>
+                        <td class="text-center fw-bold" style="background-color: #f5f5f5;">@objs.Sum(x => x.Qty ?? 0).ToString("#,##0.##")</td>
+                        <td colspan="9" class="fw-bold">Total Out</td>
+                        <td class="text-center fw-bold" style="background-color: #f5f5f5;">@objs.Sum(x => x.QtyOut ?? 0).ToString("#,##0.##")</td>
+                        <td colspan="80"></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="89">No records found</td>
+                    </tr>
+                }
+
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-lg-4" style="padding-top: 15px">
+            <span>Total <b> @objs.Count</b> records found</span>
+        </div>
+        <div class="col-12 col-lg-8">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public List<Component> objs { get; set; } = new List<Component>();
+    [Parameter] public ComponentParameter parameter { get; set; } = new ComponentParameter();
+
+    [Parameter]
+    public EventCallback<Component> OnOpenFormPrint { get; set; }
+
+
+    [Parameter] public int page { get; set; } = 1;
+
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+}

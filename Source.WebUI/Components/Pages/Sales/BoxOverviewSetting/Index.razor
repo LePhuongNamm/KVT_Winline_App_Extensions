@@ -1,0 +1,90 @@
+﻿@page "/Sales/BoxOverviewSetting"
+@attribute [Authorize(Roles = "sal,man,r&d")]
+
+<PageTitle>Box Overview Setting</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Box Overview Setting"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "3. Sales", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "3.2 Box Overview Setting", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 240px);">
+                <table class="datatable w-100 mb-0" style="font-size: 14px;">
+                    <thead>
+                        <tr class="tr-fixed">
+                            <th class="text-center" style="width: 40%">Yearly</th>
+                            <th class="text-center" style="width: 40%">Customer</th>
+                            <th class="text-center" style="width: 20%">Pending</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (_objs.Count > 0)
+                        {
+                            foreach (var item in _objs)
+                            {
+                                <tr>
+                                    <td class="text-center">@item.Yearly</td>
+                                    <td class="text-center">@item.CUSTOMERCO</td>
+                                    <td>
+                                        <input type="number" value="@item.Pending" class="form-control form-control-sm text-center" style="height: 30px;"
+                                               @onchange="@(async(ChangeEventArgs arg) =>  await HandleChangePending(item.CUSTOMERCO!,arg?.Value?.ToString() ?? ""))" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">
+                                    No Records Found
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+@code {
+    protected List<BoxOverviewSelect> _objs = new List<BoxOverviewSelect>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await _js.Loading(true);
+            _objs = await _wrapper.Sales.BoxOverviewSelect();
+            await _js.Loading(false);
+        }
+        catch{}
+    }
+
+    protected async Task HandleChangePending(string customer, string arg)
+    {
+        await _js.Loading(true);
+        if (!string.IsNullOrEmpty(arg))
+        {
+            var _confirm = await _js.Confirm($"Are you sure you can update pending customer {customer} to {arg}");
+            if (_confirm)
+            {
+                var _source = new BoxOverviewSelect { CUSTOMERCO = customer, Pending = int.Parse(arg) };
+                var _result = await _wrapper.Sales.BoxOverviewImport(_source);
+                if (_result > 0)
+                    await _js.Notification("Update successfully.");
+                else
+                    await _js.Aleft("Cannot update.");
+            }
+            _objs = await _wrapper.Sales.BoxOverviewSelect();
+        }
+        else
+        {
+            _objs = await _wrapper.Sales.BoxOverviewSelect();
+            await _js.Aleft("Invalid data.");
+        }
+        await _js.Loading(false);
+    }
+}

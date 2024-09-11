@@ -1,0 +1,121 @@
+﻿<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-file-import"></i>&ensp;
+                    Add Component
+                </h5>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() =>await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="Type">
+                                CompType
+                            </label>
+                            <DropDownList Id="Type" dropdowns="@dropdownCompType"
+                                          initData="@comp.CompType" OnSetValue="@((arg) => @comp.CompType = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="MachineNo">
+                                MachineNo
+                            </label>
+                            <InputText @bind-Value="comp.MachineNo"
+                                       id="MachineNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="Item">
+                                Item
+                            </label>
+                            @{
+                                var _dropdownItem = dropdownItemFullCode.DistinctBy(x => $"{x.ItemCode}-{x.ItemName}")
+                                .Select(x => new DropDowList { StrValue = $"{x.ItemCode}-{x.ItemName}", Label = $"{x.ItemCode} - {x.ItemName}" }).ToList();
+                            }
+                            <DropDownList Id="Item" dropdowns="@_dropdownItem"
+                                          initData="@comp.ItemCode" OnSetValue="@((arg) => comp.ItemCode = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="Qty">
+                                Quantity
+                            </label>
+                            <InputNumber @bind-Value="comp.Qty"
+                                         id="Qty" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="Color">
+                                Color
+                            </label>
+                            @{
+                                var _dropdownColor = !string.IsNullOrEmpty(comp.ItemCode) ?
+                                dropdownItemFullCode.Where(x => $"{x.ItemCode}-{x.ItemName}" == comp.ItemCode).DistinctBy(x => $"{x.ColorCode}-{x.ColorName}")
+                                .Select(x => new DropDowList { StrValue = $"{x.ColorCode}-{x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList() :
+                                dropdownItemFullCode.DistinctBy(x => $"{x.ColorCode}-{x.ColorName}").Select(x => new DropDowList { StrValue = $"{x.ColorCode}-{x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList();
+                            }
+                            <DropDownList Id="Color" dropdowns="@_dropdownColor"
+                                          initData="@comp.ColorCode" OnSetValue="@((arg) => comp.ColorCode = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="CreateBy">
+                                EmpCode
+                            </label>
+                            <InputText @bind-Value="comp.CreateBy"
+                                       id="CreateBy" type="text" class="form-control form-control-sm" style="height: 30px" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="Size">
+                                Size
+                            </label>
+                            @{
+                                var _dropdownSize = !string.IsNullOrEmpty(comp.ItemCode) ?
+                                dropdownItemFullCode.Where(x => $"{x.ItemCode}-{x.ItemName}" == comp.ItemCode).DistinctBy(x => $"{x.SizeCode}-{x.SizeName}")
+                                .Select(x => new DropDowList { StrValue = $"{x.SizeCode}-{x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList() :
+                                dropdownItemFullCode.DistinctBy(x => $"{x.SizeCode}-{x.SizeName}")
+                                .Select(x => new DropDowList { StrValue = $"{x.SizeCode}-{x.SizeName}", Label = $"{x.SizeCode} - {x.SizeName}" }).ToList();
+                            }
+                            <DropDownList Id="Size" dropdowns="@_dropdownSize"
+                                          initData="@comp.SizeCode" OnSetValue="@((arg) => comp.SizeCode = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="Remark">
+                                Remark
+                            </label>
+                            <InputText @bind-Value="comp.Remark"
+                                           id="Remark" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="async() => await OnSubmitForm.InvokeAsync(comp)">
+                    <i class="fa fa-save fa-fw"></i>
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter] public EventCallback OnCloseForm { get; set; }
+
+    [Parameter] public Component comp { get; set; } = new Component();
+    [Parameter] public EventCallback<Component> OnSubmitForm { get; set; }
+
+    [Parameter] public List<DropDowList> dropdownCompType { get; set; } = new List<DropDowList>();
+    [Parameter] public List<ItemFullCodeDropdown> dropdownItemFullCode { get; set; } = new List<ItemFullCodeDropdown>();
+}

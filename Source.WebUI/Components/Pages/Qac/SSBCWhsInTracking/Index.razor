@@ -1,0 +1,199 @@
+﻿@page "/Qac/SSBCWhsInTracking"
+@attribute [Authorize(Roles = "man,qac,whs")]
+@using Source.WebUI.Components.Pages.Qac.SSBCWhsInTracking.Components
+
+<PageTitle>SSBC Tracking</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="SSBC Tracking"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "7. QAC", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "7.1 SSBC Tracking", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter" dropdownItemFullCode="_dropdownFullCode"
+                    isAdvanced="_isAdvanced" OnSetAdvanced="() => _isAdvanced = !_isAdvanced"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((QCSSBCWhsParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if ((_objs != null && _objs.Count > 0))
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6"></div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" style="height:28px" @onclick="async() => await HandleExportExcel()">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs" isAdvanced="_isAdvanced"
+                           page="_page" OnSetPage="(arg) => _page = (int)arg" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+@code {
+    protected int _page = 1;
+    protected bool _isAdvanced = false;
+
+    protected QCSSBCWhsParameter _parameter = new QCSSBCWhsParameter();
+    protected List<Qc_SSBC_WhsIn> _objs = new List<Qc_SSBC_WhsIn>();
+    protected List<ItemFullCodeDropdown> _dropdownFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter.Type = "WHSIn";
+        _parameter.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _parameter.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _dropdownFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown();
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task HandleChangeSearch(QCSSBCWhsParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new QCSSBCWhsParameter();
+        _parameter.Type = "WHSIn";
+        _parameter.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _parameter.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _objs = new List<Qc_SSBC_WhsIn>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objs = _parameter.Type == "WHSIn" ? await _wrapper.Qac.SSBCWhsInViewWL(_parameter)
+                                                 : await _wrapper.Qac.SSBCWhsExchangeQcViewWL(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Scale Date", typeof(string));
+                dt.Columns.Add("Scale Date First", typeof(string));
+                dt.Columns.Add("Scale Time First", typeof(string));
+                dt.Columns.Add("fBarcode", typeof(string));
+                dt.Columns.Add("Packing No", typeof(string));
+                dt.Columns.Add("PONUMBER", typeof(string));
+                dt.Columns.Add("STYLE_NO", typeof(string));
+                dt.Columns.Add("Cust", typeof(string));
+                dt.Columns.Add("Item", typeof(string));
+                dt.Columns.Add("Color", typeof(string));
+                dt.Columns.Add("SIZE", typeof(string));
+                dt.Columns.Add("Box", typeof(string));
+
+                dt.Columns.Add("Pe_W", typeof(decimal));
+                dt.Columns.Add("Fo_W", typeof(decimal));
+                dt.Columns.Add("Cp_W", typeof(decimal));
+                dt.Columns.Add("Net Weight", typeof(decimal));
+                dt.Columns.Add("Std Pairs", typeof(int));
+                dt.Columns.Add("Real Pairs", typeof(int));
+                dt.Columns.Add("Compare", typeof(int));
+                dt.Columns.Add("Real Weight", typeof(int));
+                dt.Columns.Add("Std Gross Weight", typeof(string));
+                dt.Columns.Add("Option Input", typeof(string));
+                dt.Columns.Add("Real Weight Product Only", typeof(decimal));
+                dt.Columns.Add("Net Std Weight Product Only", typeof(decimal));
+                dt.Columns.Add("C105Percent Of Net Std Weight", typeof(decimal));
+                dt.Columns.Add("C95Percent Of Net Std Weight", typeof(decimal));
+                dt.Columns.Add("Diff Weight", typeof(decimal));
+                dt.Columns.Add("Diff Pair", typeof(decimal));
+                dt.Columns.Add("ini Real Wgt", typeof(decimal));
+                dt.Columns.Add("ini Diff Weight", typeof(decimal));
+                dt.Columns.Add("ini Diff Pair", typeof(decimal));
+                dt.Columns.Add("QC Diff Pair", typeof(decimal));
+                dt.Columns.Add("BX Type", typeof(string));
+                dt.Columns.Add("BX Qty", typeof(float));
+                dt.Columns.Add("Pb Code", typeof(string));
+                dt.Columns.Add("Color Level", typeof(string));
+                dt.Columns.Add("SubTransfer", typeof(string));
+
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+
+                    row[0] = (item.ScaleDate != null ? item.ScaleDate.Value.ToString("MM/dd/yyyy") : "");
+                    row[1] = (item.ScaleDateFirst != null ? item.ScaleDateFirst.Value.ToString("MM/dd/yyyy") : "");
+                    row[2] = (item.ScaleTimeFirst != null ? item.ScaleTimeFirst.Value.ToString() : "");
+                    row[3] = item.fBarcode;
+                    row[4] = item.PackingNo;
+                    row[5] = item.PONUMBER;
+                    row[6] = item.STYLE_NO;
+                    row[7] = item.Cust;
+                    row[8] = item.Item;
+                    row[9] = item.Color;
+                    row[10] = item.SIZE;
+                    row[11] = item.Box;
+                    row[12] = item.Pe_W ?? 0;
+                    row[13] = item.Fo_W ?? 0;
+                    row[14] = item.Cp_W ?? 0;
+                    row[15] = item.NetWeight ?? 0;
+                    row[16] = item.StdPairs ?? 0;
+                    row[17] = item.RealPairs ?? 0;
+                    row[18] = item.Compare ?? 0;
+                    row[19] = item.RealWeight ?? 0;
+                    row[20] = item.StdGrossWeight ?? 0;
+                    row[21] = item.OptionInput;
+                    row[22] = item.RealWeightProductOnly ?? 0;
+                    row[23] = item.NetStdWeightProductOnly ?? 0;
+                    row[24] = item.C105PercentOfNetStdWeight ?? 0;
+                    row[25] = item.C95PercentOfNetStdWeight ?? 0;
+                    row[26] = item.DiffWeight ?? 0;
+                    row[27] = item.NetWeight == 0 ? 0 : (int)Math.Floor((decimal)(item.DiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0));
+                    row[28] = item.iniRealWgt ?? 0;
+                    row[29] = item.iniDiffWeight ?? 0;
+                    row[30] = item.NetWeight == 0 ? 0 : (int)Math.Floor((decimal)(item.iniDiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0));
+                    row[31] = ((int)Math.Floor((decimal)(item.DiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0))) - ((int)Math.Floor((decimal)(item.iniDiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0)));
+                    row[32] = item.BXType;
+                    row[33] = item.BXQty ?? 0;
+                    row[34] = item.PBCode;
+                    row[35] = item.ColorLevel;
+                    row[36] = item.SubTransfer;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "QAC_SSBC_Tracking.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

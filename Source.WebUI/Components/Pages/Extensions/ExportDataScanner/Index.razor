@@ -1,0 +1,149 @@
+﻿@page "/Extensions/ExportDataScanner"
+@using Source.WebUI.Components.Pages.Extensions.ExportDataScanner.Components
+
+<PageTitle>Export data scanner</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Export data scanner"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "10. Extensions", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "10.1 Export Data Scanner", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter" selects="_dropdowns" dropdownItemFullCode="_dropdownFullCode"
+                    isAdvanced="_isAdvanced" OnSetAdvanced="() => _isAdvanced = !_isAdvanced"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((DataImexParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6"></div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs" page="_page" OnSetPage="(arg) => _page = (int)arg" isAdvanced="_isAdvanced"/>
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected int _page = 1;
+    protected bool _isAdvanced = false;
+    protected List<DataImex> _objs = new List<DataImex>();
+    protected DataImexParameter _parameter = new DataImexParameter();
+    protected List<string> _dropdowns = new List<string>();
+    protected List<ItemFullCodeDropdown> _dropdownFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Task[] tasks = new Task[]
+        {
+            Task.Run(async () => _dropdowns = await _wrapper.Extensions.GetDeptDataImex()),
+            Task.Run(async () => _dropdownFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown())
+        };
+        await Task.WhenAll(tasks);
+        await base.OnInitializedAsync();
+    }
+    protected async Task HandleChangeSearch(DataImexParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new DataImexParameter();
+        _objs = new List<DataImex>();
+        _page = 1;
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objs = await _wrapper.Extensions.GetListDataImex(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Dept", typeof(string));
+                dt.Columns.Add("Shift", typeof(string));
+                dt.Columns.Add("ShiftDate", typeof(string));
+                dt.Columns.Add("Description", typeof(string));
+                dt.Columns.Add("QRCode", typeof(string));
+                dt.Columns.Add("OCKV", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+
+                dt.Columns.Add("UserScan", typeof(string));
+                dt.Columns.Add("LastScanDate", typeof(string));
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.Dept;
+                    row[1] = item.Shift;
+                    row[2] = item.ShiftDate != null ? item.ShiftDate.Value.ToString("yyyy-MM-dd") : "";
+                    row[3] = item.Description;
+                    row[4] = item.QRCode;
+                    row[5] = item.PackingNo;
+                    row[6] = item.ItemName;
+                    row[7] = item.ColorName;
+                    row[8] = item.SizeName;
+                    row[9] = (item.QtyOrder ?? 0).ToString();
+                    row[10] = item.OrderNumber;
+                    row[11] = item.StyleNo;
+
+                    row[12] = item.EmpCode;
+                    row[13] = item.LastScanDate;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Data Scanner Overview"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "DataScannerOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

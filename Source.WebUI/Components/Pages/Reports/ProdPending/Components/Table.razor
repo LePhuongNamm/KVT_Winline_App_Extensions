@@ -1,0 +1,67 @@
+﻿
+<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - @(isAdvanced ? "370" : "275")px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="obj">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center" style="min-width:200px">ScanDate</th>
+                    <th class="text-center" style="min-width:200px">Barcode</th>
+                    <th class="text-center" style="min-width:300px">Reason</th>
+                    <th class="text-center" style="min-width:100px">ScannedSource</th>
+                    <th class="text-center">QtyOrder</th>
+                    <th class="text-center" style="min-width:300px">ItemName</th>
+                    <th class="text-center" style="min-width:500px">ColorName</th>
+                    <th class="text-center" style="min-width:200px">SizeName</th>
+                    <th class="text-center" style="min-width:400px">OrderNumber</th>
+                    <th class="text-center" style="min-width:200px">StyleNo</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center" style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.ScanDate</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.Barcode</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.Reason</td>
+                    <td class="text-center" style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.ScannedSource</td>
+                    <td class="text-center" style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.QtyOrder.ToString("#,##0.##")</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.ItemName</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.ColorName</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.SizeName</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.OrderNumber</td>
+                    <td style="background-color: @(obj.OneDay == "Y" ? "#fff" : "#FFE4E1")">@obj.StyleNo</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <td colspan="4" class="fw-bold">Total</td>
+                    <td class="text-center fw-bold">@objs.Sum(x => x.QtyOrder).ToString("#,##0.##")</td>
+                    <td colspan="5"></td>
+                </tr>
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@objs.Count</b> records</span>
+
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public int page { get; set; } = 1;
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+    [Parameter] public List<ProdPending> objs { get; set; } = new List<ProdPending>();
+    [Parameter] public bool isAdvanced { get; set; } = false;
+}

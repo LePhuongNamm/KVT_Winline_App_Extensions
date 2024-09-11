@@ -1,0 +1,17 @@
+﻿@page "/Dashboard"
+@attribute [Authorize]
+
+<PageTitle>Dashboard</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Dashboard"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "1. Dashboard", IsActive = true}})" />
+</section>
+<section class="content">
+</section>
+
+@code {
+    
+}
+
+

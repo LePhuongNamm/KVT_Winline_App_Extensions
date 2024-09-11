@@ -1,0 +1,37 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Net
+@using System.Data;
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Antiforgery;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using BlazorDataTable
+@using BlazorTemplater
+@using Tewr.Blazor.FileReader
+@using KeudellCoding.Blazor.AdvancedBlazorSelect2
+@using Source.Core.Contracts.Basic
+@using Source.Core.DTOs
+@using Source.Core.Objects
+@using Source.Core.Parameters
+@using Source.WebUI
+@using Source.WebUI.Components
+@using Source.WebUI.Components.Shared
+@using Source.WebUI.Authentication
+@using Source.WebUI.Utils
+
+@inject IJSRuntime _js
+@inject IWrapperRepository _wrapper
+@inject NavigationManager _nav
+@inject IFileReaderService _file
+@inject IWebHostEnvironment _env
+@inject IConfiguration _config
+@inject IUserInfoService _user

@@ -1,0 +1,326 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - @(isAdvanced ? "435" : "275")px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th style="width: 10px" class="text-center">
+                        <input type="checkbox" class="form-check-input" checked=@((objs.Count() > 0 && objs.Where(x => x.IsSelected).Count() == objs.Count) ? true : false)
+                               @onchange="async (EventArgs) => await HandleCheckBoxAllClick(EventArgs.Value ?? false)" />
+                    </th>
+                    <th class="text-center"></th>
+                    <th class="text-center">ProdOrderNo </th>
+                    <th class="text-center">Seq</th>
+                    <th class="text-center">Sub</th>
+                    <th class="text-center">BxCt</th>
+                    <th class="text-center">BxDv</th>
+                    <th class="text-center">BxTt</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Cus</th>
+                    <th class="text-center">FG</th>
+                    <th class="text-center">DE</th>
+                    <th class="text-center">PT</th>
+                    <th class="text-center">PackingNo</th>
+                    <th class="text-center" style="min-width: 300px">ItemName</th>
+                    <th class="text-center" style="min-width: 400px">ColorName</th>
+                    <th class="text-center" style="min-width: 150px">SizeName</th>
+
+                    <th class="text-center" style="min-width: 200px">CreateDate</th>
+                    <th class="text-center" style="min-width: 200px">DeliveryDate</th>
+                    <th class="text-center" style="min-width: 200px">StyleNo</th>
+
+                    <th class="text-center">Printed</th>
+
+                    <th class="text-center" style="min-width: 500px">OrderNumber</th>
+                    <th class="text-center" style="min-width: 100px">Ordered</th>
+                    <th class="text-center" style="min-width: 300px">Customer</th>
+
+                    <th class="text-center">ItemCode</th>
+                    <th class="text-center">ColorID</th>
+                    <th class="text-center">SizeID</th>
+
+                    <th class="text-center">UMSales</th>
+                    <th class="text-center">MoldSize</th>
+                    <th class="text-center" style="min-width: 200px">ToolingNo</th>
+                    <th class="text-center">Decoration</th>
+                    <th class="text-center">Check1</th>
+
+                    <th class="text-center">Gender</th>
+                    <th class="text-center" style="min-width: 200px">ItemFullCode</th>
+                    <th class="text-center">DeliveryNote</th>
+                    <th class="text-center">InvoiceNo</th>
+                    <th class="text-center" style="min-width: 200px">PositionText</th>
+
+                    <th class="text-center">UpdatM</th>
+                    <th class="text-center" style="min-width: 200px">UpdatT</th>
+                    <th class="text-center" style="min-width: 300px">mesoprim</th>
+                    <th class="text-center">BX1</th>
+
+                    <th class="text-center">BX2</th>
+                    <th class="text-center">BX3</th>
+                    <th class="text-center">BX4</th>
+                    <th class="text-center">BX5</th>
+                    <th class="text-center">BX6</th>
+
+                    <th class="text-center">PPbag</th>
+                    <th class="text-center">PB</th>
+                    <th class="text-center">Weight</th>
+                    <th class="text-center">BX1wgt</th>
+                    <th class="text-center">BX2wgt</th>
+
+                    <th class="text-center">BX3wgt</th>
+                    <th class="text-center">BX4wgt</th>
+                    <th class="text-center">BX5wgt</th>
+                    <th class="text-center">BX6wgt</th>
+                    <th class="text-center">PBWeight</th>
+
+                    <th class="text-center">Partionwgt</th>
+                    <th class="text-center">FormWgt</th>
+                    <th class="text-center">PE_UW</th>
+                    <th class="text-center">PRS1PE</th>
+                    <th class="text-center">FO_UW</th>
+
+                    <th class="text-center">CP_UW</th>
+                    <th class="text-center">PRS1CP</th>
+                    <th class="text-center">VoucherTypeNo</th>
+                    <th class="text-center">AddOpt4</th>
+                    <th class="text-center">CusUsePB</th>
+
+                    <th class="text-center">LR</th>
+                    <th class="text-center">PPWeight</th>
+                    <th class="text-center" style="min-width: 100px">mesocomp</th>
+                    <th class="text-center" style="min-width: 100px">mesoyear</th>
+                    <th class="text-center">ColorCode</th>
+
+                    <th class="text-center">SizeCode</th>
+                    <th class="text-center">ProdWeight</th>
+                    <th class="text-center">BoxType</th>
+                    <th class="text-center" style="min-width: 1000px">ArticleNumber</th>
+                    <th class="text-center">DateScan</th>
+
+                    <th class="text-center">InputM</th>
+                    <th class="text-center" style="min-width: 200px">InputT</th>
+                    <th class="text-center" style="min-width: 200px">LastUpdate</th>
+                    <th class="text-center">find</th>
+                    <th class="text-center" style="min-width: 300px">Del_Est</th>
+
+                    <th class="text-center">QRCODE</th>
+                    <th class="text-center" style="min-width: 300px">T1</th>
+                    <th class="text-center" style="min-width: 200px">T2</th>
+                    <th class="text-center" style="min-width: 200px">T3</th>
+                    <th class="text-center" style="min-width: 200px">T4</th>
+
+                    <th class="text-center">T5</th>
+                    <th class="text-center" style="min-width: 200px">DateINWL</th>
+                    <th class="text-center" style="min-width: 200px">DateOUTWL</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input" checked=@item.IsSelected
+                               @onchange="async(EventArgs) => await HandleCheckBoxItemClick(item,EventArgs.Value ?? false)" />
+                    </td>
+                    <td>
+                        @if (string.IsNullOrEmpty(item.FGScan)) // nếu kho chưa Scan In
+                        {
+                            <AuthorizeView Roles="pla,qac,man">
+                                <Authorized>
+                                    <a href="javascript:void(0)" title="Label Divide" @onclick="async () => await OnOpenForm.InvokeAsync(item.Barcode)">
+                                        <img src="img/edit.gif" width="16" height="16" border="0" alt="Label Divide" style="vertical-align: inherit;" />
+                                    </a>
+                                </Authorized>
+                            </AuthorizeView>
+                        }
+                        else
+                        {
+                            if (item.FGScan == "I")
+                            {
+                                <AuthorizeView Roles="whs,man">
+                                    <Authorized>
+                                        <a href="javascript:void(0)" title="Label Divide" @onclick="async () => await OnOpenForm.InvokeAsync(item.Barcode)">
+                                            <img src="img/edit.gif" width="16" height="16" border="0" alt="Label Divide" style="vertical-align: inherit;" />
+                                        </a>
+                                    </Authorized>
+                                </AuthorizeView>
+                            }
+                        }
+                    </td>
+                    <td class="text-center">@item.ProdOrderNo</td>
+                    <td class="text-center">@item.Seq</td>
+                    <td class="text-center">@item.SubSeq</td>
+                    <td class="text-center">@item.BoxCount</td>
+                    <td class="text-center">@item.BoxDV</td>
+                    <td class="text-center">@item.BoxTotalCount</td>
+                    <td class="text-center" style="background-color: #f5f5f5;">@item.QtyOrder</td>
+                    <td class="text-center">@item.TitelCustomer</td>
+                    <td class="text-center">@item.FGScan</td>
+                    <td class="text-center">@item.PPScan</td>
+                    <td class="text-center">@item.Status</td>
+                    <td class="text-center">@item.PackingNo</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.ColorName</td>
+                    <td>@item.SizeName</td>
+                    <td class="text-center">@(item.CreateDate != null ? item.CreateDate.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td class="text-center">@(item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td class="text-center">@item.StyleNo</td>
+                    <td class="text-center">@item.Printed</td>
+                    <td class="text-center">@item.OrderNumber</td>
+                    <td class="text-center">@item.Ordered</td>
+                    <td class="text-center">@item.Customer</td>
+
+                    <td class="text-center">@item.ItemCode</td>
+                    <td class="text-center">@item.ColorID</td>
+                    <td class="text-center">@item.SizeID</td>
+
+                    <td class="text-center">@item.UMSales</td>
+                    <td class="text-center">@item.MoldSize</td>
+                    <td class="text-center">@item.ToolingNo</td>
+                    <td class="text-center">@item.Decoration</td>
+                    <td class="text-center">@item.Check1</td>
+
+                    <td class="text-center">@item.Gender</td>
+                    <td class="text-center">@item.ItemFullCode</td>
+                    <td class="text-center">@item.DeliveryNote</td>
+                    <td class="text-center">@item.InvoiceNo</td>
+                    <td class="text-center">@item.PositionText</td>
+
+                    <td class="text-center">@item.UpdatM</td>
+                    <td class="text-center">@(item.UpdatT != null ? item.UpdatT.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td class="text-center">@item.ProdMesoprim</td>
+                    <td class="text-center">@item.BX1</td>
+
+                    <td class="text-center">@item.BX2</td>
+                    <td class="text-center">@item.BX3</td>
+                    <td class="text-center">@item.BX4</td>
+                    <td class="text-center">@item.BX5</td>
+                    <td class="text-center">@item.BX6</td>
+
+                    <td class="text-center">@item.PPbag</td>
+                    <td class="text-center">@item.PB</td>
+                    <td class="text-center">@item.Weight</td>
+                    <td class="text-center">@item.BX1wgt</td>
+                    <td class="text-center">@item.BX2wgt</td>
+
+                    <td class="text-center">@item.BX3wgt</td>
+                    <td class="text-center">@item.BX4wgt</td>
+                    <td class="text-center">@item.BX5wgt</td>
+                    <td class="text-center">@item.BX6wgt</td>
+                    <td class="text-center">@item.PBWeight</td>
+
+                    <td class="text-center">@item.Partionwgt</td>
+                    <td class="text-center">@item.FormWgt</td>
+                    <td class="text-center">@item.PE_UW</td>
+                    <td class="text-center">@item.PRS1PE</td>
+                    <td class="text-center">@item.FO_UW</td>
+
+                    <td class="text-center">@item.CP_UW</td>
+                    <td class="text-center">@item.PRS1CP</td>
+                    <td class="text-center">@item.VoucherTypeNo</td>
+                    <td class="text-center">@item.AddOpt4</td>
+                    <td class="text-center">@item.CusUsePB</td>
+
+
+                    <td class="text-center">@item.LR</td>
+                    <td class="text-center">@item.PPWeight</td>
+                    <td class="text-center">@item.mesocomp</td>
+                    <td class="text-center">@item.mesoyear</td>
+                    <td class="text-center">@item.ColorCode</td>
+
+                    <td class="text-center">@item.SizeCode</td>
+                    <td class="text-center">@item.ProdWeight</td>
+                    <td class="text-center">@item.Text8</td>
+                    <td class="text-center">@item.ArticleNumber</td>
+                    <td class="text-center">@(item.DateScan != null ? item.DateScan.Value.ToString("MM/dd/yyyy") : "")</td>
+
+                    <td class="text-center">@item.InputM</td>
+                    <td class="text-center">@(item.InputT != null ? item.InputT.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td class="text-center">@(item.LastUpdate != null ? item.LastUpdate.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td class="text-center"></td>
+                    <td class="text-center">@(item.DeliEst != null ? item.DeliEst.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+
+                    <td class="text-center">@item.QRCode</td>
+                    <td class="text-center">@item.T1</td>
+                    <td class="text-center">@item.T2</td>
+                    <td class="text-center">@item.T3</td>
+                    <td class="text-center">@item.T4</td>
+
+                    <td class="text-center">@item.T5</td>
+                    <td class="text-center">@(item.DateINWL != null ? item.DateINWL.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                    <td class="text-center">@(item.DateOUTWL != null ? item.DateOUTWL.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                @if (objs.Count > 0)
+                {
+                    <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <td colspan="8" class="fw-bold">Total</td>
+                        <td class="text-center fw-bold" style="background-color: #f5f5f5;">@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</td>
+                        <td colspan="80"></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="89">No records found</td>
+                    </tr>
+                }
+                
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-lg-4" style="padding-top: 15px">
+            <span>Total <b> @objs.Count</b> records found</span>
+        </div>
+        <div class="col-12 col-lg-8">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public List<BarcodeInfo> objs { get; set; } = new List<BarcodeInfo>();
+
+    [Parameter]
+    public EventCallback<bool> OnSetSelectedAll { get; set; }
+
+    [Parameter]
+    public EventCallback<BarcodeInfo> OnSetSelectedItem { get; set; }
+
+    [Parameter] public bool isAdvanced { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<string> OnOpenForm { get; set; }
+
+
+    [Parameter] public int page { get; set; } = 1;
+
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+
+
+    protected async Task HandleCheckBoxAllClick(object checkValue)
+    {
+        await _js.Loading(true);
+        await Task.Delay(10);
+        await OnSetSelectedAll.InvokeAsync((bool)checkValue);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleCheckBoxItemClick(BarcodeInfo source, object checkValue)
+    {
+        await _js.Loading(true);
+        source.IsSelected = (bool)checkValue;
+        await OnSetSelectedItem.InvokeAsync(source);
+        await _js.Loading(false);
+    }
+}

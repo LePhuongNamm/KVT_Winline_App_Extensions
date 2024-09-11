@@ -1,0 +1,297 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\ASCFilm_ScanInOut_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\ASCFilm_ScanInOut_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\Barcode_Filter_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\Barcode_Filter_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\Import_Change_ETD_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\Import_Change_ETD_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\Import_Change_Price_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\Import_Change_Price_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\Import_PPICOrder_Firm_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\Import_PPICOrder_Firm_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\KVT_Filter_ProOrderNo_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\KVT_Filter_ProOrderNo_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\KVT_Import_PackingNo_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\KVT_Import_PackingNo_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\LabTest_Report_template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\LabTest_Report_template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\QAC_Film_PackingInfo_Setting_template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\QAC_Film_PackingInfo_Setting_template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\Files\\SubTracking_Import_Template.xlsx",
+      "PackagePath": "staticwebassets\\Files\\SubTracking_Import_Template.xlsx"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\admin.css",
+      "PackagePath": "staticwebassets\\css\\admin.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\cad.css",
+      "PackagePath": "staticwebassets\\css\\cad.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\font-awesome.min.css",
+      "PackagePath": "staticwebassets\\css\\font-awesome.min.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\jquery.datetimepicker.css",
+      "PackagePath": "staticwebassets\\css\\jquery.datetimepicker.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\numpad.css",
+      "PackagePath": "staticwebassets\\css\\numpad.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\select2.min.css",
+      "PackagePath": "staticwebassets\\css\\select2.min.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\toast.css",
+      "PackagePath": "staticwebassets\\css\\toast.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\css\\waitMe.css",
+      "PackagePath": "staticwebassets\\css\\waitMe.css"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\247icon.png",
+      "PackagePath": "staticwebassets\\img\\247icon.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\4320180.png",
+      "PackagePath": "staticwebassets\\img\\4320180.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\Picture.png",
+      "PackagePath": "staticwebassets\\img\\Picture.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\changing.png",
+      "PackagePath": "staticwebassets\\img\\changing.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\clockicon.png",
+      "PackagePath": "staticwebassets\\img\\clockicon.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\delete.png",
+      "PackagePath": "staticwebassets\\img\\delete.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\down-arrow.png",
+      "PackagePath": "staticwebassets\\img\\down-arrow.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\dribbble_1.gif",
+      "PackagePath": "staticwebassets\\img\\dribbble_1.gif"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\edit.gif",
+      "PackagePath": "staticwebassets\\img\\edit.gif"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\error-403.svg",
+      "PackagePath": "staticwebassets\\img\\error-403.svg"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\exchange.png",
+      "PackagePath": "staticwebassets\\img\\exchange.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\favicon.ico",
+      "PackagePath": "staticwebassets\\img\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\framas mini (black).png",
+      "PackagePath": "staticwebassets\\img\\framas mini (black).png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\framas-korea-vina.png",
+      "PackagePath": "staticwebassets\\img\\framas-korea-vina.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\framas.png",
+      "PackagePath": "staticwebassets\\img\\framas.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\framas_logo_1.png",
+      "PackagePath": "staticwebassets\\img\\framas_logo_1.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\image.png",
+      "PackagePath": "staticwebassets\\img\\image.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\logout.jpg",
+      "PackagePath": "staticwebassets\\img\\logout.jpg"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\no-image.png",
+      "PackagePath": "staticwebassets\\img\\no-image.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\scanin.png",
+      "PackagePath": "staticwebassets\\img\\scanin.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\scanout.png",
+      "PackagePath": "staticwebassets\\img\\scanout.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\send.png",
+      "PackagePath": "staticwebassets\\img\\send.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\setting.ico",
+      "PackagePath": "staticwebassets\\img\\setting.ico"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\time_wait.png",
+      "PackagePath": "staticwebassets\\img\\time_wait.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\updown.gif",
+      "PackagePath": "staticwebassets\\img\\updown.gif"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\upiclon.png",
+      "PackagePath": "staticwebassets\\img\\upiclon.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\img\\users.png",
+      "PackagePath": "staticwebassets\\img\\users.png"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\js\\admin.js",
+      "PackagePath": "staticwebassets\\js\\admin.js"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\js\\jquery.min.js",
+      "PackagePath": "staticwebassets\\js\\jquery.min.js"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\js\\print.min.js",
+      "PackagePath": "staticwebassets\\js\\print.min.js"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\js\\toastr.min.js",
+      "PackagePath": "staticwebassets\\js\\toastr.min.js"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\js\\waitMe.min.js",
+      "PackagePath": "staticwebassets\\js\\waitMe.min.js"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-brands-400.eot",
+      "PackagePath": "staticwebassets\\webfonts\\fa-brands-400.eot"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-brands-400.svg",
+      "PackagePath": "staticwebassets\\webfonts\\fa-brands-400.svg"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-brands-400.ttf",
+      "PackagePath": "staticwebassets\\webfonts\\fa-brands-400.ttf"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-brands-400.woff",
+      "PackagePath": "staticwebassets\\webfonts\\fa-brands-400.woff"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-brands-400.woff2",
+      "PackagePath": "staticwebassets\\webfonts\\fa-brands-400.woff2"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-brands-400d41d.eot",
+      "PackagePath": "staticwebassets\\webfonts\\fa-brands-400d41d.eot"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-regular-400.eot",
+      "PackagePath": "staticwebassets\\webfonts\\fa-regular-400.eot"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-regular-400.svg",
+      "PackagePath": "staticwebassets\\webfonts\\fa-regular-400.svg"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-regular-400.ttf",
+      "PackagePath": "staticwebassets\\webfonts\\fa-regular-400.ttf"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-regular-400.woff",
+      "PackagePath": "staticwebassets\\webfonts\\fa-regular-400.woff"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-regular-400.woff2",
+      "PackagePath": "staticwebassets\\webfonts\\fa-regular-400.woff2"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-regular-400d41d.eot",
+      "PackagePath": "staticwebassets\\webfonts\\fa-regular-400d41d.eot"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-solid-900.eot",
+      "PackagePath": "staticwebassets\\webfonts\\fa-solid-900.eot"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-solid-900.svg",
+      "PackagePath": "staticwebassets\\webfonts\\fa-solid-900.svg"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-solid-900.ttf",
+      "PackagePath": "staticwebassets\\webfonts\\fa-solid-900.ttf"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-solid-900.woff",
+      "PackagePath": "staticwebassets\\webfonts\\fa-solid-900.woff"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-solid-900.woff2",
+      "PackagePath": "staticwebassets\\webfonts\\fa-solid-900.woff2"
+    },
+    {
+      "Id": "D:\\Framas-GitHub\\KVT_Winline_App_Extensions\\Source.WebUI\\wwwroot\\webfonts\\fa-solid-900d41d.eot",
+      "PackagePath": "staticwebassets\\webfonts\\fa-solid-900d41d.eot"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.Source.WebUI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.build.Source.WebUI.props",
+      "PackagePath": "build\\Source.WebUI.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.buildMultiTargeting.Source.WebUI.props",
+      "PackagePath": "buildMultiTargeting\\Source.WebUI.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.buildTransitive.Source.WebUI.props",
+      "PackagePath": "buildTransitive\\Source.WebUI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

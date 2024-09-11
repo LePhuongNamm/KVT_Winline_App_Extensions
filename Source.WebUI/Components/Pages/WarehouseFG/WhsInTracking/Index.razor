@@ -1,0 +1,366 @@
+﻿@page "/WHS/WHSInTracking"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.WarehouseFG.WhsInTracking.Components
+
+<PageTitle>WHS In Tracking</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="WHS In Tracking"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "2. Warehouse FG", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "2.3 WHS In Tracking", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="_parameter" isAdvanced="_isAdvanced"
+                    dropdownCustomer="_dropdownCustomer" dropdownOptionInput="_dropdownOptionInput" dropdownItemFullCode="_dropdownFullCode"
+                    OnSetAdvanced="() => _isAdvanced = !_isAdvanced"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((WHSInTrackingParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 mb-1">
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                            <div class="d-flex">
+                                <div style="width: 3%" class="text-center">
+                                    <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                                </div>
+                                <div class="d-flex" style="width: 350px;">
+                                    <input type="text" style="height:28px;background-color: #f9f9f9;border: 1px solid #e2e2e2;"
+                                           value="Selected @_barcodes.Count rows" class="form-control form-control-sm rounded-0 w-50" readonly>
+                                    @if(_barcodes.Count > 0)
+                                    {
+                                        <AuthorizeView Roles="man,qac">
+                                            <Authorized>
+                                                @if (_member != null && (_member.Role.ToLower() == "man" || _member.UserName == "thaodoan"))
+                                                {
+                                                    <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" @onclick="() => _isShow = true">
+                                                        <i class="fas fa-edit fa-fw text-warning"></i>
+                                                        Update
+                                                    </button>
+                                                    <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" @onclick="async() => await HandleDeleteItems()">
+                                                        <i class="fas fa-trash fa-fw text-danger"></i>
+                                                        Delete
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" disabled>
+                                                        <i class="fas fa-edit fa-fw text-warning"></i>
+                                                        Update
+                                                    </button>
+                                                    <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" disabled>
+                                                        <i class="fas fa-trash fa-fw text-danger"></i>
+                                                        Delete
+                                                    </button>
+                                                }
+                                            </Authorized>
+                                            <NotAuthorized>
+                                                <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" disabled>
+                                                    <i class="fas fa-edit fa-fw text-warning"></i>
+                                                    Update
+                                                </button>
+                                                <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" disabled>
+                                                    <i class="fas fa-trash fa-fw text-danger"></i>
+                                                    Delete
+                                                </button>
+                                            </NotAuthorized>
+                                        </AuthorizeView>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" disabled>
+                                            <i class="fas fa-edit fa-fw text-warning"></i>
+                                            Update
+                                        </button>
+                                        <button class="btn btn-sm btn-action rounded-0 w-25" style="height: 28px" disabled>
+                                            <i class="fas fa-trash fa-fw text-danger"></i>
+                                            Delete
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 text-end">
+                            <div class="row">
+                                <div class="col-lg-6 offset-sm-4">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control form-control-sm" style="height: 28px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                        <div class="input-group-append">
+                                            <button id="btn" class="btn btn-action w-100 btn-sm rounded-1" @onclick="async() => await DownloadTemplate()" style="height:28px">
+                                                <i class="fas fa-download fa-fw text-secondary"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-sm btn-action w-100" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                        <i class="fa fa-file-excel fa-fw text-success"></i>
+                                        Export Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <Table objs="_objs" isAdvanced="_isAdvanced"
+                       page="_page" OnSetPage="(arg) => _page = (int)arg"
+                       barcodes="_barcodes" OnSetSelected="(arg) => _barcodes = (List<string>)arg" />
+            </div>
+        </div>
+    </div>
+</section>
+<Modal isShow="_isShow" dropdown="_dropdownOptionInput"
+       OnCloseForm="() => _isShow = false" 
+       OnSubmitForm="async(arg) => await HandleUpdateOption(arg.ToString())" />
+
+@code {
+    protected bool _isShow = false;
+    protected bool _isAdvanced = false;
+    protected int _page = 1;
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected List<WHSInTracking> _objs = new List<WHSInTracking>();
+    protected List<string> _barcodes = new List<string>();
+    protected WHSInTrackingParameter _parameter = new WHSInTrackingParameter();
+
+    protected List<DropDowList> _dropdownCustomer = new List<DropDowList>();
+    protected List<DropDowList> _dropdownOptionInput = new List<DropDowList>();
+    protected List<ItemFullCodeDropdown> _dropdownFullCode = new List<ItemFullCodeDropdown>();
+
+    protected CurrentUserInfoDTO? _member = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _member = await _user.GetUserAsync();
+
+        Task[] tasks = new Task[]
+        {
+            Task.Run(async () => _dropdownCustomer = await _wrapper.KVTWL.ScanStatusLoadDropdown("Customer")),
+            Task.Run(async () => _dropdownOptionInput = await _wrapper.KVTWL.ScanStatusLoadDropdown("OptionInput")),
+            Task.Run(async () => _dropdownFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown())
+        };
+        await Task.WhenAll(tasks);
+    }
+
+    protected async Task HandleChangeSearch(WHSInTrackingParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new WHSInTrackingParameter();
+        _objs = new List<WHSInTracking>();
+        _inputFileId = Guid.NewGuid().ToString();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _barcodes = new List<string>();
+            _objs = await _wrapper.WareHouseFG.FindWhsInTracking(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleUpdateOption(string OptionInput)
+    {
+        if (_barcodes.Count > 0 && !string.IsNullOrEmpty(OptionInput))
+        {
+            await _js.Loading(true);
+            bool _confirm = await _js.Confirm($"Are you sure you want to update option input for {_barcodes.Count} records?");
+            if (_confirm)
+            {
+                try
+                {
+                    var _result = await _wrapper.WareHouseFG.UpdateOptionWhsInTracking(string.Join(",", _barcodes),OptionInput);
+                    if (_result.Error == 0)
+                    {
+                        _isShow = false;
+                        await FetchData();
+                        await _js.Notification("Delete successfully.");
+                    }
+                    else
+                    {
+                        await _js.Aleft(_result.Msg ?? "");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _js.Aleft(ex.Message);
+                }
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleDeleteItems()
+    {
+        if (_barcodes.Count > 0)
+        {
+            await _js.Loading(true);
+            bool _confirm = await _js.Confirm($"Are you sure you want to delete {_barcodes.Count} records?");
+            if (_confirm)
+            {
+                try
+                {
+                    var _result = await _wrapper.WareHouseFG.DeleteWhsInTracking(string.Join(",", _barcodes));
+                    if (_result.Error == 0)
+                    {
+                        await FetchData();
+                        await _js.Notification("Delete successfully.");
+                    }
+                    else
+                    {
+                        await _js.Aleft(_result.Msg ?? "");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _js.Aleft(ex.Message);
+                }
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        await _js.Loading(true);
+        if (_objs.Count > 0)
+        {
+            await _js.Loading(true);
+            await Task.Yield();
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("PackingNo", typeof(string));
+                dt.Columns.Add("fBarcode", typeof(string));
+                dt.Columns.Add("CUSTOMER", typeof(string));
+                dt.Columns.Add("ITEMNAME", typeof(string));
+                dt.Columns.Add("ITEMCOLOR", typeof(string));
+                dt.Columns.Add("SIZE", typeof(string));
+                dt.Columns.Add("BOXQTY1", typeof(int));
+                dt.Columns.Add("Pairs", typeof(int));
+                dt.Columns.Add("Boxco", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("RealWeightGram", typeof(int));
+                dt.Columns.Add("OptionInput", typeof(string));
+                dt.Columns.Add("ScaleDate", typeof(string));
+                dt.Columns.Add("WhsToQc", typeof(string));
+                dt.Columns.Add("QCToWhs", typeof(string));
+                dt.Columns.Add("PONUMBER", typeof(string));
+                dt.Columns.Add("STYLE_NO", typeof(string));
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.PackingNo;
+                    row[1] = item.fBarcode;
+                    row[2] = item.CUSTOMER;
+                    row[3] = item.ITEMNAME;
+                    row[4] = item.ITEMCOLOR;
+                    row[5] = item.SIZE;
+                    row[6] = item.BOXQTY1;
+                    row[7] = item.Pairs;
+                    row[8] = item.Boxco;
+                    row[9] = item.ItemFullCode;
+                    row[10] = item.RealWeightGram;
+                    row[11] = item.OptionInput;
+                    row[12] = item.ScaleDate != null ? item.ScaleDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "";
+                    row[13] = item.WhsToQc != null ? item.WhsToQc.Value.ToString("yyyy-MM-dd HH:mm:ss") : "";
+                    row[14] = item.QcToWhs != null ? item.QcToWhs.Value.ToString("yyyy-MM-dd HH:mm:ss") : "";
+                    row[15] = item.PONUMBER;
+                    row[16] = item.STYLE_NO;
+
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "WHSInTrackingOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task DownloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "Barcode_Filter_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("Barcode_Filter_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> _barcodeQuery = new List<string>();
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? Barcode = dt.Rows[i]["Barcode"].ToString();
+                        if (!string.IsNullOrEmpty(Barcode))
+                        {
+                            _barcodeQuery.Add(Barcode);
+                        }
+                    }
+                    _parameter.BarcodeImport = String.Join(",", _barcodeQuery);
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            _inputFileId = Guid.NewGuid().ToString();
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+}

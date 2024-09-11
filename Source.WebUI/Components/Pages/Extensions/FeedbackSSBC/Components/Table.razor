@@ -1,0 +1,61 @@
+﻿<div class="row">
+    <div class="col-lg-12 mb-1">
+        <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+            <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+                <TableHeadTemplate>
+                    <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <th class="text-center" style="width: 13%;">FBDate</th>
+                        <th class="text-center" style="width: 5%;">Shift</th>
+                        <th class="text-center" style="width: 10%; ">Barcode</th>
+                        <th class="text-center" style="width: 23%; ">Reason</th>
+                        <th class="text-center" style="width: 7%; ">MC</th>
+                        <th class="text-center" style="width: 7%; ">QtyOrder</th>
+                        <th class="text-center" style="width: 35%; ">ItemName</th>
+                    </tr>
+                </TableHeadTemplate>
+                <TableRowTemplate>
+                    <tr>
+                        <td>@item.FBDate</td>
+                        <td>@item.Shift</td>
+                        <td>@item.fBarcode</td>
+                        <td>@item.Reason</td>
+                        <td class="text-center">@item.MC</td>
+                        <td class="text-center">@string.Format("{0:#,##0.##}", Convert.ToInt32(item.QtyOrder))</td>
+                        <td>@item.ItemName</td>
+                    </tr>
+                </TableRowTemplate>
+                <TableFootTemplate>
+                    <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <td colspan="5" class="fw-bold">Total</td>
+                        <td class="text-center fw-bold" style="background-color: #f5f5f5;">@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</td>
+                        <td></td>
+                    </tr>
+                </TableFootTemplate>
+            </BlazorTable>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-12 col-md-6" style="padding-top: 1rem">
+                <span>Total <b class="text-primary">@objs.Count</b> records</span>
+            </div>
+            <div class="col-12 col-md-6">
+                <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                       Class="pagination pagination-sm float-end"
+                                       DisplayTotals="false"
+                                       PagingSize="5"
+                                       ActivePage="page"
+                                       PageSize="100"
+                                       NoOfItems="objs.Count()" />
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public List<FeedbackSSBC> objs { get; set; } = new List<FeedbackSSBC>();
+
+    [Parameter] public int page { get; set; } = 1;
+
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+}

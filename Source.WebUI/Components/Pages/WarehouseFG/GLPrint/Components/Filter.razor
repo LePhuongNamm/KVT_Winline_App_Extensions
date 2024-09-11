@@ -1,0 +1,51 @@
+﻿
+<div class="search-bar">
+    <div class="simple">
+        <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+        <div class="search-fields">
+            <div class="row">
+                <div class="col-12 col-lg-2">
+                    <div class="form-group">
+                        <label for="EmailAddress">
+                            PackingNo
+                        </label>
+                        <input value="@parameter" placeholder="..." id="EmailAddress" type="text"
+                               @onchange="@((ChangeEventArgs args) => parameter = args.Value?.ToString() ?? "")" class="form-control form-control-sm" style="height: 30px;" />
+                    </div>
+                </div>
+                <div class="col-12 col-lg-1">
+                    <label class="clear-search" for="btn"></label>
+                    <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" @onclick="async () => await OnChangeSearch.InvokeAsync(parameter)">
+                        <i class="fas fa-search fa-fw"></i>
+                        <span class="hidden-md">
+                            Search
+                        </span>
+                    </button>
+                </div>
+                <div class="col-12 col-lg-1">
+                    <label class="clear-search" for="btn"></label>
+                    <button type="submit" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                        <i class="fas fa-ban fa-fw"></i>
+                        <span class="hidden-md">
+                            Refresh
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string parameter { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> OnChangeSearch { get; set; }
+
+    [Parameter]
+    public EventCallback OnResetSearch { get; set; }
+
+
+}

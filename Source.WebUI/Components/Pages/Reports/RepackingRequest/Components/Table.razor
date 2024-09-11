@@ -1,0 +1,56 @@
+﻿
+<div class="row">
+    <div class="col-lg-12 mb-1">
+        <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+            <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((_page - 1) * 100).Take(100)" Context="obj">
+                <TableHeadTemplate>
+                    <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <th class="text-center">Year</th>
+                        <th class="text-center">Month</th>
+                        <th class="text-center">RepackingCount</th>
+                        <th class="text-center">QtySum</th>
+                    </tr>
+                </TableHeadTemplate>
+                <TableRowTemplate>
+                    <tr>
+                        <td class="text-center">@obj.Year</td>
+                        <td class="text-center">@obj.Month</td>
+                        <td class="text-center">@obj.RepackingCount.ToString("#,##0.##")</td>
+                        <td class="text-center">@obj.QtySum.ToString("#,##0.##")</td>
+                    </tr>
+                </TableRowTemplate>
+                <TableFootTemplate>
+                    <tr>
+                        <td colspan="2" class="fw-bold">Total</td>
+                        <td class="text-center fw-bold">@objs.Sum(x => x.RepackingCount).ToString("#,##0.##")</td>
+                        <td class="text-center fw-bold">@objs.Sum(x => x.QtySum).ToString("#,##0.##")</td>
+                    </tr>
+                </TableFootTemplate>
+            </BlazorTable>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-12 col-md-6" style="padding-top: 1rem">
+                <span>Total <b class="text-primary">@objs.Count</b> records</span>
+
+            </div>
+            <div class="col-12 col-md-6">
+                <BlazorTablePagination PageChangeEvent="(page) => _page = page"
+                                       Class="pagination pagination-sm float-end"
+                                       DisplayTotals="false"
+                                       PagingSize="5"
+                                       ActivePage="_page"
+                                       PageSize="100"
+                                       NoOfItems="objs.Count()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<RepackingRequest> objs { get; set; } = new List<RepackingRequest>();
+
+    protected int _page = 1;
+}

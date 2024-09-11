@@ -1,0 +1,144 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - @(isAdvanced ? "370" : "275")px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th style="width: 5px" class="text-center">
+                        <input type="checkbox" class="form-check-input" checked=@((barcodes.Count > 0 && barcodes.Count == objs.Count) ? true : false)
+                               @onchange="(EventArgs) =>  HandleCheckBoxAllClick(EventArgs.Value ?? false)" />
+                    </th>
+                    <th class="text-center">PackingNo</th>
+                    <th class="text-center" style="min-width:160px">fBarcode</th>
+                    <th class="text-center">Cus</th>
+                    <th class="text-center" style="min-width:250px">ItemName</th>
+                    <th class="text-center" style="min-width:300px">ColorName</th>
+                    <th class="text-center" style="min-width:200px">SizeName</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Pairs</th>
+                    <th class="text-center">BoxCo</th>
+                    <th class="text-center" style="min-width:200px">ItemFullCode</th>
+                    <th class="text-center">Weight</th>
+                    <th class="text-center">Option</th>
+                    <th class="text-center" style="min-width:200px">Scale Date</th>
+                    <th class="text-center" style="min-width:200px">WhsToQc</th>
+                    <th class="text-center" style="min-width:200px">QCToWhs</th>
+                    <th class="text-center" style="min-width:500px">PoNumber</th>
+                    <th class="text-center" style="min-width:200px">Style No</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center">
+                        @if (item.Scan_in == "N")
+                        {
+                            <input type="checkbox" class="form-check-input" checked=@(barcodes.Contains(item.fBarcode!) ? true : false)
+                                   @onchange="(EventArgs) => HandleCheckBoxItemClick(item.fBarcode!,EventArgs.Value ?? false)" />
+                        } 
+                    </td>
+                    <td class="text-center">@item.PackingNo</td>
+                    <td>@item.fBarcode</td>
+                    <td class="text-center">@item.CUSTOMER</td>
+                    <td>@item.ITEMNAME</td>
+                    <td>@item.ITEMCOLOR</td>
+                    <td>@item.SIZE</td>
+                    <td class="text-center">@item.BOXQTY1</td>
+                    <td class="text-center">@item.Pairs</td>
+                    <td class="text-center">@item.Boxco</td>
+                    <td class="text-center">@item.ItemFullCode</td>
+                    <td class="text-center">@string.Format("{0:#,##0.##}", item.RealWeightGram ?? 0)</td>
+                    <td class="text-center">@item.OptionInput</td>
+                    <td>@(item.ScaleDate != null ? item.ScaleDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
+                    <td>@(item.WhsToQc != null ? item.WhsToQc.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
+                    <td>@(item.QcToWhs != null ? item.QcToWhs.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
+                    <td>@item.PONUMBER</td>
+                    <td>@item.STYLE_NO</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                @if (objs.Count > 0)
+                {
+                    <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <td colspan="7" class="fw-bold">Total :</td>
+                        <td class="fw-bold"> @string.Format("{0:#,##0.##}", objs.Sum(x => x.BOXQTY1))</td>
+                        <td colspan="12"></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="20">No records found</td>
+                    </tr>
+                }
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@string.Format("{0:#,##0.##}", objs.Count)</b> records</span>
+
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<WHSInTracking> objs { get; set; } = new List<WHSInTracking>();
+
+    [Parameter] public List<string> barcodes { get; set; } = new List<string>();
+
+    [Parameter] public EventCallback<List<string>> OnSetSelected { get; set; }
+
+    [Parameter] public int page { get; set; } = 1;
+
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+
+    [Parameter] public bool isAdvanced { get; set; } = false;
+
+    protected async Task HandleCheckBoxAllClick(object checkValue)
+    {
+        await _js.Loading(true);
+        await Task.Delay(10);
+        if ((bool)checkValue)
+        {
+            foreach (var fBarcode in objs.Where(x => x.Scan_in == "N").Select(x => x.fBarcode))
+            {
+                if (!barcodes.Contains(fBarcode!))
+                    barcodes.Add(fBarcode!);
+            }
+        }
+        else
+        {
+            barcodes.Clear();
+        }
+        await OnSetSelected.InvokeAsync(barcodes);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleCheckBoxItemClick(string fBarcode, object checkValue)
+    {
+        await _js.Loading(true);
+        await Task.Delay(10);
+        if ((bool)checkValue)
+        {
+            if (!barcodes.Contains(fBarcode))
+                barcodes.Add(fBarcode);
+        }
+        else
+        {
+            if (barcodes.Contains(fBarcode))
+                barcodes.Remove(fBarcode);
+        }
+        await OnSetSelected.InvokeAsync(barcodes);
+        await _js.Loading(false);
+    }
+}

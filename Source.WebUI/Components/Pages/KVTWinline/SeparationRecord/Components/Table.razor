@@ -1,0 +1,94 @@
+﻿
+<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        @{
+            var results = from p in objs
+                          group p by new { p.PackingNo, p.ItemName, p.ColorName, p.SizeName, p.OrderNumber, p.StyleNo, p.InputDate, p.TitelCustomer } into g
+                          select new
+                          {
+                              ItemName = g.Key.ItemName,
+                              ColorName = g.Key.ColorName,
+                              PackingNo = g.Key.PackingNo,
+                              SizeName = g.Key.SizeName,
+                              OrderNumber = g.Key.OrderNumber,
+                              StyleNo = g.Key.StyleNo,
+                              InputDate = g.Key.InputDate,
+                              TitelCustomer = g.Key.TitelCustomer,
+                              Items = g.ToList()
+                          };
+        }
+        <BlazorTable Class="datatable w-100 mb-0" Items="results.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th style="min-width: 200px" class="text-center">Barcode</th>
+                    <th class="text-center">Q'ty</th>
+                    <th style="min-width: 200px" class="text-center">Barcode_Sub</th>
+                    <th class="text-center">Qty_Sub</th>
+                    <th class="text-center">Packing No</th>
+                    <th style="min-width: 250px" class="text-center">Items</th>
+                    <th style="min-width: 400px" class="text-center">Color</th>
+                    <th style="min-width: 200px" class="text-center">Size</th>
+                    <th class="text-center">Customer</th>
+                    <th style="min-width: 300px" class="text-center">DPO</th>
+                    <th style="min-width: 200px" class="text-center">Style</th>
+                    <th style="min-width: 200px" class="text-center">Time</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                @{
+                    var firtRow = item.Items.Where(x => x.Checkbox == 1).FirstOrDefault();
+                }
+                <tr>
+                    <td>@firtRow?.BarcodeInput</td>
+                    <td class="text-center">@firtRow?.QtyInput</td>
+                    <td>@firtRow?.BarcodeOutput</td>
+                    <td class="text-center">@firtRow?.QtyOutput</td>
+                    <td rowspan="@item.Items.Count()">@item.PackingNo</td>
+                    <td rowspan="@item.Items.Count()">@item.ItemName</td>
+                    <td rowspan="@item.Items.Count()">@item.ColorName</td>
+                    <td rowspan="@item.Items.Count()">@item.SizeName</td>
+                    <td class="text-center" rowspan="@item.Items.Count()">@item.TitelCustomer</td>
+                    <td rowspan="@item.Items.Count()">@item.OrderNumber</td>
+                    <td rowspan="@item.Items.Count()">@item.StyleNo</td>
+                    <td rowspan="@item.Items.Count()">@(item.InputDate != null ? item.InputDate.Value.ToString("MM/dd/yyyy HH:mm") : "")</td>
+                </tr>
+
+                @foreach (var childItem in item.Items.Skip(1))
+                {
+                    <tr>
+                        <td>@childItem.BarcodeInput</td>
+                        <td class="text-center">@childItem.QtyInput</td>
+                        <td>@childItem.BarcodeOutput</td>
+                        <td class="text-center">@childItem.QtyOutput</td>
+                    </tr>
+                }
+            </TableRowTemplate>
+        </BlazorTable>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@objs.Count</b> records</span>
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<SeparetionRecord> objs { get; set; } = new List<SeparetionRecord>();
+
+    [Parameter] public int page { get; set; } = 1;
+
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+
+}

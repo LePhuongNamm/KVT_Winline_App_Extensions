@@ -1,0 +1,98 @@
+﻿@page "/Reports/OrderChecking"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.Reports.OrderChecking.Components
+
+<PageTitle>Order PO Checking</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Order PO Checking"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "9. Reports", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "9.4 Order Checking", IsActive = true}})" />
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((OrderCheckingParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if (_dataTable.Rows.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6"></div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table dataTable="_dataTable" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected DataTable _dataTable = new DataTable();
+    protected OrderCheckingParameter _parameter = new OrderCheckingParameter();
+
+    protected async Task HandleChangeSearch(OrderCheckingParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new OrderCheckingParameter();
+        _dataTable = new DataTable();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _dataTable = await _wrapper.Report.OrderCheckingReport(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_dataTable.Rows.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(_dataTable, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "OrderCheckingReport.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

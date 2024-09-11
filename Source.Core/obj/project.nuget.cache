@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "GdObmkjijlk=",
+  "success": true,
+  "projectFilePath": "D:\\KVT_Winline_App_Extensions\\Source.Core\\Source.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\nam.lephuong\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512"
+  ],
+  "logs": []
+}

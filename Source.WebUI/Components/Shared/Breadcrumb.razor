@@ -1,0 +1,31 @@
+﻿<div class="row">
+    <div class="col-lg-6 col-12">
+        <h1 class="title">@((MarkupString)@pageName)</h1>
+    </div>
+    <div class="col-lg-6 d-none d-sm-block">
+        @if (breadcrumbs.Count > 0)
+        {
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb float-end">
+                    <li class="breadcrumb-item">
+                        <a href="/" class="text-decoration-none text-dark">
+                            <i class="fa fa-home"></i>
+                        </a>
+                    </li>
+                    @foreach (var item in breadcrumbs)
+                    {
+                        <li class="breadcrumb-item @(item.IsActive ? "active" : "")">@item.Text</li>
+                    }
+                </ol>
+            </nav>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string pageName { get; set; } = "";
+
+    [Parameter]
+    public List<BreadcrumbDTO> breadcrumbs { get; set; } = new List<BreadcrumbDTO>();
+}

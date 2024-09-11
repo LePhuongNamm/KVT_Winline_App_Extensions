@@ -1,0 +1,261 @@
+﻿<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width: 600px">
+                    <div class="col-6 col-md-6">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-40 bg-white fw-bold" style="height: 28px">Product Type: </span>
+                            <select value="@_type" class="form-select form-select-sm rounded-0" style="height: 28px"
+                                    @onchange="@(async(ChangeEventArgs arg) => await HandleTypeChange(arg?.Value?.ToString() ?? ""))">
+                                <option value="">None</option>
+                                <option value="Gấp">Gap</option>
+                                <option value="Bù">Bu</option>
+                                <option value="R">R</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-6">
+                        <div class="input-group text-center">
+                            <span class="input-group-text w-40 bg-white fw-bold" style="height: 28px">Deco Type: </span>
+                            <select value="@_deco" class="form-select form-select-sm rounded-0" style="height: 28px"
+                                    @onchange="@(async(ChangeEventArgs arg) => await HandleDecoChange(arg?.Value?.ToString() ?? ""))">
+                                <option value="">None</option>
+                                <option value="Deco">Deco</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() => await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 200px);">
+                <div class="row">
+                    <div class="col-md-12" style="display: flex ;justify-content: center;">
+                        <div id="sheet">
+                            @if (objs != null)
+                            {
+                                for (int i = 0; i < objs.Count; i++)
+                                {
+                                    <page id="printable" style="padding: 19px;width: 582px;height: 393px;">
+                                        <div style="width: 100%; height: 100%; border : 1px solid #000; padding: 0px; position: relative">
+                                            <div class="w-100 h-100 d-flex">
+                                                <div class="w-10 h-100">
+                                                    <div class="w-100 text-center narrow" style="height: 1.4cm;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 18pt;font-weight: bold;display: flex;flex-direction: column;justify-content: center;">
+                                                        @objs[i].TitelCustomer
+                                                    </div>
+                                                    <div class="w-100" style="height: 1cm;padding-left: 5px;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        PO No
+                                                    </div>
+                                                    <div class="w-100" style="height: 1cm;padding-left: 5px;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        Style
+                                                    </div>
+                                                    <div class="w-100" style="height: 1.8cm;padding-left: 5px;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;">
+                                                        Color
+                                                    </div>
+                                                    <div class="w-100 narrow" style="height: 2cm;padding-left: 5px;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 12px;">
+                                                        QC Check
+                                                    </div>
+                                                    <div class="w-100" style="height: 0.7cm;padding-left: 5px;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        Size
+                                                    </div>
+                                                    <div class="w-100" style="height: 0.7cm;padding-left: 5px;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        Q'ty
+                                                    </div>
+                                                    <div class="w-100" style="height: 0.75cm;padding-left: 5px;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        Gender
+                                                    </div>
+                                                </div>
+                                                <div class="w-58 h-100">
+                                                    <div class="w-100 narrow" style="padding-left: 5px;height: 1.4cm;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 13pt; font-weight: bold; display: flex;flex-direction: column;justify-content: center;">
+                                                        @objs[i].OSCode
+                                                    </div>
+                                                    <div class="w-100 narrow" style="padding-left: 5px;height: 1cm;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        @objs[i].OrderNumber
+                                                    </div>
+                                                    <div class="w-100 narrow" style="padding-left: 5px;height: 1cm;border-bottom : 1px solid #000;border-right : 1px solid #000;font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;">
+                                                        @objs[i].StyleNo
+                                                    </div>
+                                                    <div class="w-100" style="padding-left: 5px;height: 3.8cm;border-bottom : 1px solid #000;border-right : 1px solid #000;position: relative">
+                                                        <p class="narrow" style="font-size: 13pt;z-index:100;">@objs[i].ColorName</p>
+
+                                                        <p class="Text12" style="font-size: 35pt;position: absolute;top: 2.2cm;left: 0.3cm;z-index: 0;font-weight: 400;">
+                                                            @_deco
+                                                        </p>
+                                                       
+                                                        <p class="Text12" style="font-size: 35pt;position: absolute;top: 2.2cm;right: 0.3cm;z-index: 0;font-weight: 400;">
+                                                            @(!string.IsNullOrEmpty(_type) && _type != "Deco" ? _type : objs[i].Text12)
+                                                        </p>
+                                                    </div>
+                                                    <div class="w-100 d-flex" style="height: 2.15cm;border-right : 1px solid #000;">
+                                                        <div class="w-70 h-100" style="border-right : 1px solid #000;">
+                                                            <div class="w-100 narrow" style="height: 0.7cm;font-size: 13pt;border-bottom : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 5px;font-weight: bold">
+                                                                @objs[i].SizeName
+                                                            </div>
+                                                            <div class="w-100 d-flex" style="height: 0.7cm;font-size: 15px;border-bottom : 1px solid #000;">
+                                                                <div class="h-100 w-80 d-flex" style="border-right : 1px solid #000;">
+                                                                    <div class="h-100 w-50 narrow" style="font-size: 14pt;display: flex;flex-direction: column;justify-content: center;padding-left: 5px;">
+                                                                        <div class="w-100 d-flex">
+                                                                            <div class="w-60">
+                                                                                <div class="@(objs[i].QtyOrder < objs[i].QtyMax && objs[i].SubSeq > 1 ? "circle" : "")" style="font-weight: bold;text-align:center">@objs[i].QtyOrder</div>
+                                                                            </div>
+                                                                            <div class="w-40 text-center">
+                                                                                @objs[i].UMSales
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="text-end h-100 w-50" style="font-size: 15px;display: flex;flex-direction: column;justify-content: center;padding-right: 3px">
+                                                                        Total Box
+                                                                    </div>
+                                                                </div>
+                                                                <div class="h-100 w-20" style="font-size: 15px;display: flex;flex-direction: column;justify-content: center;text-align: center">
+                                                                    @objs[i].BoxTotalCount
+                                                                </div>
+                                                            </div>
+                                                            <div class="w-100 d-flex" style="height: 0.75cm;">
+                                                                <div class="h-100 @(string.IsNullOrEmpty(objs[i].Gender) || objs[i].Gender?.Length <= 4 ? "w-20" : "w-30")" style="font-size: 15px;border-right : 1px solid #000;display: flex;flex-direction: column;justify-content: center;text-align: center">
+                                                                    @objs[i].Gender
+                                                                </div>
+                                                                <div class="h-100 @(string.IsNullOrEmpty(objs[i].Gender) || objs[i].Gender?.Length <= 4 ? "w-80" : "w-70") narrow" style="font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;padding-left: 5px">
+                                                                    @objs[i].PositionText
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-30 h-100"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="w-32 h-100">
+                                                    <div class="w-100 d-flex" style="height: 1.4cm">
+                                                        <div class="w-50 h-100">
+                                                            <div class="w-100 h-50 fw-bold text-center narrow" style="border-bottom : 1px solid #000;display: flex;flex-direction: column;justify-content: center;font-size: 11pt;font-weight: bold">
+                                                                @objs[i].Text11
+                                                            </div>
+                                                            <div class="w-100 h-50 text-center narrow" style="font-size: 9.75pt;display: flex;flex-direction: column;justify-content: center;border-bottom : 1px solid #000;">
+                                                                @objs[i].PackingNo
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-50 h-100" style="border-left: 1px solid #000;border-bottom : 1px solid #000;padding-left: 5px">
+                                                            <img src="/img/framas-korea-vina.png" style="margin-top: 15%;" width="70" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-100 d-flex" style="font-size: 9.75pt;height: 2cm;padding-left: 5px;border-bottom : 1px solid #000;">
+                                                        Prod. Date
+                                                    </div>
+                                                    <div class="w-100" style="height: 3.8cm">
+                                                        <div class="w-100 d-flex" style="height: 2.3cm;border-bottom : 1px solid #000;">
+                                                            <div class="w-60 h-100" style="font-size: 8.75pt;padding-left: 5px;">
+                                                                Real Weight (g)
+                                                            </div>
+                                                            <div class="w-40 h-100 text-end" style="font-size: 8.75pt;padding-right: 3px;">
+                                                                @if (objs[i].Metal == "Y")
+                                                                {
+                                                                    <text>Metal Scan</text>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-100 d-flex" style="height: 0.5cm;">
+                                                            <div class="w-30 h-100" style="font-size: 8.75pt;border-bottom : 1px solid #000;border-right : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 5px">
+                                                                ToolNo
+                                                            </div>
+                                                            <div class="w-70 h-100 narrow" style="font-size: 8.75pt;border-bottom : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 2px">
+                                                                @objs[i].ToolingNo
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-100 d-flex" style="height: 0.5cm;">
+                                                            <div class="w-30 h-100" style="font-size: 8.75pt;border-bottom : 1px solid #000;border-right : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 5px">
+                                                                Bags
+                                                            </div>
+                                                            <div class="w-70 h-100 narrow" style="font-size: 8.75pt;border-bottom : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 2px">
+                                                                @objs[i].Text9
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-100 d-flex" style="height: 0.5cm;">
+                                                            <div class="w-30 h-100" style="font-size: 8.75pt;border-bottom : 1px solid #000;border-right : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 5px">
+                                                                ETD
+                                                            </div>
+                                                            <div class="w-70 h-100 narrow" style="font-size: 8.75pt;border-bottom : 1px solid #000;display: flex;flex-direction: column;justify-content: center;padding-left: 2px">
+                                                                @objs[i].Text1
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-100" style="height: 2.15cm">
+
+                                                        <div class="w-100 d-flex" style="height: 1.8cm">
+                                                            <div class="w-40 h-100" style="padding: 4px">
+                                                                <img style="height: 100%" src="@string.Format("data:image/png;base64,{0}", BarcodeHandleExtensions.Generator(objs[i].Barcode!))" />
+                                                            </div>
+
+                                                            <div class="w-60 h-100" style="padding-left: 1px;font-weight:bold ;">
+                                                                @if (objs[i].Barcode != null)
+                                                                {
+                                                                    <span class="narrow" style="font-size: 23px;">@objs[i]?.Barcode?.Substring(0, objs[i].Barcode!.IndexOf("-"))</span> <br />
+                                                                    <span class="narrow" style="font-size: 20px;position: absolute;margin-top: 8px;">@objs[i]?.Barcode?.Substring(objs[i].Barcode!.IndexOf("-") + 1)</span>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-100 d-flex" style="height: 0.3cm">
+                                                            <div class="w-60 narrow" style="font-size: 9px; padding-left:4px">
+                                                                PRINTED: @DateTime.Now.ToString("MM/dd/yyyy HH:mm")
+                                                            </div>
+                                                            <div class="w-40 narrow" style="font-size: 9px">
+                                                                MADE IN VIETNAM
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </page>
+                                    @if (i % 2 != 0)
+                                    {
+                                        <p style="page-break-after:always;"></p>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="button" class="btn btn-dark btn-sm" @onclick="async() => await OnCloseForm.InvokeAsync()">
+                    <i class="fa fa-ban fa-fw"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="async () => await OnSubmitForm.InvokeAsync()">
+                    <i class="fa fa-save fa-fw"></i>
+                    Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<BarcodeInfo> objs { get; set; } = new List<BarcodeInfo>();
+
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback OnSubmitForm { get; set; }
+
+    protected string _type = "";
+    protected string _deco = "";
+
+    protected async Task HandleTypeChange(string arg)
+    {
+        await _js.Loading(true);
+        _type = arg;
+        await Task.Delay(100);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleDecoChange(string arg)
+    {
+        await _js.Loading(true);
+        _deco = arg;
+        await Task.Delay(100);
+        await _js.Loading(false);
+    }
+}

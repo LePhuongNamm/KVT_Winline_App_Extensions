@@ -1,0 +1,83 @@
+﻿<div class="search-bar">
+    <form @onsubmit="async () => await OnChangeSearch.InvokeAsync(parameter)" @formname="filter-form">
+        <div class="simple">
+            <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+            <div class="search-fields">
+                <div class="row">
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="FormDate">
+                                From Date
+                            </label>
+                            <InputText @bind-Value="parameter.FormDate"
+                                       id="FormDate" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="ToDate">
+                                To Date
+                            </label>
+                            <InputText @bind-Value="parameter.ToDate"
+                                       id="ToDate" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="Item">
+                                Item
+                            </label>
+                            @{
+                                var _dropdownItem = dropdownItemFullCode.DistinctBy(x => $"{x.ItemCode} - {x.ItemName}")
+                                .Select(x => new DropDowList { StrValue = $"{x.ItemCode} - {x.ItemName}", Label = $"{x.ItemCode} - {x.ItemName}" }).ToList();
+                            }
+                            <DropDownList Id="Item" dropdowns="@_dropdownItem"
+                                          initData="@parameter.Item" OnSetValue="@((arg) => parameter.Item = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <div class="form-group">
+                            <label for="Color">
+                                Color
+                            </label>
+                            @{
+                                var _dropdownColor = !string.IsNullOrEmpty(parameter.Item) ?
+                                dropdownItemFullCode.Where(x => $"{x.ItemCode} - {x.ItemName}" == parameter.Item).DistinctBy(x => $"{x.ColorCode} - {x.ColorName}")
+                                .Select(x => new DropDowList { StrValue = $"{x.ColorCode} - {x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList() :
+                                dropdownItemFullCode.DistinctBy(x => $"{x.ColorCode} - {x.ColorName}").Select(x => new DropDowList { StrValue = $"{x.ColorCode} - {x.ColorName}", Label = $"{x.ColorCode} - {x.ColorName}" }).ToList();
+                            }
+                            <DropDownList Id="Color" dropdowns="@_dropdownColor"
+                                          initData="@parameter.Color" OnSetValue="@((arg) => parameter.Color = (string?)arg ?? "")" />
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-ban fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public ColorPrepartionPlanParameter parameter { get; set; } = new ColorPrepartionPlanParameter();
+    [Parameter] public EventCallback<ColorPrepartionPlanParameter> OnChangeSearch { get; set; }
+    [Parameter] public EventCallback OnResetSearch { get; set; }
+    [Parameter] public List<ItemFullCodeDropdown> dropdownItemFullCode { get; set; } = new List<ItemFullCodeDropdown>();
+}

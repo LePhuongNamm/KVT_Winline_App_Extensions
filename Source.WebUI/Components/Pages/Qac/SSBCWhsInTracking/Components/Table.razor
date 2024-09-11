@@ -1,0 +1,113 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - @(isAdvanced ? "370" : "275")px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center">Scale Date</th>
+                    <th class="text-center" style="min-width: 150px">Scale Date First</th>
+                    <th class="text-center" style="min-width: 150px">Scale Time First</th>
+                    <th class="text-center" style="min-width: 200px">fBarcode</th>
+                    <th class="text-center" style="min-width: 150px">Packing No</th>
+                    <th class="text-center" style="min-width: 500px">PONUMBER</th>
+                    <th class="text-center" style="min-width: 150px">STYLE_NO</th>
+                    <th class="text-center" style="min-width: 150px">Cust</th>
+                    <th class="text-center" style="min-width: 300px">Item</th>
+                    <th class="text-center" style="min-width: 500px">Color</th>
+                    <th class="text-center" style="min-width: 150px">SIZE</th>
+                    <th class="text-center" style="min-width: 150px">Box</th>
+                    <th class="text-center" style="min-width: 150px">Pe_W</th>
+                    <th class="text-center" style="min-width: 150px">Fo_W</th>
+                    <th class="text-center" style="min-width: 150px">Cp_W</th>
+                    <th class="text-center" style="min-width: 150px">Net Weight</th>
+                    <th class="text-center" style="min-width: 150px">Std Pairs</th>
+                    <th class="text-center" style="min-width: 150px">Real Pairs</th>
+                    <th class="text-center" style="min-width: 150px">Compare</th>
+                    <th class="text-center" style="min-width: 150px">Real Weight</th>
+                    <th class="text-center" style="min-width: 200px">Std Gross Weight</th>
+                    <th class="text-center" style="min-width: 150px">Option Input</th>
+                    <th class="text-center" style="min-width: 300px">Real Weight Product Only</th>
+                    <th class="text-center" style="min-width: 300px">Net Std Weight Product Only</th>
+                    <th class="text-center" style="min-width: 300px">C105Percent Of Net Std Weight</th>
+                    <th class="text-center" style="min-width: 300px">C95Percent Of Net Std Weight</th>
+                    <th class="text-center" style="min-width: 150px">Diff Weight</th>
+                    <th class="text-center" style="min-width: 150px">Diff Pair</th>
+                    <th class="text-center" style="min-width: 150px">ini Real Wgt</th>
+                    <th class="text-center" style="min-width: 200px">ini Diff Weight</th>
+                    <th class="text-center" style="min-width: 200px">ini Diff Pair</th>
+                    <th class="text-center" style="min-width: 200px">QC Diff Pair</th>
+                    <th class="text-center" style="min-width: 150px">BX Type</th>
+                    <th class="text-center" style="min-width: 150px">BX Qty</th>
+                    <th class="text-center" style="min-width: 150px">Pb Code</th>
+                    <th class="text-center" style="min-width: 150px">Color Level</th>
+                    <th class="text-center" style="min-width: 150px">SubTransfer</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center">@(item.ScaleDate != null ? item.ScaleDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                    <td class="text-center">@(item.ScaleDateFirst != null ? item.ScaleDateFirst.Value.ToString("MM/dd/yyyy") : "")</td>
+                    <td class="text-center">@(item.ScaleTimeFirst != null ? item.ScaleTimeFirst.Value.ToString() : "")</td>
+                    <td>@item.fBarcode</td>
+                    <td>@item.PackingNo</td>
+                    <td>@item.PONUMBER</td>
+                    <td>@item.STYLE_NO</td>
+                    <td class="text-center">@item.Cust</td>
+                    <td>@item.Item</td>
+                    <td>@item.Color</td>
+                    <td>@item.SIZE</td>
+                    <td class="text-center">@item.Box</td>
+                    <td class="text-center">@item.Pe_W</td>
+                    <td class="text-center">@item.Fo_W</td>
+                    <td class="text-center">@item.Cp_W</td>
+                    <td class="text-center">@item.NetWeight</td>
+                    <td class="text-center">@item.StdPairs</td>
+                    <td class="text-center">@item.RealPairs</td>
+                    <td class="text-center">@item.Compare</td>
+                    <td class="text-center">@item.RealWeight</td>
+                    <td class="text-center">@item.StdGrossWeight</td>
+                    <td class="text-center">@item.OptionInput</td>
+                    <td class="text-center">@item.RealWeightProductOnly</td>
+                    <td class="text-center">@item.NetStdWeightProductOnly</td>
+                    <td class="text-center">@item.C105PercentOfNetStdWeight</td>
+                    <td class="text-center">@item.C95PercentOfNetStdWeight</td>
+                    <td class="text-center">@item.DiffWeight</td>
+                    <td class="text-center">@(item.NetWeight == 0 ? "0" : $"{(int)Math.Floor((decimal)(item.DiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0))}")</td>
+                    <td class="text-center">@item.iniRealWgt</td>
+                    <td class="text-center">@item.iniDiffWeight</td>
+                    <td class="text-center">@(item.NetWeight == 0 ? "0" : $"{(int)Math.Floor((decimal)(item.iniDiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0))}")</td>
+                    <td class="text-center">@(((int)Math.Floor((decimal)(item.DiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0))) - ((int)Math.Floor((decimal)(item.iniDiffWeight ?? 0) / (decimal)(item.NetWeight ?? 0))))</td>
+                    <td class="text-center">@item.BXType</td>
+                    <td class="text-center">@item.BXQty</td>
+                    <td class="text-center">@item.PBCode</td>
+                    <td class="text-center">@item.ColorLevel</td>
+                    <td class="text-center">@item.SubTransfer</td>
+                </tr>
+            </TableRowTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@objs.Count</b> records</span>
+
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<Qc_SSBC_WhsIn> objs { get; set; } = new List<Qc_SSBC_WhsIn>();
+    [Parameter] public bool isAdvanced { get; set; } = false;
+    [Parameter] public int page { get; set; } = 1;
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+}

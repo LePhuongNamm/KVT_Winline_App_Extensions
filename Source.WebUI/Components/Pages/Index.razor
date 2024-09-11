@@ -1,0 +1,10 @@
+﻿@page "/"
+@attribute [Authorize]
+
+@code {
+    protected override void OnInitialized()
+    {
+        _nav.NavigateTo("/Dashboard");
+    }
+}
+

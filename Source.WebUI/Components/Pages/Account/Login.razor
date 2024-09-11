@@ -1,0 +1,85 @@
+﻿@page "/Account/Login"
+
+<PageTitle>Login</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Login"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "Login", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-4 offset-lg-4 border" style="background-color: #fff;padding: 20px;margin-top: 20px">
+            <EditForm Model="Input" method="post" OnValidSubmit="HandleSubmit" FormName="login">
+                <DataAnnotationsValidator />
+                <div class="mb-3 text-center">
+                    <h3>Login <span class="text-danger">@(!string.IsNullOrEmpty(errorMessage) ? errorMessage : "")</span></h3>
+                </div>
+                <div class="mb-3">
+                    <label>Username</label>
+                    <InputText @bind-Value="Input.EmpCode" class="form-control form-control-sm" autocomplete="username" aria-required="true" style="height: 30px;" />
+                </div>
+                <div class="mb-3">
+                    <label>Password</label>
+                    <InputText type="password" @bind-Value="Input.Password" class="form-control form-control-sm" autocomplete="current-password" aria-required="true" style="height: 30px;" />
+                </div>
+                <div class="mb-3 d-grid gap-2">
+                    <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                        <i class="fas fa-sign-in-alt fa-fw"></i>
+                        <span class="hidden-md">
+                            Login
+                        </span>
+                    </button>
+                </div>
+            </EditForm>  
+        </div>
+    </div>
+</section>
+
+@code {
+    private string? errorMessage;
+
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    public AccountDTO Input { get; set; } = new AccountDTO();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _identity = await _user.GetUserAsync();
+        if (_identity != null)
+            _nav.NavigateTo("/");
+    }
+
+    protected async Task HandleSubmit()
+    {
+        try
+        {
+            errorMessage = "";
+            var _result = await _wrapper.Account.FindUserAsync(Input.EmpCode ?? "", Input.Password ?? "");
+            if (_result != null)
+            {
+                var _claims = new[] {
+                    new Claim(ClaimTypes.Name,_result.ID ?? ""),
+                    new Claim(ClaimTypes.Role,_result.Department.ToLower() ?? ""),
+                };
+                var identity = new ClaimsIdentity(_claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(principal, new AuthenticationProperties { IsPersistent = true });
+                _nav.NavigateTo(ReturnUrl ?? "/");
+            }
+            else
+            {
+                errorMessage = "Login failed";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

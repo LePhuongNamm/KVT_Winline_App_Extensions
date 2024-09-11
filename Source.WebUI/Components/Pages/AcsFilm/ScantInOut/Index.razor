@@ -1,0 +1,241 @@
+﻿@page "/ACSFilm/ScanInOut"
+@using Source.WebUI.Components.Pages.AcsFilm.ScantInOut.Components
+
+<PageTitle>Scan In/Out</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Scan In/Out"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "6. ACSFilm", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "6.3 Scan In/Out", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <div class="search-bar">
+                <div class="simple">
+                    <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-file-import"></i></div></div>
+                    <div class="search-fields">
+                        <div class="row">
+                            <div class="col-12 col-lg-3">
+                                <div class="form-group">
+                                    <label for="PackingNo">
+                                        Option Input :
+                                    </label>
+                                    <select class="form-select form-select-sm" style="height: 30px;" value="@_scanner.OptionInput" @onchange="@((ChangeEventArgs args) => _scanner.OptionInput = args?.Value?.ToString() ?? "")">
+                                        <option value="">-- none --</option>
+                                        <option value="P">In Deco</option>
+                                        <option value="S">Send Sup</option>
+                                        <option value="R">Receive Sub</option>
+                                        <option value="Q">Out Deco</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(_scanner.OptionInput))
+                            {
+                                <div class="col-12 col-lg-3">
+                                    <div class="form-group">
+                                        <label for="ItemFullCode">
+                                            File import :
+                                        </label>
+                                        <input type="file" class="form-control form-control-sm" style="height: 30px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                    </div>
+                                </div>
+                            }
+                            @if (_scanner.ProdOrders.Count > 0)
+                            {
+                                <div class="col-12 col-lg-1">
+                                    <label class="clear-search" for="btn"></label>
+                                    <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" @onclick="async() => await HandleConfirmScanner()">
+                                        <i class="fas fa-file-import fa-fw"></i>
+                                        <span class="hidden-md">
+                                            Confirm
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="col-12 col-lg-1">
+                                    <label class="clear-search" for="btn"></label>
+                                    <button type="submit" id="btn" class="btn btn-dark w-100 btn-sm rounded-1" @onclick="async() => await HandleClearData()">
+                                        <i class="fas fa-ban fa-fw"></i>
+                                        <span class="hidden-md">
+                                            Cancel
+                                        </span>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 mb-1">
+                    <div class="row">
+                        <div class="col-12 col-lg-6"></div>
+                        <div class="col-12 col-lg-6 text-end">
+                            <button class="btn btn-sm btn-action" @onclick="async() => await DowloadTemplate()">
+                                <i class="fa fa-file-download fa-fw text-success"></i>
+                                Download Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @if (_scanner.ProdOrders.Count > 0)
+                {
+                    <Table objs="_scanner.ProdOrders" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+               
+            </div>
+        </div>
+    </div>
+</section>
+@code {
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected ProdScannedDTO _scanner { get; set; } = new ProdScannedDTO();
+
+    protected async Task HandleClearData()
+    {
+        await _js.Loading(true);
+        _inputFileId = Guid.NewGuid().ToString();
+
+        if (!string.IsNullOrEmpty(_scanner.ImportCode))
+        {
+            try
+            {
+                await _wrapper.AcsFilm.ProdScannedDeleteByCodeImport(_scanner.ImportCode);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+        }
+
+        _scanner = new ProdScannedDTO();
+        await _js.Loading(false);
+    }
+
+    protected async Task DowloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "ASCFilm_ScanInOut_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("ASCFilm_ScanInOut_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            _scanner.ProdOrders = new List<FilmProdOrder>();
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? Barcode = dt.Rows[i]["Barcode"].ToString();
+                        if (!string.IsNullOrEmpty(Barcode))
+                        {
+                            var _prodOrder = await _wrapper.AcsFilm.ProdOrderLoadByBarcode(Barcode);
+                            if (_prodOrder != null)
+                                _scanner.ProdOrders.Add(_prodOrder);
+                        }
+                    }
+
+                    if (_scanner.ProdOrders.Count > 0)
+                    {
+                        var _inputM = await _user.GetUserAsync();
+                        _scanner.ImportCode = _scanner.OptionInput + "-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                        foreach (var item in _scanner.ProdOrders)
+                        {
+                            await _wrapper.AcsFilm.ProdScannerInsert(_scanner.ImportCode, item.Barcode ?? "", _scanner.OptionInput, _inputM?.UserName ?? "");
+                        }
+                    }
+                    else
+                    {
+                        _inputFileId = Guid.NewGuid().ToString();
+                        await _js.Aleft("No data.");
+                    }
+                }
+                else
+                {
+                    _inputFileId = Guid.NewGuid().ToString();
+                    await _js.Aleft("No data.");
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleConfirmScanner()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var _check = await _wrapper.AcsFilm.ProdScannerCheck(_scanner.ImportCode);
+            if (_check != null && _check.Error == 0)
+            {
+                var _result = await _wrapper.AcsFilm.ProdScannerConfirm(_scanner.ImportCode);
+                if (_result != null && _result.Error == 0)
+                {
+                    _scanner = new ProdScannedDTO();
+                    _inputFileId = Guid.NewGuid().ToString();
+                    await _js.Notification(_result?.Msg ?? "");
+                }
+                else
+                {
+                    await HandleClearData();
+                    await _js.Aleft($"OPP! : {_result?.Msg}.");
+                }
+            }
+            else
+            {
+                await HandleClearData();
+                await _js.Aleft($"OPP! : {_check?.Msg}.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+}

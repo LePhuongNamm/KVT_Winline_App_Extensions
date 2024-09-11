@@ -1,0 +1,24 @@
+﻿@inherits LayoutComponentBase
+
+<div id="admin-container" class="sidebar-mini fixed @NavMenuCssClass">
+    <header class="main-header">
+        <Header ToggleNavMenu="ToggleNavMenu" />
+    </header>
+    <div class="main-sidebar">
+        <Sidebar @rendermode="InteractiveServer" />
+    </div>
+    <div class="content-wrapper">
+        @Body
+    </div>
+</div>
+
+@functions {
+    protected bool collapseNavMenu = true;
+
+    protected string? NavMenuCssClass => collapseNavMenu ? "" : "sidebar-collapse";
+
+    protected void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

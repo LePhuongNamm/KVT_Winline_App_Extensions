@@ -1,0 +1,654 @@
+﻿@page "/KVTWinline/PublicationBarcode"
+@attribute [Authorize]
+
+@using Source.WebUI.Components.Pages.KVTWinline.PublicationBarcode.Components
+
+<PageTitle>Publication Item In Barcode</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Publication Item In Barcode"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "4. KVT Winline", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "4.2 Publication Barcode", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="_parameter" isAdvanced="_isAdvanced"
+                    dropdownScan="_dropdownScan" dropdownStatus="_dropdownStatus" dropdownItemFullCode="_dropdownItemFullCode"
+                    OnSetAdvanced="() => _isAdvanced = !_isAdvanced"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((TbProdOrderParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12 mb-1">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <div class="d-flex">
+                        <div style="width: 4%" class="text-center">
+                            <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                        </div>
+                        <div class="d-flex" style="width: 450px;">
+                            <input type="text" style="height:28px;background-color: #f9f9f9;border: 1px solid #e2e2e2;"
+                                   value="Selected @_objs.Where(x => x.IsSelected).Count() rows" class="form-control form-control-sm rounded-0 w-40" readonly>
+                            <button class="btn btn-sm btn-action rounded-0 w-30" @onclick="async() => await HandleOpenFormPrint()" style="height:28px">
+                                <i class="fas fa-print fa-fw text-warning"></i>
+                                Print
+                            </button>
+                            @{
+                                var _selected = _objs.Where(x => x.IsSelected).ToList();
+                            }
+                            @if (_selected.Count == 2 && _selected.Where(x => x.BoxDV > 1).Count() > 0 &&
+                            _selected[0].ProdOrderNo == _selected[1].ProdOrderNo && _selected[0].Seq == _selected[1].Seq && _selected[0].SubSeq == _selected[1].SubSeq)
+                            {
+                                var _maxDVObjects = _objs.Where(x => x.ProdOrderNo == _selected[0].ProdOrderNo && x.Seq == _selected[0].Seq && x.SubSeq == _selected[0].SubSeq).OrderByDescending(x => x.BoxDV).FirstOrDefault();
+                                var _maxDVSelected = _selected.OrderByDescending(x => x.BoxDV).FirstOrDefault();
+
+                                if (_maxDVObjects == _maxDVSelected)
+                                {
+                                    if (string.IsNullOrEmpty(_selected[0].FGScan) && string.IsNullOrEmpty(_selected[1].FGScan)) // Nếu chưa được scan in vào kho. PPIC có quyền gộp
+                                    {
+                                        <AuthorizeView Roles="pla,man">
+                                            <Authorized>
+                                                <button class="btn btn-sm btn-action rounded-0 w-30" style="height:28px" @onclick="async() => await HandleMergeSeparation(_selected[0],_selected[1])">
+                                                    <i class="fas fa-object-group fa-fw text-danger"></i>
+                                                    Merge
+                                                </button>
+                                            </Authorized>
+                                        </AuthorizeView>
+                                    }
+                                    else
+                                    {
+                                        if (_selected[0].FGScan == "I" && _selected[1].FGScan == "I") // Nếu đã được scan in vào kho. chỉ kho mới có có quyền gộp
+                                        {
+                                            <AuthorizeView Roles="whs,man">
+                                                <Authorized>
+                                                    <button class="btn btn-sm btn-action rounded-0 w-30" style="height:28px" @onclick="async() => await HandleMergeSeparation(_selected[0],_selected[1])">
+                                                        <i class="fas fa-object-group fa-fw text-danger"></i>
+                                                        Merge
+                                                    </button>
+                                                </Authorized>
+                                            </AuthorizeView>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="row">
+                        <div class="col-lg-2 offset-2">
+                            <button class="btn btn-sm btn-action rounded-0 w-100" @onclick="() => _isOption = true" style="height:28px">
+                                <i class="fas fa-sort fa-fw text-info"></i>
+                                Sort
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <input type="file" class="form-control form-control-sm" style="height: 28px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                <div class="input-group-append">
+                                    <button id="btn" class="btn btn-action w-100 btn-sm rounded-1" @onclick="async() => await DownloadTemplate()" style="height:28px">
+                                        <i class="fas fa-download fa-fw text-secondary"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <button class="btn btn-sm btn-action rounded-0 w-100" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                <i class="fa fa-file-excel fa-fw text-success"></i>
+                                Export Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <Table objs="_objs" isAdvanced="_isAdvanced"
+               page="_page" OnSetPage="(arg) => _page = (int)arg"
+               OnOpenForm="(arg) => HandleOpenFormSeparation(arg.ToString())"
+               OnSetSelectedAll="(arg) => HandleSetSelectedAll((bool)arg)"
+               OnSetSelectedItem="(arg) => HandleSetSelectedItem((BarcodeInfo)arg)" />
+    </div>
+</section>
+
+@if (_isOption)
+{
+    <Option SortSelecteds="_sorts"
+            OnSetSorts="(arg) => _sorts = (List<SortDTO>)arg" OnCloseForm="() => _isOption = false" />
+}
+
+@if (_isSeparation)
+{
+    <Separation obj="_obj" objDivide="_objDivide" OnCloseForm="() => _isSeparation = false"
+                OnSetObjDivide="(arg) => _objDivide = (List<ProdOrderDivide>)arg"
+                OnSubmitForm="async() => await HandleSubmitFormSeparation()" />
+}
+
+@if (_isPrint)
+{
+    <PrintReview objs="_objs.Where(x => x.IsSelected).ToList()" OnCloseForm="async() => await HandleCloseFormPrint()"
+                 OnSubmitForm="async() => await HandleSubmitFormPrint()" />
+}
+
+@code {
+    protected int _page = 1;
+
+    protected bool _isSeparation = false;
+    protected bool _isOption = false;
+    protected bool _isPrint = false;
+    protected bool _isAdvanced = false;
+
+    protected List<SortDTO> _sorts = new List<SortDTO>();
+    protected string _codeImport = "1";
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected TbProdOrder _obj = new TbProdOrder();
+    protected List<ProdOrderDivide> _objDivide { get; set; } = new List<ProdOrderDivide>();
+    protected TbProdOrderParameter _parameter = new TbProdOrderParameter();
+    protected List<BarcodeInfo> _objs = new List<BarcodeInfo>();
+
+    protected List<DropDowList> _dropdownScan = new List<DropDowList>();
+    protected List<DropDowList> _dropdownStatus = new List<DropDowList>();
+    protected List<ItemFullCodeDropdown> _dropdownItemFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        SetDefaultSort();
+
+        Task[] tasks = new Task[]
+        {
+            Task.Run(async () => _dropdownScan = await _wrapper.KVTWL.ScanStatusLoadDropdown("Scan")),
+            Task.Run(async () => _dropdownStatus = await _wrapper.KVTWL.ScanStatusLoadDropdown("Status")),
+            Task.Run(async () => _dropdownItemFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown())
+        };
+
+        await Task.WhenAll(tasks);
+    }
+
+    protected async Task HandleChangeSearch(TbProdOrderParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new TbProdOrderParameter();
+        _inputFileId = Guid.NewGuid().ToString();
+        SetDefaultSort();
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected void SetDefaultSort()
+    {
+        _sorts = new List<SortDTO>()
+        {
+            new SortDTO(){Stt = 0,SortColumn = "ItemName",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "ColorName",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "SizeID",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "ProdOrderNo",SortValue = "asc"},
+            new SortDTO(){Stt = 0,SortColumn = "SubSeq",SortValue = "asc"},
+        };
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _obj = (TbProdOrder)null!;
+            _objs = new List<BarcodeInfo>();
+            _codeImport = "1";
+            if (!string.IsNullOrEmpty(_parameter.ProdOrderNo) && _parameter.ProdOrderNo.Length == 7)
+                _parameter.ProdOrderNo = "202" + _parameter.ProdOrderNo;
+
+            var propertyValuesByName = _parameter.GetType().GetProperties().Where(pi => pi.PropertyType == typeof(string))
+                                       .Select(pi => new { Val = (string?)pi.GetValue(_parameter), Name = pi.Name }).Where(pi => !string.IsNullOrEmpty(pi.Val)).ToDictionary(pi => pi.Name, pi => pi.Val);
+
+            if (propertyValuesByName.Count > 0)
+            {
+                _parameter.SortValue = _sorts.Where(x => !string.IsNullOrEmpty(x.SortColumn)).Count() > 0 ?
+                   String.Join(",", _sorts.Where(x => !string.IsNullOrEmpty(x.SortColumn)).Select(x => $"{x.SortColumn.ToString()} {x.SortValue.ToString()}").ToList()) : "";
+
+                _objs = await _wrapper.KVTWL.TbProdOrderLoad(_parameter);
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected void HandleSetSelectedAll(bool Value)
+    {
+        if (Value)
+            _objs.Where(x => x.IsSelected == false).ToList().ForEach(x => x.IsSelected = true);
+        else
+            _objs.Where(x => x.IsSelected == true).ToList().ForEach(x => x.IsSelected = false);
+    }
+
+    protected void HandleSetSelectedItem(BarcodeInfo sources)
+    {
+        _objs.Where(x => x.Barcode == sources.Barcode).FirstOrDefault()!.IsSelected = sources.IsSelected;
+    }
+
+    protected async Task HandleOpenFormSeparation(string Barcode)
+    {
+        await _js.Loading(true);
+        _obj = new TbProdOrder();
+        _objDivide = new List<ProdOrderDivide>();
+        var _source = await _wrapper.KVTWL.TbProdOrderLoadByBarcode(Barcode);
+        if (_source != null)
+        {
+            _obj = _source;
+            _obj.BoxDVMax = await _wrapper.KVTWL.TbProdOrderGetBoxDv(_source.ProdOrderNo!, _source.Seq.ToString()!, _source.SubSeq.ToString()!, _source.BoxCount.ToString()!);
+
+            var _currentBarcode = $"J{_obj.ProdOrderNo!.Substring(_obj.ProdOrderNo.Length - 7)}-{_obj.Seq.ToString()}-{_obj.SubSeq.ToString()}-{_obj.BoxCount.ToString()}-{_obj.BoxDV.ToString()}";
+            _objDivide.Add(new ProdOrderDivide
+                {
+                    CurrentBarcode = _currentBarcode,
+                    ProdOrderNo = _obj.ProdOrderNo,
+                    Seq = _obj.Seq,
+                    SubSeq = _obj.SubSeq,
+                    BoxCount = _obj.BoxCount,
+                    BoxDV = _obj.BoxDV, // Lấy số thùng tách là số củ
+                    QtyOrder = _obj.QtyOrder
+                });
+
+            _objDivide.Add(new ProdOrderDivide
+                {
+                    CurrentBarcode = _currentBarcode,
+                    ProdOrderNo = _obj.ProdOrderNo,
+                    Seq = _obj.Seq,
+                    SubSeq = _obj.SubSeq,
+                    BoxCount = _obj.BoxCount,
+                    BoxDV = _obj.BoxDVMax, // Lấy số thùng tách là số mới
+                    QtyOrder = _obj.QtyOrder
+                });
+
+            _isSeparation = true;
+        }
+        else
+        {
+            await _js.Aleft($"Barcode {Barcode} not found");
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleSubmitFormSeparation()
+    {
+        await _js.Loading(true);
+        var _source = _objDivide.Where(x => x.BoxDV == _obj.BoxDVMax).FirstOrDefault();
+        if (_source != null)
+        {
+            try
+            {
+                var _identity = await _user.GetUserAsync();
+
+                if (_codeImport == "1")
+                    _codeImport = $"{_identity!.UserName}-{DateTime.Now.ToString("MMddyyyyHHmmss")}";
+
+                var _result = await _wrapper.KVTWL.ProdOrderLabelSeparation(_source.CurrentBarcode!, _source.QtyOrder ?? 0, _codeImport, _identity!.UserName);
+                if (_result?.Error == 0)
+                {
+                    _obj = new TbProdOrder();
+                    _objDivide = new List<ProdOrderDivide>();
+                    _objs = await _wrapper.KVTWL.SortLabelSeparation(_codeImport);
+                    _isSeparation = false;
+                    await _js.Notification("Divide successfully.");
+                }
+                else
+                {
+                    await _js.Aleft(_result?.Msg ?? "Error!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+        }
+        else
+        {
+            await _js.Aleft("Requested BoxDvMax not found.");
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleMergeSeparation(BarcodeInfo OriginalBarcode, BarcodeInfo SplitBarcode)
+    {
+        await _js.Loading(true);
+        try
+        {
+            bool _confirm = await _js.Confirm($"Bạn có chắc muốn gộp thành tem: '{OriginalBarcode.Barcode}' số lượng: '{(OriginalBarcode.QtyOrder + SplitBarcode.QtyOrder).ToString()}'");
+            if (_confirm)
+            {
+                var _identity = await _user.GetUserAsync();
+                var _result = await _wrapper.KVTWL.ProdOrderLabelMerge(OriginalBarcode.Barcode!, SplitBarcode.Barcode!, _identity!.UserName);
+                if (_result?.Error == 0)
+                {
+                    if (_codeImport != "1")
+                        _objs = await _wrapper.KVTWL.SortLabelSeparation(_codeImport);
+                    else
+                        await FetchData();
+
+                    await _js.Notification(_result?.Msg ?? "");
+                }
+                else
+                {
+                    await _js.Aleft(_result?.Msg ?? "");
+                }
+            }     
+        }
+        catch(Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        _objs.Where(x => x.IsSelected).ToList().ForEach(x => x.IsSelected = false);
+        await _js.Loading(false);
+    }
+
+    protected async Task DownloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "KVT_Filter_ProOrderNo_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("KVT_Filter_ProOrderNo_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            _objs = new List<BarcodeInfo>();
+            _parameter = new TbProdOrderParameter();
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> _prods = new List<string>();
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? ProdOrderNo = dt.Rows[i]["ProdOrderNo"].ToString();
+                        if (!string.IsNullOrEmpty(ProdOrderNo))
+                        {
+                            if (ProdOrderNo.Length == 7)
+                                ProdOrderNo = "202" + ProdOrderNo;
+                            _prods.Add(ProdOrderNo);
+                        }
+                    }
+                    _parameter.ProdOrderNoImport = String.Join(",", _prods);
+                    await FetchData();
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            _inputFileId = Guid.NewGuid().ToString();
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs.Count > 0)
+        {
+            await _js.Loading(true);
+            await Task.Yield();
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("ProdOrderNo", typeof(string));
+                dt.Columns.Add("Seq", typeof(string));
+                dt.Columns.Add("Sub", typeof(string));
+                dt.Columns.Add("BoxCount", typeof(string));
+                dt.Columns.Add("BoxDV", typeof(string));
+                dt.Columns.Add("BoxTotalCount", typeof(string));
+                dt.Columns.Add("PPScan", typeof(string));
+                dt.Columns.Add("FGScan", typeof(string));
+                dt.Columns.Add("PackingNo", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("Ordered", typeof(string));
+                dt.Columns.Add("TitelCustomer", typeof(string));
+                dt.Columns.Add("Customer", typeof(string));
+                dt.Columns.Add("CreateDate", typeof(string));
+                dt.Columns.Add("DeliveryDate", typeof(string));
+                dt.Columns.Add("ItemCode", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorID", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeID", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+                dt.Columns.Add("UMSales", typeof(string));
+                dt.Columns.Add("MoldSize", typeof(string));
+                dt.Columns.Add("ToolingNo", typeof(string));
+                dt.Columns.Add("Decoration", typeof(string));
+                dt.Columns.Add("Check1", typeof(string));
+                dt.Columns.Add("Gender", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("DeliveryNote", typeof(string));
+                dt.Columns.Add("InvoiceNo", typeof(string));
+                dt.Columns.Add("PositionText", typeof(string));
+                dt.Columns.Add("Status", typeof(string));
+                dt.Columns.Add("UpdatM", typeof(string));
+                dt.Columns.Add("UpdatT", typeof(string));
+                dt.Columns.Add("mesoprim", typeof(string));
+                dt.Columns.Add("BX1", typeof(string));
+                dt.Columns.Add("BX2", typeof(string));
+                dt.Columns.Add("BX3", typeof(string));
+                dt.Columns.Add("BX4", typeof(string));
+                dt.Columns.Add("BX5", typeof(string));
+                dt.Columns.Add("BX6", typeof(string));
+                dt.Columns.Add("PPbag", typeof(string));
+                dt.Columns.Add("PB", typeof(string));
+                dt.Columns.Add("Weight", typeof(string));
+                dt.Columns.Add("BX1wgt", typeof(string));
+                dt.Columns.Add("BX2wgt", typeof(string));
+                dt.Columns.Add("BX3wgt", typeof(string));
+                dt.Columns.Add("BX4wgt", typeof(string));
+                dt.Columns.Add("BX5wgt", typeof(string));
+                dt.Columns.Add("BX6wgt", typeof(string));
+                dt.Columns.Add("PBWeight", typeof(string));
+                dt.Columns.Add("Partionwgt", typeof(string));
+                dt.Columns.Add("FormWgt", typeof(string));
+                dt.Columns.Add("PE_UW", typeof(string));
+                dt.Columns.Add("PRS1PE", typeof(string));
+                dt.Columns.Add("FO_UW", typeof(string));
+                dt.Columns.Add("CP_UW", typeof(string));
+                dt.Columns.Add("PRS1CP", typeof(string));
+                dt.Columns.Add("VoucherTypeNo", typeof(string));
+                dt.Columns.Add("AddOpt4", typeof(string));
+                dt.Columns.Add("CusUsePB", typeof(string));
+                dt.Columns.Add("LR", typeof(string));
+                dt.Columns.Add("PPWeight", typeof(string));
+                dt.Columns.Add("mesocomp", typeof(string));
+                dt.Columns.Add("mesoyear", typeof(string));
+                dt.Columns.Add("ColorCode", typeof(string));
+                dt.Columns.Add("SizeCode", typeof(string));
+                dt.Columns.Add("ProdWeight", typeof(string));
+                dt.Columns.Add("BoxType", typeof(string));
+                dt.Columns.Add("ArticleNumber", typeof(string));
+                dt.Columns.Add("DateScan", typeof(string));
+                dt.Columns.Add("InputM", typeof(string));
+                dt.Columns.Add("InputT", typeof(string));
+                dt.Columns.Add("LastUpdate", typeof(string));
+                dt.Columns.Add("find", typeof(string));
+                dt.Columns.Add("Del_Est", typeof(string));
+                dt.Columns.Add("QRCODE", typeof(string));
+                dt.Columns.Add("T1", typeof(string));
+                dt.Columns.Add("T2", typeof(string));
+                dt.Columns.Add("T3", typeof(string));
+                dt.Columns.Add("T4", typeof(string));
+                dt.Columns.Add("T5", typeof(string));
+                dt.Columns.Add("DateINWL", typeof(string));
+                dt.Columns.Add("DateOUTWL", typeof(string));
+
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.ProdOrderNo;
+                    row[1] = item.Seq.ToString();
+                    row[2] = item.SubSeq.ToString();
+                    row[3] = item.BoxCount.ToString();
+                    row[4] = item.BoxDV.ToString();
+                    row[5] = item.BoxTotalCount.ToString();
+                    row[6] = item.PPScan;
+                    row[7] = item.FGScan;
+                    row[8] = item.PackingNo;
+                    row[9] = item.OrderNumber;
+                    row[10] = item.Ordered;
+                    row[11] = item.TitelCustomer;
+                    row[12] = item.Customer;
+                    row[13] = item.CreateDate != null ? item.CreateDate.Value.ToString("MM/dd/yyyy") : "";
+                    row[14] = item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("MM/dd/yyyy") : "";
+                    row[15] = item.ItemCode;
+                    row[16] = item.ItemName;
+                    row[17] = item.ColorID;
+                    row[18] = item.ColorName;
+                    row[19] = item.SizeID;
+                    row[20] = item.SizeName;
+                    row[21] = item.QtyOrder.ToString();
+                    row[22] = item.StyleNo;
+                    row[23] = item.UMSales;
+                    row[24] = item.MoldSize;
+                    row[25] = item.ToolingNo;
+                    row[26] = item.Decoration;
+                    row[27] = item.Check1;
+                    row[28] = item.Gender;
+                    row[29] = item.ItemFullCode;
+                    row[30] = item.DeliveryNote;
+                    row[31] = item.InvoiceNo;
+                    row[32] = item.PositionText;
+                    row[33] = item.Status;
+                    row[34] = item.UpdatM;
+                    row[35] = item.UpdatT != null ? item.UpdatT.Value.ToString("MM/dd/yyyy HH:mm") : "";
+                    row[36] = item.ProdMesoprim;
+                    row[37] = item.BX1;
+                    row[38] = item.BX2;
+                    row[39] = item.BX3;
+                    row[40] = item.BX4;
+                    row[41] = item.BX5;
+                    row[42] = item.BX6;
+                    row[43] = item.PPbag;
+                    row[44] = item.PB;
+                    row[45] = item.Weight.ToString();
+                    row[46] = item.BX1wgt;
+                    row[47] = item.BX2wgt;
+                    row[48] = item.BX3wgt;
+                    row[49] = item.BX4wgt;
+                    row[50] = item.BX5wgt;
+                    row[51] = item.BX6wgt;
+                    row[52] = item.PBWeight;
+                    row[53] = item.Partionwgt;
+                    row[54] = item.FormWgt;
+                    row[55] = item.PE_UW;
+                    row[56] = item.PRS1PE;
+                    row[57] = item.FO_UW;
+                    row[58] = item.CP_UW;
+                    row[59] = item.PRS1CP;
+                    row[60] = item.VoucherTypeNo;
+                    row[61] = item.AddOpt4;
+                    row[62] = item.CusUsePB;
+                    row[63] = item.LR;
+                    row[64] = item.PPWeight;
+                    row[65] = item.mesocomp;
+                    row[66] = item.mesoyear;
+                    row[67] = item.ColorCode;
+                    row[68] = item.SizeCode;
+                    row[69] = item.ProdWeight.ToString();
+                    row[70] = item.Text8;
+                    row[71] = item.ArticleNumber;
+                    row[72] = item.DateScan != null ? item.DateScan.Value.ToString("MM/dd/yyyy HH:mm") : "";
+                    row[73] = item.InputM;
+                    row[74] = item.InputT != null ? item.InputT.Value.ToString("MM/dd/yyyy HH:mm") : "";
+                    row[75] = item.LastUpdate != null ? item.LastUpdate.Value.ToString("MM/dd/yyyy HH:mm") : "";
+                    row[76] = "";
+                    row[77] = item.DeliEst != null ? item.DeliEst.Value.ToString("MM/dd/yyyy HH:mm") : "";
+                    row[78] = item.QRCode;
+                    row[79] = item.T1;
+                    row[80] = item.T2;
+                    row[81] = item.T3;
+                    row[82] = item.T4;
+                    row[83] = item.T5;
+                    row[84] = item.DateINWL != null ? item.DateINWL.Value.ToString("MM/dd/yyyy") : "";
+                    row[85] = item.DateOUTWL != null ? item.DateOUTWL.Value.ToString("MM/dd/yyyy") : "";
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "KVT.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleOpenFormPrint()
+    {
+        var _count = _objs.Where(x => x.IsSelected).Count();
+        if (_count > 0)
+        {
+            _isPrint = true;
+            await _js.Loading(true);
+            await Task.Delay(_count);
+            await _js.Loading(false);
+
+            var _countPrinted = _objs.Where(x => x.IsSelected && x.Printed == "Y" && string.IsNullOrEmpty(x.FGScan) && string.IsNullOrEmpty(x.PPScan)).Count();
+            if (_countPrinted > 0 && _codeImport == "1")
+                await _js.Aleft($"Có {_countPrinted} tem được in lại.");
+        }
+    }
+
+    protected async Task HandleCloseFormPrint()
+    {
+        await _js.Loading(true);
+        _isPrint = false;
+        _objs.Where(x => x.IsSelected).ToList().ForEach(x => x.IsSelected = false);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleSubmitFormPrint()
+    {
+        await _js.Loading(true);
+        await Task.Delay(50);
+        var _member = await _user.GetUserAsync();
+        await _wrapper.KVTWL.UpdatePrinted(string.Join(",", _objs.Where(x => x.IsSelected == true).Select(x => x.Barcode).ToList()), _member!.UserName);
+        await _js.InvokeVoidAsync("printDiv", "sheet");
+        await _js.Loading(false);
+    }
+}

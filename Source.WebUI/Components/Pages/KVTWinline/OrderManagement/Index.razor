@@ -1,0 +1,720 @@
+﻿@page "/KVTWinline/OrderManagement"
+@attribute [Authorize(Roles = "pla,man")]
+@using Source.WebUI.Components.Pages.KVTWinline.OrderManagement.Components
+@using System.Text
+
+<PageTitle>Order Management</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Order Management"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "4. KVT Winline", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "4.1 Order Management", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <div class="search-bar">
+                <div class="simple">
+                    <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+                    <div class="search-fields">
+                        <div class="row">
+                            <div class="col-12 col-lg-2">
+                                <div class="form-group">
+                                    <label for="Item">
+                                        Select action :
+                                    </label>
+                                    <select class="form-select form-select-sm" style="height: 30px;" value="@_type">
+                                        <option value="Register">Register</option>
+                                        <option value="Update">Update</option>
+                                        <option value="Delete">Delete</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-2">
+                                <div class="form-group">
+                                    <label for="Item">
+                                        OCKV No :
+                                    </label>
+                                    <input value="@_packingNo" class="form-control form-control-sm" style="height: 30px;"
+                                           @onchange="@(async(ChangeEventArgs EventArgs) => await HandlePackingNoChange(EventArgs))" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="form-group">
+                                    <label for="Item">
+                                        File Import :
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control form-control-sm" style="height: 28px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                        <div class="input-group-append">
+                                            <button id="btn" class="btn btn-action w-100 btn-sm rounded-1" @onclick="async() => await DownloadTemplate()" style="height:28px">
+                                                <i class="fas fa-download fa-fw text-success"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="clear-search" for="btn"></label>
+                                <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" style="height: 29px;" @onclick="async () => await GetPackingInfo()">
+                                    <i class="fas fa-search fa-fw"></i>
+                                    <span class="hidden-md">
+                                        Search
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="clear-search" for="btn"></label>
+                                <button type="submit" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" style="height: 29px;" @onclick="() => HandleResetForm()">
+                                    <i class="fas fa-sync fa-fw"></i>
+                                    <span class="hidden-md">
+                                        Refresh
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12" style="height: calc(100vh - 275px)">
+            <div class="row" style="height: 100%">
+                <div class="col-lg-12 mb-1" style="height: 3%;">
+                    @if (_salesOrders.Count > 0)
+                    {
+                        <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px;margin-right: 5px" @onclick="async() => await HandleExportSaleOrder()">
+                            <i class="fas fa-file-excel fa-fw text-success"></i>
+                            Export Excel
+                        </button>
+                        @if (_prodOrders.Count == 0)
+                        {
+                            <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px;margin-right: 5px" @onclick="async() => await HandleSubMitForm()">
+                                <i class="fas fa-plus fa-fw text-primary"></i>
+                                Order Register
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px;margin-right: 5px" disabled>
+                                <i class="fas fa-plus fa-fw text-primary"></i>
+                                Order Register
+                            </button>
+                        }
+                        <button type="button" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px" disabled>
+                            <i class="fas fa-trash fa-fw text-danger"></i>
+                            Order Delete
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px;margin-right: 5px" disabled>
+                            <i class="fas fa-file-excel fa-fw text-success"></i>
+                            Export Excel
+                        </button>
+                        <button type="button" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px;margin-right: 5px" disabled>
+                            <i class="fas fa-plus fa-fw text-primary"></i>
+                            Order Register
+                        </button>
+                        <button type="button" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px" disabled>
+                            <i class="fas fa-trash fa-fw text-danger"></i>
+                            Order Delete
+                        </button>
+                    }
+                </div>
+                <div class="col-lg-12 mb-1" style="height: 47%;">
+                    <div id="simple-bar" class="data-scrollbar table-responsive" style="height: 100%;">
+                        <TablePackingInfo objs="_salesOrders" />
+                    </div>
+                </div>
+                <div class="col-lg-12 mb-1" style="height: 3%;">
+                    @if (_prodOrders.Count > 0)
+                    {
+                        <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px" @onclick="async() => await HandleExportProdOrder()">
+                            <i class="fas fa-file-excel fa-fw text-success"></i>
+                            Export Excel
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px" disabled>
+                            <i class="fas fa-file-excel fa-fw text-success"></i>
+                            Export Excel
+                        </button>
+                    }
+                </div>
+                <div class="col-lg-12 mb-1" style="height: 47%;">
+                    <div id="simple-bar" class="data-scrollbar table-responsive" style="height: 100%">
+                        <TableProdOrder objs="_prodOrders" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@code {
+    protected List<string> _packingNos = new List<string>();
+    protected List<V_PACKING_WL> _salesOrders = new List<V_PACKING_WL>();
+    protected List<TbProdOrder> _prodOrders = new List<TbProdOrder>();
+    protected List<string> _packingCreated = new List<string>();
+
+    protected string _packingNo = "";
+    protected string _type = "";
+
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await _js.Loading(true);
+        _type = "Register";
+        _packingCreated = await _wrapper.KVTWL.GetPackingNoFromProd();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandlePackingNoChange(ChangeEventArgs EventArgs)
+    {
+        _packingNo = EventArgs?.Value?.ToString() ?? "";
+        _packingNos = new List<string>();
+        _salesOrders = new List<V_PACKING_WL>();
+        _prodOrders = new List<TbProdOrder>();
+        _inputFileId = Guid.NewGuid().ToString();
+        if (!string.IsNullOrEmpty(_packingNo))
+        {
+            await _js.Loading(true);
+            try
+            {
+                if (!_packingCreated.Contains(_packingNo))
+                {
+                    _packingNos.Add(_packingNo);
+                    await GetPackingInfo();
+                }
+                else
+                {
+                    await _js.Aleft($"The following OCKV numbers has been created PPIC order : {_packingNo}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            _packingNo = "";
+            _packingNos = new List<string>();
+            _salesOrders = new List<V_PACKING_WL>();
+            _prodOrders = new List<TbProdOrder>();
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    List<string> _error = new List<string>();
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? PackingNo = dt.Rows[i]["PackingNo"].ToString();
+
+                        if (!string.IsNullOrEmpty(PackingNo))
+                        {
+                            if (!_packingCreated.Contains(PackingNo))
+                                _packingNos.Add(PackingNo);
+                            else
+                                _error.Add(PackingNo);
+                        }
+                    }
+                    if (_error.Count > 0)
+                    {
+                        _packingNos = new List<string>();
+                        _inputFileId = Guid.NewGuid().ToString();
+                        await _js.Aleft($"The following OCKV numbers has been created PPIC order : {string.Join(",", _error)}");
+                    }
+                    else
+                    {
+                        await GetPackingInfo();
+                    }
+                }
+                else
+                {
+                    _inputFileId = Guid.NewGuid().ToString();
+                    await _js.Aleft("No data.");
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task GetPackingInfo()
+    {
+        if (_packingNos.Count > 0)
+        {
+            try
+            {
+                var _sources = await _wrapper.KVTWL.GetPackingInfo(string.Join(",", _packingNos));
+                if (_sources.Select(x => x.PackingNo).Distinct().Count() != _packingNos.Count())
+                {
+                    var notFounds = _packingNos.Where(x => !_sources.Any(y => x.Contains(y.PackingNo!)));
+                    await _js.Aleft($"The following OCKV numbers were not found : {string.Join(",", notFounds)}");
+                    _inputFileId = Guid.NewGuid().ToString();
+                }
+                else
+                {
+                    if (_sources.Where(x => x.OverallTestResult == "fail").Count() > 0)
+                        await _js.Aleft($"Lab test fail!");
+
+                    _salesOrders = _sources;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+        }
+    }
+
+    protected async Task HandleSubMitForm()
+    {
+        var _confirm = await _js.Confirm($"Are you sure you want to create an order with q'ty {_salesOrders.Sum(x => x.QtyOrder)} prs for production?");
+        if (_confirm)
+        {
+            await _js.Loading(true);
+            try
+            {
+                var check = ValidateOrder();
+                if (string.IsNullOrEmpty(check))
+                {
+                    var _member = await _user.GetUserAsync();
+                    var _codeImport = $"{_member!.UserName}-{DateTime.Now.ToString("yyyyMMdd-HHmmss")}";
+                    var _sources = _salesOrders.Select(x => x.PackingNo).Distinct().ToList();
+
+                    foreach (var _source in _sources)
+                    {
+                        var _result = await _wrapper.KVTWL.RegisterOrder(_source!, _member!.UserName, _codeImport);
+
+                        if (_result.Error == 1)
+                        {
+                            await _wrapper.KVTWL.RollbackOrder(string.Join(",", _source));
+                            await _js.Aleft(_result.Msg ?? "");
+                            HandleResetForm();
+                            return;
+                        }
+                    }
+
+                    _packingNo = "";
+                    _packingNos = new List<string>();
+                    _inputFileId = Guid.NewGuid().ToString();
+                    _prodOrders = await _wrapper.KVTWL.ProdOrderLoadAfterRegister(string.Join(",", _sources));
+                    await _js.Notification("Import successfully.");
+                }
+                else
+                {
+                    await _js.Aleft(check);
+                }
+            }
+            catch (Exception ex)
+            {
+                _packingNo = "";
+                _packingNos = new List<string>();
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected string ValidateOrder()
+    {
+        string _result = "";
+        foreach (var _ in _salesOrders)
+        {
+            if (string.IsNullOrEmpty(_.BoxType) || string.IsNullOrEmpty(_.ItemCode) || string.IsNullOrEmpty(_.ColorName) || string.IsNullOrEmpty(_.StyleNo) ||
+                   _.Weight == null || string.IsNullOrEmpty(_.TitelCustomer) || string.IsNullOrEmpty(_.T1) || string.IsNullOrEmpty(_.ToolingNo))
+            {
+                _result = $"Error : One of the columns 'BoxType,ItemCode,ColorName,StyleNo,Weight,TitelCustomer,T1,ToolingNo' has a null value at OCKV : {_.PackingNo}";
+                break;
+            }
+
+            if ((_.BoxType == "BX1" && decimal.Parse(_.BX1 ?? "0") == 0) || (_.BoxType == "BX2" && decimal.Parse(_.BX2 ?? "0") == 0) ||
+                (_.BoxType == "BX3" && decimal.Parse(_.BX3 ?? "0") == 0) || (_.BoxType == "BX4" && decimal.Parse(_.BX4 ?? "0") == 0) ||
+                (_.BoxType == "BX5" && decimal.Parse(_.BX5 ?? "0") == 0) || (_.BoxType == "BX6" && decimal.Parse(_.BX6 ?? "0") == 0) ||
+                (_.BoxType == "PPbag" && decimal.Parse(_.PPbag ?? "0") == 0) || (_.BoxType == "PB" && decimal.Parse(_.PB ?? "0") == 0))
+            {
+                _result = $"Error : There is no box info at OCKV : {_.PackingNo}";
+                break;
+            }
+        }
+        return _result;
+    }
+
+    protected void HandleResetForm()
+    {
+        _inputFileId = Guid.NewGuid().ToString();
+        _packingNo = "";
+        _packingNos = new List<string>();
+        _salesOrders = new List<V_PACKING_WL>();
+        _prodOrders = new List<TbProdOrder>();
+    }
+
+    protected async Task DownloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "KVT_Import_PackingNo_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("KVT_Import_PackingNo_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+
+    protected async Task HandleExportProdOrder()
+    {
+        if (_prodOrders.Count > 0)
+        {
+            await _js.Loading(true);
+            await Task.Yield();
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("ProdOrderNo", typeof(string));
+                dt.Columns.Add("Seq", typeof(string));
+                dt.Columns.Add("SubSeq", typeof(string));
+                dt.Columns.Add("BoxCount", typeof(string));
+                dt.Columns.Add("BoxDV", typeof(string));
+                dt.Columns.Add("BoxTotalCount", typeof(string));
+                dt.Columns.Add("PPScan", typeof(string));
+                dt.Columns.Add("FGScan", typeof(string));
+                dt.Columns.Add("mesoprim", typeof(string));
+                dt.Columns.Add("mesocomp", typeof(string));
+                dt.Columns.Add("mesoyear", typeof(string));
+                dt.Columns.Add("PackingNo", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("Ordered", typeof(string));
+                dt.Columns.Add("TitelCustomer", typeof(string));
+                dt.Columns.Add("Customer", typeof(string));
+                dt.Columns.Add("CreateDate", typeof(string));
+                dt.Columns.Add("DeliveryDate", typeof(string));
+                dt.Columns.Add("ItemCode", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorID", typeof(string));
+                dt.Columns.Add("ColorCode", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeID", typeof(string));
+                dt.Columns.Add("SizeCode", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+                dt.Columns.Add("UMSales", typeof(string));
+                dt.Columns.Add("Weight", typeof(string));
+                dt.Columns.Add("MoldSize", typeof(string));
+                dt.Columns.Add("ToolingNo", typeof(string));
+                dt.Columns.Add("CusUsePB", typeof(string));
+                dt.Columns.Add("LR", typeof(string));
+                dt.Columns.Add("PPWeight", typeof(string));
+                dt.Columns.Add("Decoration", typeof(string));
+                dt.Columns.Add("BoxType", typeof(string));
+                dt.Columns.Add("HorizontalSize", typeof(string));
+                dt.Columns.Add("VerticalSize", typeof(string));
+                dt.Columns.Add("SizeGroup", typeof(string));
+                dt.Columns.Add("ArticleNumber", typeof(string));
+                dt.Columns.Add("Gender", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("DeliveryNote", typeof(string));
+                dt.Columns.Add("InvoiceNo", typeof(string));
+                dt.Columns.Add("AddOpt1", typeof(string));
+                dt.Columns.Add("Article", typeof(string));
+                dt.Columns.Add("Season", typeof(string));
+                dt.Columns.Add("PositionText", typeof(string));
+                dt.Columns.Add("UpdatM", typeof(string));
+                dt.Columns.Add("UpdatT", typeof(string));
+                dt.Columns.Add("InputM", typeof(string));
+                dt.Columns.Add("InputT", typeof(string));
+                dt.Columns.Add("T1", typeof(string));
+                dt.Columns.Add("T2", typeof(string));
+                dt.Columns.Add("T3", typeof(string));
+                dt.Columns.Add("T4", typeof(string));
+                dt.Columns.Add("T5", typeof(string));
+
+                foreach (var item in _prodOrders)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.ProdOrderNo;
+                    row[1] = item.Seq.ToString();
+                    row[2] = item.SubSeq.ToString();
+                    row[3] = item.BoxCount.ToString();
+                    row[4] = item.BoxDV.ToString();
+                    row[5] = item.BoxTotalCount.ToString();
+                    row[6] = item.PPScan;
+                    row[7] = item.FGScan;
+                    row[8] = item.mesoprim;
+                    row[9] = item.mesocomp;
+                    row[10] = item.mesoyear;
+                    row[11] = item.PackingNo;
+                    row[12] = item.OrderNumber;
+                    row[13] = item.Ordered;
+                    row[14] = item.TitelCustomer;
+                    row[15] = item.Customer;
+                    row[16] = item.CreateDate;
+                    row[17] = item.DeliveryDate;
+                    row[18] = item.ItemCode;
+                    row[19] = item.ItemName;
+                    row[20] = item.ColorID;
+                    row[21] = item.ColorCode;
+                    row[22] = item.ColorName;
+                    row[23] = item.SizeID;
+                    row[24] = item.SizeCode;
+                    row[25] = item.SizeName;
+                    row[26] = item.QtyOrder;
+                    row[27] = item.StyleNo;
+                    row[28] = item.UMSales;
+                    row[29] = item.Weight;
+                    row[30] = item.MoldSize;
+                    row[31] = item.ToolingNo;
+                    row[32] = item.CusUsePB;
+                    row[33] = item.LR;
+                    row[34] = item.PPWeight;
+                    row[35] = item.Decoration;
+                    row[36] = item.BoxType;
+                    row[37] = item.HorizontalSize;
+                    row[38] = item.VerticalSize;
+                    row[39] = item.SizeGroup;
+                    row[40] = item.ArticleNumber;
+                    row[41] = item.Gender;
+                    row[42] = item.ItemFullCode;
+                    row[43] = item.DeliveryNote;
+                    row[44] = item.InvoiceNo;
+                    row[45] = item.AddOpt1;
+                    row[46] = item.Article;
+                    row[47] = item.Season;
+                    row[48] = item.PositionText;
+                    row[49] = item.UpdatM;
+                    row[50] = item.UpdatT;
+                    row[51] = item.InputM;
+                    row[52] = item.InputT;
+                    row[53] = item.T1;
+                    row[54] = item.T2;
+                    row[55] = item.T3;
+                    row[56] = item.T4;
+                    row[57] = item.T5;
+                    dt.Rows.Add(row);
+                }
+
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", $"ProdOrder_Register_{DateTime.Now.ToString("yyyy-MM-dd")}.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleExportSaleOrder()
+    {
+        if (_salesOrders.Count > 0)
+        {
+            await _js.Loading(true);
+            await Task.Yield();
+            try
+            {
+                DataTable dt = new DataTable();
+
+                dt.Columns.Add("mesoprim", typeof(string));
+                dt.Columns.Add("mesocomp", typeof(string));
+                dt.Columns.Add("mesoyear", typeof(string));
+                dt.Columns.Add("PackingNo", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("Ordered", typeof(string));
+                dt.Columns.Add("TitelCustomer", typeof(string));
+                dt.Columns.Add("Customer", typeof(string));
+                dt.Columns.Add("CreateDate", typeof(string));
+                dt.Columns.Add("DeliveryDate", typeof(string));
+                dt.Columns.Add("ItemCode", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorID", typeof(string));
+                dt.Columns.Add("ColorCode", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeID", typeof(string));
+                dt.Columns.Add("SizeCode", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+                dt.Columns.Add("UMSales", typeof(string));
+                dt.Columns.Add("Weight", typeof(string));
+                dt.Columns.Add("MoldSize", typeof(string));
+                dt.Columns.Add("ToolingNo", typeof(string));
+                dt.Columns.Add("CusUsePB", typeof(string));
+                dt.Columns.Add("LR", typeof(string));
+                dt.Columns.Add("PPWeight", typeof(string));
+                dt.Columns.Add("Decoration", typeof(string));
+                dt.Columns.Add("BoxType", typeof(string));
+                dt.Columns.Add("BX1", typeof(string));
+                dt.Columns.Add("BX2", typeof(string));
+                dt.Columns.Add("BX3", typeof(string));
+                dt.Columns.Add("BX4", typeof(string));
+                dt.Columns.Add("BX5", typeof(string));
+                dt.Columns.Add("BX6", typeof(string));
+                dt.Columns.Add("PPbag", typeof(string));
+                dt.Columns.Add("PB", typeof(string));
+                dt.Columns.Add("BX1wgt", typeof(string));
+                dt.Columns.Add("BX2wgt", typeof(string));
+                dt.Columns.Add("BX3wgt", typeof(string));
+                dt.Columns.Add("BX4wgt", typeof(string));
+                dt.Columns.Add("BX5wgt", typeof(string));
+                dt.Columns.Add("BX6wgt", typeof(string));
+                dt.Columns.Add("PBWeight", typeof(string));
+                dt.Columns.Add("Partionwgt", typeof(string));
+                dt.Columns.Add("FormWgt", typeof(string));
+                dt.Columns.Add("PE_UW", typeof(string));
+                dt.Columns.Add("PRS1PE", typeof(string));
+                dt.Columns.Add("FO_UW", typeof(string));
+                dt.Columns.Add("CP_UW", typeof(string));
+                dt.Columns.Add("PRS1CP", typeof(string));
+                dt.Columns.Add("HorizontalSize", typeof(string));
+                dt.Columns.Add("VerticalSize", typeof(string));
+                dt.Columns.Add("SizeGroup", typeof(string));
+                dt.Columns.Add("ArticleNumber", typeof(string));
+                dt.Columns.Add("Gender", typeof(string));
+                dt.Columns.Add("ItemFullCode", typeof(string));
+                dt.Columns.Add("DeliveryNote", typeof(string));
+                dt.Columns.Add("InvoiceNo", typeof(string));
+                dt.Columns.Add("AddOpt1", typeof(string));
+                dt.Columns.Add("Article", typeof(string));
+                dt.Columns.Add("Season", typeof(string));
+                dt.Columns.Add("PositionText", typeof(string));
+                dt.Columns.Add("AddOpt4", typeof(string));
+                dt.Columns.Add("VoucherTypeNo", typeof(string));
+                dt.Columns.Add("T1", typeof(string));
+                dt.Columns.Add("T2", typeof(string));
+                dt.Columns.Add("T3", typeof(string));
+                dt.Columns.Add("T4", typeof(string));
+                dt.Columns.Add("T5", typeof(string));
+                dt.Columns.Add("Find", typeof(string));
+
+                foreach (var item in _salesOrders)
+                {
+                    DataRow row = dt.NewRow();
+
+                    row[0] = item.mesoprim;
+                    row[1] = item.mesocomp;
+                    row[2] = item.mesoyear;
+                    row[3] = item.PackingNo;
+                    row[4] = item.OrderNumber;
+                    row[5] = item.Ordered;
+                    row[6] = item.TitelCustomer;
+                    row[7] = item.Customer;
+                    row[8] = item.CreateDate;
+                    row[9] = item.DeliveryDate;
+                    row[10] = item.ItemCode;
+                    row[11] = item.ItemName;
+                    row[12] = item.ColorID;
+                    row[13] = item.ColorCode;
+                    row[14] = item.ColorName;
+                    row[15] = item.SizeID;
+                    row[16] = item.SizeCode;
+                    row[17] = item.SizeName;
+                    row[18] = (item.QtyOrder ?? 0).ToString();
+                    row[19] = item.StyleNo;
+                    row[20] = item.UMSales;
+                    row[21] = (item.Weight ?? 0).ToString();
+                    row[22] = item.MoldSize;
+                    row[23] = item.ToolingNo;
+                    row[24] = item.CusUsePB;
+                    row[25] = item.LR;
+                    row[26] = item.PPWeight;
+                    row[27] = item.Decoration;
+                    row[28] = item.BoxType;
+                    row[29] = item.BX1;
+                    row[30] = item.BX2;
+                    row[31] = item.BX3;
+                    row[32] = item.BX4;
+                    row[33] = item.BX5;
+                    row[34] = item.BX6;
+                    row[35] = item.PPbag;
+                    row[36] = item.PB;
+                    row[37] = item.BX1wgt;
+                    row[38] = item.BX2wgt;
+                    row[39] = item.BX3wgt;
+                    row[40] = item.BX4wgt;
+                    row[41] = item.BX5wgt;
+                    row[42] = item.BX6wgt;
+                    row[43] = item.PBWeight;
+                    row[44] = item.Partionwgt;
+                    row[45] = item.FormWgt;
+                    row[46] = item.PE_UW;
+                    row[47] = item.PRS1PE;
+                    row[48] = item.FO_UW;
+                    row[49] = item.CP_UW;
+                    row[50] = item.PRS1CP;
+                    row[51] = item.HorizontalSize;
+                    row[52] = item.VerticalSize;
+                    row[53] = item.SizeGroup;
+                    row[54] = item.ArticleNumber;
+                    row[55] = item.Gender;
+                    row[56] = item.ItemFullCode;
+                    row[57] = item.DeliveryNote;
+                    row[58] = item.InvoiceNo;
+                    row[59] = item.AddOpt1;
+                    row[60] = item.Article;
+                    row[61] = item.Season;
+                    row[62] = item.PositionText;
+                    row[63] = item.AddOpt4;
+                    row[64] = item.VoucherTypeNo;
+                    row[65] = item.T1;
+                    row[66] = item.T2;
+                    row[67] = item.T3;
+                    row[68] = item.T4;
+                    row[69] = item.T5;
+                    row[70] = item.Find;
+
+                    dt.Rows.Add(row);
+                }
+
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, ""));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", $"SaOrder_Register_{DateTime.Now.ToString("yyyy-MM-dd")}.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

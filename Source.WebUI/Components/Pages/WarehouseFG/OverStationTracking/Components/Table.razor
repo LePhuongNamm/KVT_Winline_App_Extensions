@@ -1,0 +1,92 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - @(isAdvanced ? "370" : "275")px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center" style="min-width: 200px">fBarcode</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Type</th>
+                    <th class="text-center">Reason</th>
+                    <th class="text-center">Cus</th>
+                    <th class="text-center">FG</th>
+                    <th class="text-center">DE</th>
+                    <th class="text-center" style="min-width: 300px">ItemName</th>
+                    <th class="text-center" style="min-width: 500px">ColorName</th>
+                    <th class="text-center" style="min-width: 200px">SizeName</th>
+                    <th class="text-center" style="min-width: 100px">OCKV No</th>
+                    <th class="text-center" style="min-width: 200px">StyleNo</th>
+                    <th class="text-center" style="min-width: 200px">Ordered</th>
+                    <th class="text-center" style="min-width: 200px">Customer</th>
+                    <th class="text-center" style="min-width: 300px">ToolingNo</th>
+                    <th class="text-center">Gender</th>
+                    <th class="text-center" style="min-width: 200px">ItemFullCode</th>
+                    <th class="text-center" style="min-width: 300px">OrderNumber</th>
+                    <th class="text-center" style="min-width: 200px">TakenBy</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center">@item.fBarcode</td>
+                    <td class="text-center">@string.Format("{0:#,##0.##}", item.QtyOrder ?? 0)</td>
+                    <td class="text-center">@item.AddOpt1</td>
+                    <td class="text-center">@item.Reason</td>
+                    <td class="text-center">@item.TitelCustomer</td>
+                    <td class="text-center">@item.FGScan</td>
+                    <td class="text-center">@item.PPScan</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.ColorName</td>
+                    <td>@item.SizeName</td>
+                    <td class="text-center">@item.PackingNo</td>
+                    <td>@item.StyleNo</td>
+                    <td class="text-center">@item.Ordered</td>
+                    <td>@item.Customer</td>
+                    <td>@item.ToolingNo</td>
+                    <td class="text-center">@item.Gender</td>
+                    <td class="text-center">@item.ItemFullCode</td>
+                    <td>@item.OrderNumber</td>
+                    <td class="text-center">@item.TakenBy</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                @if (objs.Count > 0)
+                {
+                    <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                        <td class="fw-bold">Total :</td>
+                        <td class="fw-bold"> @string.Format("{0:#,##0.##}", objs.Sum(x => x.QtyOrder ?? 0))</td>
+                        <td colspan="17"></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="19">No records found</td>
+                    </tr>
+                }
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@string.Format("{0:#,##0.##}", objs.Count)</b> records</span>
+
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter] public List<OverStationTracking> objs { get; set; } = new List<OverStationTracking>();
+    [Parameter] public int page { get; set; } = 1;
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+    [Parameter] public bool isAdvanced { get; set; } = false;
+}

@@ -1,0 +1,194 @@
+﻿
+<section class="sidebar">
+    <div class="user-panel">
+        <div class="pull-left image">
+            <img src="img/users.png">
+        </div>
+        <div class="pull-left info">
+            @if (_userInfo != null)
+            {
+                <p>@_userInfo.UserName</p>
+                <a href="#">
+                    <i class="fa fa-circle text-success"></i>
+                    @_userInfo.Role
+                </a>
+            }
+            else
+            {
+                <p>@_config[$"AppConfig:IsLocation"]</p>
+                <a href="#">
+                    <i class="fa fa-circle text-success"></i>
+                    @_config[$"AppConfig:IsVersion"]
+                </a>
+            }
+        </div>
+    </div>
+    <ul class="sidebar-menu">
+        <li class="menu-title" key="t-menu">Navigation</li>
+
+        @foreach (var item in _menuItems)
+        {
+            if (item.SubMenu.Count == 0)
+            {
+                <li class="treeview">
+                    <NavLink href="@(!string.IsNullOrEmpty(item.Link) ? item.Link : "#")">
+                        <i class="@item.Icon"></i>
+                        <span>@item.Text</span>
+                    </NavLink>
+                </li>
+            }
+            else
+            {
+                <li class="treeview @(item.IsExpanded ? "active" : "")">
+                    <a href="javascript:void(0);" @onclick="() => TogleMenu(item)">
+                        <i class="@item.Icon"></i>
+                        <span>@item.Text</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @foreach (var child in item.SubMenu)
+                        {
+                            <li>
+                                <NavLink class="navlink" href="@(!string.IsNullOrEmpty(child.Link) ? child.Link : "#")">
+                                    <i class="fa fa-caret-right"></i><span>@child.Text</span>
+                                </NavLink>
+                            </li>
+                        }
+                    </ul>
+                </li>
+            }
+        }
+    </ul>
+</section>
+
+@code {
+    protected string _currUrl = "";
+    protected CurrentUserInfoDTO? _userInfo;
+    protected List<MenuItem> _menuItems = new List<MenuItem>();
+
+    protected void TogleMenu(MenuItem item)
+    {
+        _menuItems.Where(c => c != item && c.IsExpanded).ToList().ForEach((x) => x.IsExpanded = false);
+        item.IsExpanded = !item.IsExpanded;            
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _userInfo = await _user.GetUserAsync();
+        var _uri = _nav.Uri.ToString().Replace(_nav.BaseUri, "");
+        _currUrl = _uri == "" ? "/Dashboard" : $"/{_uri}";
+        BindSidebarMenu();
+    }
+
+    protected void BindSidebarMenu()
+    {
+        _menuItems = new List<MenuItem>()
+        {
+            new MenuItem
+            {
+                 Text = "1. Dashboard",Link = "/Dashboard",Icon = "fa fa-desktop",IsExpanded = _currUrl.StartsWith("/Dashboard"),
+            },
+            new MenuItem
+            {
+                 Text = "2. Warehouse FG",Icon = "fa fa-hotel",IsExpanded = _currUrl.StartsWith("/WHS"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "2.1 Packing GL Label", Link = "/WHS/PackingGLLabel" },
+                     new MenuItem { Text = "2.2 Over Station Tracking", Link = "/WHS/OverStationTracking" },
+                     new MenuItem { Text = "2.3 WHS In Tracking", Link = "/WHS/WHSInTracking" },
+                     new MenuItem { Text = "2.4 Packing And Bill", Link = "/WHS/PackingAndBill" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "3. Sales",Icon = "fa fa-shopping-cart",IsExpanded = _currUrl.StartsWith("/Sales"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "3.1 Change ETD & Price", Link = "/Sales/ChangeETD" },
+                     new MenuItem { Text = "3.2 Box Overview Setting", Link = "/Sales/BoxOverviewSetting" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "4. KVT Winline",Icon = "fa fa-th-list",IsExpanded = _currUrl.StartsWith("/KVTWinline"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "4.1 Order Management", Link = "/KVTWinline/OrderManagement" },
+                     new MenuItem { Text = "4.2 Publication Barcode", Link = "/KVTWinline/PublicationBarcode" },
+                     new MenuItem { Text = "4.3 SeparationRecord", Link = "/KVTWinline/SeparationRecord" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "5. Laboratory",Icon = "fa fa-tablet-alt",IsExpanded = _currUrl.StartsWith("/Laboratory"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "5.1 Lab Test", Link = "/Laboratory/LabTest" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "6. ACS Film",Icon = "fa fa-certificate",IsExpanded = _currUrl.StartsWith("/ACSFilm"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "6.1 Order Management", Link = "/ACSFilm/OrderRegister" },
+                     new MenuItem { Text = "6.2 Publication Barcode", Link = "/ACSFilm/PublicationBarcode" },
+                     new MenuItem { Text = "6.3 Scan In Out", Link = "/ACSFilm/ScanInOut" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "7. QAC",Icon = "fa fa-weight",IsExpanded = _currUrl.StartsWith("/Qac"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "7.1 SSBC Whs In Tracking", Link = "/Qac/SSBCWhsInTracking" },
+                     new MenuItem { Text = "7.2 Color Swatch Plan", Link = "/Qac/ColorSwatchPlan" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "8. Decoration",Icon = "fa fa-wallet",IsExpanded = _currUrl.StartsWith("/Decoration"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "8.1 Sub Tracking", Link = "/Decoration/SubTracking" },
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "9. Reports",Icon = "fa fa-chart-bar",IsExpanded = _currUrl.StartsWith("/Reports"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "9.1 Prod Pending", Link = "/Reports/ProdPending" },
+                     new MenuItem { Text = "9.2 Prod Order Article", Link = "/Reports/ProdOrderArticle" },
+                     new MenuItem { Text = "9.3 Repacking Request", Link = "/Reports/RepackingRequest" },
+                     new MenuItem { Text = "9.4 Order Checking", Link = "/Reports/OrderChecking" },
+
+                 }
+            },
+            new MenuItem
+            {
+                 Text = "10. Extensions",Icon = "fa fa-globe",IsExpanded = _currUrl.StartsWith("/Extensions"),
+                 SubMenu = new List<MenuItem>
+                 {
+                     new MenuItem { Text = "10.1 Export Data Scanner", Link = "/Extensions/ExportDataScanner" },
+                     new MenuItem { Text = "10.2 Production Scanner", Link = "/Extensions/ProductionScanner" },
+                     new MenuItem { Text = "10.3 Production Feedback", Link = "/Extensions/ProductionFeedback" },
+                     new MenuItem { Text = "10.4 SSBC Feedback", Link = "/Extensions/SSBCFeedback" },
+                     new MenuItem { Text = "10.5 Barcode Search", Link = "/Extensions/BarcodeSearch" },
+                     new MenuItem { Text = "10.6 Production Component", Link = "/Extensions/ProdComponents" },
+                 }
+            },
+        };
+    }
+
+    public class MenuItem
+    {
+        public string Text { set; get; } = "";
+        public string Icon { set; get; } = "";
+        public string Link { set; get; } = "";
+        public bool IsExpanded { set; get; } = false;
+        public List<MenuItem> SubMenu { get; set; } = new List<MenuItem>();
+    }
+}

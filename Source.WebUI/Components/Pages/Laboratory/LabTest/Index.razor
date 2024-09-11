@@ -1,0 +1,231 @@
+﻿@page "/Laboratory/LabTest"
+@attribute [Authorize(Roles = "pla,man,qac,lab,r&d")]
+@using Source.WebUI.Components.Pages.Laboratory.LabTest.Components
+
+<PageTitle>Lab Test</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Lab Test"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "5. Laboratory", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "5.1 Lab Test", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((LabTestParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 mb-1">
+                    <div class="row">
+                        <div class="col-12 col-lg-6"></div>
+                        <div class="col-12 col-lg-6 text-end">
+                            <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                <i class="fa fa-file-excel fa-fw text-success"></i>
+                                Export Excel
+                            </button>
+                            <button class="btn btn-sm btn-action" @onclick="() =>  HandleOpenForm()">
+                                <i class="fa fa-file-import fa-fw text-primary"></i>
+                                Import Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <Table objs="_objs"/>
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+@if (_isShow)
+{
+    <Import OnCloseForm="() => _isShow = false" OnSetImport="(arg) => _imports = (List<LabTest>)arg" OnSubmitImport="async () => await HandleImportExcel()" />
+}
+
+@code {
+    protected bool _isShow = false;
+
+    protected List<LabTest> _objs = new List<LabTest>();
+    protected LabTestParameter _parameter = new LabTestParameter();
+    protected List<LabTest> _imports = new List<LabTest>();
+
+    protected async Task HandleChangeSearch(LabTestParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new LabTestParameter();
+        _objs = new List<LabTest>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _objs = await _wrapper.Lab.GetAll(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected void HandleOpenForm()
+    {
+        _imports = new List<LabTest>();
+        _isShow = true;
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("No", typeof(string));
+                dt.Columns.Add("Item", typeof(string));
+                dt.Columns.Add("Color", typeof(string));
+                dt.Columns.Add("Overall Test result", typeof(string));
+                dt.Columns.Add("Date Update", typeof(string));
+                dt.Columns.Add("Testing time", typeof(string));
+                dt.Columns.Add("Improve", typeof(string));
+                dt.Columns.Add("Lab test Result date", typeof(string));
+                dt.Columns.Add("Note", typeof(string));
+                dt.Columns.Add("Material", typeof(string));
+
+                dt.Columns.Add("QUV. Mark", typeof(string));
+                dt.Columns.Add("Internal QUV test result/ 3.0", typeof(string));
+                dt.Columns.Add("Nike QUV test result / 3.5", typeof(string));
+
+                dt.Columns.Add("Color Migration Internal Mark", typeof(string));
+                dt.Columns.Add("Color Migration IM Result", typeof(string));
+                dt.Columns.Add("Color Migration Nike Mark", typeof(string));
+                dt.Columns.Add("Color Migration NM Result", typeof(string));
+                dt.Columns.Add("Color Migration Final result", typeof(string));
+
+                dt.Columns.Add("Aging Mark", typeof(string));
+                dt.Columns.Add("Aging Result", typeof(string));
+
+                dt.Columns.Add("Hydrolysis Mark", typeof(string));
+                dt.Columns.Add("Hydrolysis Result", typeof(string));
+
+                dt.Columns.Add("CRF Test Cycle", typeof(string));
+                dt.Columns.Add("CRF Test Result", typeof(string));
+
+                dt.Columns.Add("Bonding Test Score", typeof(string));
+                dt.Columns.Add("Bonding Test Result", typeof(string));
+
+                dt.Columns.Add("Box", typeof(string));
+
+                foreach (var item in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = item.No;
+                    row[1] = item.ItemName;
+                    row[2] = item.ColorName;
+                    row[3] = item.OverallTestResult;
+                    row[4] = item.InputT != null ? item.InputT.Value.ToString("MM/dd/yyyy HH:mm") : "";
+                    row[5] = item.TestingTime;
+                    row[6] = item.Improve;
+                    row[7] = item.LabTestResultDate;
+                    row[8] = item.Note;
+                    row[9] = item.MaterialName;
+                    row[10] = item.QUV_QUVMark;
+                    row[11] = item.QUV_InternalQUVTestResult30;
+                    row[12] = item.QUV_NikeQUVTestResult35;
+
+                    row[13] = item.CM_InternalMark;
+                    row[14] = item.CM_IMResult;
+                    row[15] = item.CM_NikeMark;
+                    row[16] = item.CM_NMResult;
+                    row[17] = item.CM_FinalResult;
+
+                    row[18] = item.A_AgingMark;
+                    row[19] = item.A_Result;
+
+                    row[20] = item.H_Mark;
+                    row[21] = item.H_Result;
+
+                    row[22] = item.CRF_Cycle;
+                    row[23] = item.CRF_Result;
+
+                    row[24] = item.B_Score;
+                    row[25] = item.B_Result;
+
+                    row[26] = item.Box;
+
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Labtest Overview"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "LabtestOverview.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleImportExcel()
+    {
+        if (_imports.Count() > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                string _error = "";
+                foreach (var item in _imports)
+                {
+                    string ItemColorCode = $"{item.ItemCode}-{item.ColorCode}";
+                    var _check = await _wrapper.Lab.CheckItemColorCode(ItemColorCode);
+
+                    if (_check == 0)
+                        _error += $"{item.No};";
+                }
+
+                if (string.IsNullOrEmpty(_error))
+                {
+                    var _member = await _user.GetUserAsync();
+                    foreach(var item in _imports)
+                    {
+                        await _wrapper.Lab.Import(item, _member!.UserName);
+                    }
+                    _isShow = false;
+                    await FetchData();
+                    await _js.Notification("Import successfully.");
+                }
+                else
+                {
+                    await _js.Aleft($"No matching data found for the code : {_error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            _imports.Clear();
+            await _js.Loading(false);
+        } 
+    }
+}

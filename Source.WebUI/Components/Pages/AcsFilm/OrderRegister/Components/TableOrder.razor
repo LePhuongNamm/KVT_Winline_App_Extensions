@@ -1,0 +1,42 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th style="width: 10%" class="text-center">ProdOrderNo</th>
+                    <th style="width: 10%" class="text-center">PackingNo</th>
+                    <th style="width: 15%" class="text-center">Barcode</th>
+                    <th style="width: 15%" class="text-center">ItemFullCode</th>
+                    <th style="width: 15%" class="text-center">ItemName</th>
+                    <th style="width: 15%" class="text-center">ColorName</th>
+                    <th style="width: 10%" class="text-center">SizeName</th>
+                    <th style="width: 10%" class="text-center">QtyOrder</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td>@item.ProdOrderNo</td>
+                    <td>@item.PackingNo</td>
+                    <td>@item.Barcode</td>
+                    <td>@item.ItemFullCode</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.ColorName</td>
+                    <td>@item.SizeName</td>
+                    <td class="text-center">@item.OrderQty</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <td colspan="7"><b>Total: </b> </td>
+                    <td class="text-center"><b>@objs.Sum(x => x.OrderQty ?? 0).ToString("#,##0.##")</b></td>
+                </tr>
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<FilmProdOrder> objs { get; set; } = new List<FilmProdOrder>();
+
+}

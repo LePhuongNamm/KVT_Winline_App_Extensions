@@ -1,0 +1,114 @@
+﻿
+<div class="search-bar">
+    <div class="simple">
+        <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+        <div class="search-fields">
+            <form @onsubmit="async () => await OnChangeSearch.InvokeAsync(parameter)" @formname="filter-form">
+                <div class="row">
+                    <div class="col-12 col-lg-3">
+                        <div class="form-group">
+                            <label for="Barcode">
+                                Barcode
+                            </label>
+                            <InputText @bind-Value="parameter.Barcode"
+                                       id="Barcode" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="row">
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="PackingNo">
+                                        Packing No
+                                    </label>
+                                    <InputText @bind-Value="parameter.PackingNo"
+                                               id="PackingNo" type="text" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="SubName">
+                                        Sub Name
+                                    </label>
+                                    <InputSelect id="SubName" @bind-Value="parameter.SubName" class="form-select form-select-sm" style="height: 30px;">
+                                        <option value="">-- All --</option>
+                                        @foreach (var item in dropdownSubs)
+                                        {
+                                            <option value="@item.StrValue">@item.Label</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-group">
+                                    <label for="Status">
+                                        By PT
+                                    </label>
+                                    <DropDownList Id="Status" dropdowns="@dropdownStatus"
+                                                  initData="@parameter.Status" OnSetValue="@((arg) => parameter.Status = (string?)arg ?? "")" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-3">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <label for="FromDate">
+                                        FromDate
+                                    </label>
+                                    <InputText @bind-Value="parameter.FromDate"
+                                               id="FromDate" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <label for="DateScan">
+                                        ToDate
+                                    </label>
+                                    <InputText @bind-Value="parameter.ToDate"
+                                               id="ToDate" type="date" class="form-control form-control-sm" style="height: 30px;" />
+                                </div>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1">
+                            <i class="fas fa-search fa-fw"></i>
+                            <span class="hidden-md">
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-1">
+                        <label class="clear-search" for="btn"></label>
+                        <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async () => await OnResetSearch.InvokeAsync()">
+                            <i class="fas fa-sync fa-fw"></i>
+                            <span class="hidden-md">
+                                Refresh
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public SubTrackingParameter parameter { get; set; } = new SubTrackingParameter();
+
+    [Parameter] public List<DropDowList> dropdownScan { get; set; } = new List<DropDowList>();
+    [Parameter] public List<DropDowList> dropdownStatus { get; set; } = new List<DropDowList>();
+    [Parameter] public List<DropDowList> dropdownSubs { get; set; } = new List<DropDowList>();
+
+    [Parameter]
+    public EventCallback<SubTrackingParameter> OnChangeSearch { get; set; }
+
+    [Parameter]
+    public EventCallback OnResetSearch { get; set; }
+}

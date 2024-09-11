@@ -1,0 +1,74 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        <table class="datatable w-100 mb-0">
+            <thead>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    @foreach (DataColumn col in dataTable.Columns)
+                    {
+                        <th class="text-center" style="min-width: @(col.ColumnName == "Name" ? "500px" : "200px") ">@col.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in dataTable.Rows.Cast<DataRow>().Skip((CurrentPage - 1) * PageSize).Take(PageSize))
+                {
+                    <tr>
+                        @foreach (DataColumn col in dataTable.Columns)
+                        {
+                            <td>@row[col.ColumnName]</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@dataTable.Rows.Count</b> records</span>
+
+        </div>
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <div class="d-flex" style="float: right">
+                <button class="btn btn-sm btn-default mx-1" @onclick="PreviousPage" disabled="@IsPreviousDisabled">Previous</button>
+                <span style="margin-top: .1rem">Page @CurrentPage of @TotalPages</span>
+                <button class="btn btn-sm btn-default mx-1" @onclick="NextPage" disabled="@IsNextDisabled">Next</button>
+            </div>    
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public DataTable dataTable { get; set; } = new DataTable();
+
+    private int CurrentPage = 1;
+    private int PageSize = 100;
+    private int TotalPages = 0;
+
+    private bool IsPreviousDisabled => CurrentPage == 1;
+    private bool IsNextDisabled => CurrentPage == TotalPages;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        CurrentPage = 1;
+        TotalPages = (int)Math.Ceiling(dataTable.Rows.Count / (double)PageSize);
+    }
+
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+}

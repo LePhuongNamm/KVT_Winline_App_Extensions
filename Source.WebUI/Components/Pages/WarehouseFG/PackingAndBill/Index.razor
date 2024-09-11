@@ -1,0 +1,263 @@
+﻿@page "/WHS/PackingAndBill"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.WarehouseFG.PackingAndBill.Components
+
+<PageTitle>Packing And Bill</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Packing And Bill"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "2. Warehouse FG", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "2.4 Packing And Bill", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <div class="search-bar">
+                <div class="simple">
+                    <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-search"></i></div></div>
+                    <div class="search-fields">
+                        <div class="row">
+                            <div class="col-12 col-lg-3">
+                                <div class="form-group">
+                                    <label for="PackingNo">
+                                        PackingNo
+                                    </label>
+                                    <input id="PackingNo" type="text" class="form-control form-control-sm" style="height: 30px;"
+                                           value="@_packingNo" @onchange="@(async(ChangeEventArgs arg) => {_packingNo = arg?.Value?.ToString() ?? "";await HandlePackingNoChange();})" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="clear-search" for="btn"></label>
+                                <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" @onclick="async () => await HandlePackingNoChange()">
+                                    <i class="fas fa-search fa-fw"></i>
+                                    <span class="hidden-md">
+                                        Search
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-1">
+                                <label class="clear-search" for="btn"></label>
+                                <button type="button" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="@(async () => {_packingNo = "";await HandlePackingNoChange();})">
+                                    <i class="fas fa-ban fa-fw"></i>
+                                    <span class="hidden-md">
+                                        Refresh
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 mb-1">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="d-flex w-100">
+                                <div style="width: 12%" class="text-center">
+                                    <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                                </div>
+                                <input type="text" style="height:28px;background-color: #fff;border: 1px solid #e2e2e2;width: 88%"
+                                       value="Selected @_packingSaOrderSelecteds.Count rows" class="form-control form-control-sm rounded-0" readonly>
+                            </div>
+                        </div>
+                        @if (_packingSaOrderSelecteds.Count > 0)
+                        {
+                            <div class="col-12 col-md-2">
+                                <button type="submit" id="btn" class="btn btn-action w-100 btn-sm rounded-1" style="height: 28px" @onclick="async() => await HandleGeneralPackingDetail()">
+                                    <i class="fas fa-plus fa-fw text-primary"></i>
+                                    Packing Register
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <button type="submit" id="btn" class="btn btn-action w-100 btn-sm rounded-1" style="height: 28px" @onclick="async() =>await HandleDeletePackingSaOrder()">
+                                    <i class="fas fa-trash fa-fw text-danger"></i>
+                                    Delete Delivery
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px" @onclick="() => _isDelivery = true">
+                        <i class="fas fa-list fa-fw text-success"></i>
+                        Select Delivery
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 mb-1" style="height: calc(100vh - 800px);">
+            <SaleOrderTable objs="_packingSaOrders"
+                            objSelecteds="_packingSaOrderSelecteds" OnSetSelected="(arg) => _packingSaOrderSelecteds = (List<string>)arg" />
+        </div>
+        <hr />
+        @if (_packingDetails.Count > 0)
+        {
+            <div class="col-lg-12 mb-1">
+                <button type="submit" id="btn" class="btn btn-action btn-sm rounded-1" style="height: 28px" @onclick="() => _isDelivery = true">
+                    <i class="fas fa-eye fa-fw text-success"></i>
+                    Packing Overview
+                </button>
+                @if(_packingDetails.Where(x => (x.IsGeneral ?? 0) == 0).Count() > 0)
+                {
+                    <button id="btn" class="btn btn-action btn-sm rounded-1 mx-1" style="height: 28px" @onclick="async() => await HandleGeneralPackingBox()">
+                        <i class="fas fa-plus fa-fw text-primary"></i>
+                        Packing General
+                    </button>
+                }  
+            </div>
+            <div class="col-lg-12 mb-1" style="height: calc(100vh - 800px);">
+                <DetailTable objs="_packingDetails"/>
+            </div>
+        }
+    </div>
+</section>
+
+<DeliveryTable dropdownItemFullCode="_dropdownFullCode" dropdownCustomer="_dropdownCustomer" isShow="_isDelivery"
+               packingDeliveries="_packingDeliveries.Where(x => !_deliverySelecteds.Contains(x.DeliveryNote!)).ToList()" OnGetPackingDeliveries="async(arg) => await HandleGetListDelivery((WHS_Packing_Delivery_Parameter)arg)"
+               OnCloseForm="() => _isDelivery = false" OnSetSelected="async (arg) => await HandleAddPackingSaOrder((List<string>)arg)" />
+
+@code {
+    protected bool _isDelivery = false;
+    protected string _packingNo = "";
+
+    protected List<WHS_Packing_Delivery> _packingDeliveries = new List<WHS_Packing_Delivery>();
+    protected List<string> _deliverySelecteds = new List<string>();
+
+    protected List<WHS_Packing_SaOrder> _packingSaOrders = new List<WHS_Packing_SaOrder>();
+    protected List<string> _packingSaOrderSelecteds = new List<string>();
+
+    protected List<WHS_Packing_Details> _packingDetails = new List<WHS_Packing_Details>();
+
+    protected List<ItemFullCodeDropdown> _dropdownFullCode = new List<ItemFullCodeDropdown>();
+    protected List<DropDowList> _dropdownCustomer = new List<DropDowList>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Task[] tasks = new Task[]
+       {
+            Task.Run(async () => _dropdownCustomer = await _wrapper.KVTWL.ScanStatusLoadDropdown("Customer")),
+            Task.Run(async () => _dropdownFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown())
+       };
+        await Task.WhenAll(tasks);
+    }
+
+    protected async Task HandlePackingNoChange()
+    {
+        await _js.Loading(true);
+        if (string.IsNullOrEmpty(_packingNo))
+            _packingDetails = new List<WHS_Packing_Details>();
+        else
+            _packingDetails = await _wrapper.WareHouseFG.PackingDetailLoad(_packingNo);
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleGetListDelivery(WHS_Packing_Delivery_Parameter source)
+    {
+        await _js.Loading(true);
+        if (!string.IsNullOrEmpty(source.TitleCustomer) || !string.IsNullOrEmpty(source.Item) || !string.IsNullOrEmpty(source.Size) ||
+                !string.IsNullOrEmpty(source.Color) || !string.IsNullOrEmpty(source.DeliveryDate) || !string.IsNullOrEmpty(source.DeliveryNote))
+        {
+            _packingDeliveries = await _wrapper.WareHouseFG.PackingGetDeliveries(source);
+        }
+        else
+        {
+            _packingDeliveries = new List<WHS_Packing_Delivery>();
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleAddPackingSaOrder(List<string> sources)
+    {
+        if (sources.Count > 0)
+        {
+            await _js.Loading(true);
+
+            sources.ForEach(x =>
+            {
+                if (!_deliverySelecteds.Contains(x))
+                    _deliverySelecteds.Add(x);
+            });
+
+            _packingSaOrders = await _wrapper.WareHouseFG.PackingGetSaOrders(_deliverySelecteds);
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleDeletePackingSaOrder()
+    {
+        bool _confirm = await _js.Confirm($"Are you sure want to delete these records?");
+        if (_confirm)
+        {
+            foreach (var item in _packingSaOrderSelecteds)
+            {
+                _packingSaOrders.RemoveAll(x => x.DeliveryNote == item);
+            }
+            _packingSaOrderSelecteds.Clear();
+            _deliverySelecteds.Clear();
+        }
+    }
+
+    protected async Task HandleGeneralPackingDetail()
+    {
+        bool _confirm = await _js.Confirm($"Are you sure want to general packing detail these records?");
+        if (_confirm)
+        {
+            await _js.Loading(true);
+            try
+            {
+                var _identity = await _user.GetUserAsync();
+                var _result = await _wrapper.WareHouseFG.PackingDetaiGeneral(_packingNo, _identity!.UserName, _packingSaOrderSelecteds);
+                if (_result?.Error == 0)
+                {
+                    _deliverySelecteds = new List<string>();
+                    _packingDeliveries = new List<WHS_Packing_Delivery>();
+                    _packingSaOrders = new List<WHS_Packing_SaOrder>();
+                    _packingSaOrderSelecteds = new List<string>();
+                    _packingNo = _result.Msg ?? "";
+                    await HandlePackingNoChange();
+                    await _js.Notification("General packing detail successfully.");
+                }
+                else
+                {
+                    await _js.Aleft(_result?.Msg ?? "Error!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        } 
+    }
+
+    protected async Task HandleGeneralPackingBox()
+    {
+        bool _confirm = await _js.Confirm($"Are you sure want to general box packing these records?");
+        if (_confirm)
+        {
+            await _js.Loading(true);
+            try
+            {
+                var _identity = await _user.GetUserAsync();
+                var _result = await _wrapper.WareHouseFG.PackingBoxGeneral(_packingNo, _identity!.UserName);
+                if (_result?.Error == 0)
+                {
+                    await HandlePackingNoChange();
+                    await _js.Notification("General packing box successfully.");
+                }
+                else
+                {
+                    await _js.Aleft(_result?.Msg ?? "Error!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}

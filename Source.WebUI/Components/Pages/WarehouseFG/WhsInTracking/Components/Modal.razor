@@ -1,0 +1,54 @@
+﻿@if (isShow)
+{
+    <div class="modal rounded-0" tabindex="-1">
+        <div class="modal-dialog" style="max-width:600px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fa fa-file-import"></i>&ensp;
+                        Update Option Input
+                    </h5>
+                    <button type="button" class="btn-close" style="color: #fff" @onclick="async() =>await OnCloseForm.InvokeAsync()"></button>
+                </div>
+                <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-12">
+                            <div class="form-group">
+                                <label for="OptionInput">
+                                    OptionInput
+                                </label>
+                                <DropDownList Id="OptionInput" initData="@selected" dropdowns="@dropdown" OnSetValue="@((arg) => selected = (string?)arg ?? "")" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer rounded-0">
+                    <button type="button" class="btn btn-dark btn-sm" @onclick="async() => await OnCloseForm.InvokeAsync()">
+                        <i class="fa fa-ban fa-fw"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-primary" @onclick="@(async() => await OnSubmitForm.InvokeAsync(selected ?? ""))">
+                        <i class="fa fa-save fa-fw"></i>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool isShow { get; set; } = false;
+
+    [Parameter]
+    public List<DropDowList> dropdown { get; set; } = new List<DropDowList>();
+
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSubmitForm { get; set; }
+
+    protected string? selected;
+}

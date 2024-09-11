@@ -1,0 +1,80 @@
+﻿<div class="row">
+    <div class="col-7">
+        <input value="@_date" class="text-box" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" @onchange="(ChangeEventArgs arg) => HandleDateChange(arg)" />
+    </div>
+    <div class="col-5">
+        @{
+            var _dropdowns = new List<DropDowList>();
+            _dropdowns.Add(new DropDowList { StrValue = "00:00", Label = "00:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "01:00", Label = "01:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "02:00", Label = "02:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "03:00", Label = "03:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "04:00", Label = "04:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "05:00", Label = "05:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "06:00", Label = "06:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "07:00", Label = "07:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "08:00", Label = "08:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "09:00", Label = "09:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "10:00", Label = "10:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "11:00", Label = "11:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "12:00", Label = "12:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "13:00", Label = "13:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "14:00", Label = "14:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "15:00", Label = "15:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "16:00", Label = "16:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "17:00", Label = "17:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "18:00", Label = "18:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "19:00", Label = "19:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "20:00", Label = "20:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "21:00", Label = "21:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "22:00", Label = "22:00" });
+            _dropdowns.Add(new DropDowList { StrValue = "23:00", Label = "23:00" });
+        }
+        <DropDownList Id="drMachine" dropdowns="@_dropdowns" initData="@_time"
+                      OnSetValue="(arg) => HandleTimeChange(arg.ToString())" />
+    </div>
+</div>
+
+@code {
+    protected string? _date;
+    protected string? _time;
+
+    [Parameter] public EventCallback<DateTime?> OnSetDateTime { get; set; }
+
+    [Parameter] public DateTime? DefaultValue { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (DefaultValue != null)
+        {
+            _date = DefaultValue.Value.ToString("yyyy-MM-dd");
+            _time = DefaultValue.Value.ToString("HH:mm");
+        }
+
+    }
+
+    protected async Task HandleDateChange(ChangeEventArgs arg)
+    {
+        _date = arg.Value?.ToString();
+        await HandleSetDateTime();
+    }
+
+    protected async Task HandleTimeChange(string arg)
+    {
+        _time = arg;
+        await HandleSetDateTime();
+    }
+
+    protected async Task HandleSetDateTime()
+    {
+        if(!string.IsNullOrEmpty(_date) && !string.IsNullOrEmpty(_time))
+        {
+            var _source = DateTime.Parse(_date + " " + _time);
+            await OnSetDateTime.InvokeAsync(_source);
+        }
+        else
+        {
+            await OnSetDateTime.InvokeAsync(null);
+        }
+    }
+}

@@ -1,0 +1,417 @@
+﻿@page "/Sales/ChangeETD"
+@attribute [Authorize(Roles = "sal,man,r&d")]
+
+<PageTitle>Change ETD & Price For Winline</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Change ETD & Price For Winline"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "3. Sales", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "3.1 Change ETD", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <div class="search-bar">
+                <div class="simple">
+                    <div class="search-icon"><div class="icon-wrapper"><i class="fas fa-file-import"></i></div></div>
+                    <div class="search-fields">
+                        <div class="row">
+                            <div class="col-12 col-lg-2">
+                                <div class="form-group">
+                                    <label for="Item">
+                                        Type :
+                                    </label>
+                                    <select class="form-select form-select-sm" style="height: 30px;" value="@_type" @onchange="(ChangeEventArgs e) =>  HandleTypeChange(e)">
+                                        <option value="">-- none --</option>
+                                        <option value="ETD">Change ETD</option>
+                                        <option value="Price">Change Price OC</option>
+                                        <option value="PriceDN">Change Price DN</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(_type))
+                            {
+                                <div class="col-12 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="Item">
+                                            File import :
+                                        </label>
+                                        <input type="file" class="form-control form-control-sm" style="height: 30px;" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                                    </div>
+                                </div>
+                                @if (_imports != null && _imports.Count() > 0)
+                                {
+                                    <div class="col-12 col-lg-1">
+                                        <label class="clear-search" for="btn"></label>
+                                        <button type="submit" id="btn" class="btn btn-primary w-100 btn-sm rounded-1" @onclick="async() => await HandleInsertHistory()">
+                                            <i class="fas fa-file-import fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Import
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="col-12 col-lg-1">
+                                        <label class="clear-search" for="btn"></label>
+                                        <button type="submit" id="btn" class="btn btn-secondary w-100 btn-sm rounded-1" @onclick="async() => await HandleRefech()">
+                                            <i class="fas fa-ban fa-fw"></i>
+                                            <span class="hidden-md">
+                                                Cancel
+                                            </span>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 mb-1">
+            <div class="row">
+                <div class="col-lg-6" style="padding-top: 3px;">
+                    <span>Total : @(_imports != null ? _imports.Count : "0") row</span>
+                </div>
+                <div class="col-lg-6 text-end">
+                    @if (!string.IsNullOrEmpty(_type))
+                    {
+                        <button class="btn btn-action btn-sm rounded-1 mx-1" @onclick="async() => await DowloadTemplate()">
+                            <i class="fa fa-download text-secondary"></i> Download Template
+                        </button>
+                    }
+                    @if (_imports != null && _imports.Count > 0)
+                    {
+                        <button class="btn btn-action btn-sm rounded-1" @onclick="async() => await ExportExcel()">
+                            <i class="fa fa-file-excel text-success"></i> Export Excel
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            @if (_imports != null && _imports.Count > 0)
+            {
+                <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 240px);">
+                    <table class="datatable w-100 mb-0" style="font-size: 14px;">
+                        <thead>
+                            <tr class="tr-fixed">
+                                <th class="text-center">OrderNo</th>
+                                <th class="text-center">@(_type == "ETD" ? "ETD Old" : "Price Old")</th>
+                                <th class="text-center">@(_type == "ETD" ? "ETD New" : "Price New")</th>
+                                @if (_type == "ETD")
+                                {
+                                    <th class="text-center">PositionText</th>
+                                }
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (_imports != null && _imports.Count > 0)
+                            {
+                                foreach (var item in _imports)
+                                {
+                                    <tr>
+
+                                        <td>@item.OrderNo</td>
+                                        <td>@item.OldValue</td>
+                                        <td>@item.NewValue</td>
+                                        @if (_type == "ETD")
+                                        {
+                                            <td>@item.PositionText</td>
+                                        }
+                                        <td>@_inputM</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">
+                                        No Records Found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-primary mt-1" role="alert">
+                    No record found
+                </div>
+            }
+        </div>
+    </div>
+</section>
+@code {
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+    protected List<ChangeETD>? _imports;
+    protected string _type = "";
+    protected string _inputM = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _identity = await _user.GetUserAsync();
+        _inputM = _identity?.UserName ?? "";
+    }
+
+    protected async Task HandleRefech()
+    {
+        await Task.Delay(1);
+        _type = "";
+        _imports = new List<ChangeETD>();
+        _inputFileId = Guid.NewGuid().ToString();
+    }
+
+    protected void HandleTypeChange(ChangeEventArgs args)
+    {
+        _imports = new List<ChangeETD>();
+        _inputFileId = Guid.NewGuid().ToString();
+
+        string? value = args.Value?.ToString();
+        _type = value ?? "";
+    }
+
+    protected async Task DowloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            string _fileName = _type == "ETD" ? "Import_Change_ETD_Template.xlsx" : "Import_Change_Price_Template.xlsx";
+            var path = Path.Combine(_env.WebRootPath, "files", _fileName);
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate(_fileName, streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task ExportExcel()
+    {
+        if (_imports != null && _imports.Count() > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                if (_type == "ETD")
+                {
+                    dt.Columns.Add("OrderNo", typeof(string));
+                    dt.Columns.Add("ETD Old", typeof(string));
+                    dt.Columns.Add("ETD New", typeof(string));
+                    dt.Columns.Add("PositionText", typeof(string));
+                    dt.Columns.Add("User", typeof(string));
+
+                    foreach (var item in _imports)
+                    {
+                        DataRow row = dt.NewRow();
+                        row[0] = item.OrderNo ?? "";
+                        row[1] = item.OldValue ?? "";
+                        row[2] = item.NewValue ?? "";
+                        row[3] = item.PositionText ?? "";
+                        row[4] = _user;
+                        dt.Rows.Add(row);
+                    }
+
+                    var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Change ETD Overview"));
+                    using var streamRef = new DotNetStreamReference(stream: fileStream);
+                    await _js.InvokeVoidAsync("downloadFileFromStream", $"ChangeETD_{_user}_{DateTime.Now.ToString("MM-dd-yyyy")}.xlsx", streamRef);
+                }
+                else
+                {
+                    dt.Columns.Add("OrderNo", typeof(string));
+                    dt.Columns.Add("Price Old", typeof(string));
+                    dt.Columns.Add("Price New", typeof(string));
+                    dt.Columns.Add("User", typeof(string));
+
+                    foreach (var item in _imports)
+                    {
+                        DataRow row = dt.NewRow();
+                        row[0] = item.OrderNo ?? "";
+                        row[1] = item.OldValue ?? "";
+                        row[2] = item.NewValue ?? "";
+                        row[3] = _user;
+                        dt.Rows.Add(row);
+                    }
+
+                    var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Change Price Overview"));
+                    using var streamRef = new DotNetStreamReference(stream: fileStream);
+                    await _js.InvokeVoidAsync("downloadFileFromStream", $"ChangePrice_{_user}_{DateTime.Now.ToString("MM-dd-yyyy")}.xlsx", streamRef);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    _imports = new List<ChangeETD>();
+                    var _checkFile = ValidateFile(dt);
+                    if (!_checkFile)
+                    {
+                        _inputFileId = Guid.NewGuid().ToString();
+                        await _js.Aleft("Please select the correct file.");
+                    }
+                    else
+                    {
+                        var _checkData = ValidateData(dt);
+                        if (_checkData.Count > 0)
+                        {
+                            _inputFileId = Guid.NewGuid().ToString();
+                            string errorMessage = string.Join(",", (_checkData.Select(p => p + 2).ToList()));
+                            await _js.Aleft($"File error line number : {errorMessage}");
+                        }
+                        else
+                        {
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                var _obj = new ChangeETD();
+                                var _oldValue = _type == "ETD" ? await _wrapper.Sales.GetEtdOldByOrderNo(dt.Rows[i]["OrderNo"].ToString() ?? "")
+                                                               : await _wrapper.Sales.GetPriceOldByOrderNo(dt.Rows[i]["OrderNo"].ToString() ?? "");
+                                _obj.Type = _type;
+                                _obj.OrderNo = dt.Rows[i]["OrderNo"].ToString() ?? "";
+                                _obj.OldValue = _oldValue ?? "";
+                                _obj.NewValue = _type == "ETD" ? ConvertHelper.ConvertDateFromExcel(dt.Rows[i]["ETDNew"].ToString() ?? "") : dt.Rows[i]["PriceNew"].ToString() ?? "";
+                                _obj.PositionText = _type == "ETD" ? dt.Rows[i]["PositionText"].ToString() ?? "" : "";
+                                _imports!.Add(_obj);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    _inputFileId = Guid.NewGuid().ToString();
+                    await _js.Aleft("No data.");
+                }
+            }
+            else
+            {
+                _inputFileId = Guid.NewGuid().ToString();
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleInsertHistory()
+    {
+        if (_imports != null && _imports.Count() > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                string _codeImport = $"{_inputM}-{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+
+                foreach (var obj in _imports)
+                {
+                    var _source = new TblETDChangeHistory();
+                    _source.CodeImport = _codeImport;
+                    _source.OrderNo = obj.OrderNo;
+                    _source.Price = (obj.Type == "Price" || obj.Type == "PriceDN") ? decimal.Parse(obj.NewValue) : null;
+                    _source.ETD = obj.Type == "ETD" ? DateTime.Parse(obj.NewValue) : null;
+                    _source.PositionText = obj.PositionText;
+                    await _wrapper.Sales.InsertHistory(_source);
+                }
+
+                var _check = await _wrapper.Sales.CheckCodeImportHistory(_codeImport);
+                if (_check > 0)
+                    await HandleConfirmWL(_codeImport);
+                else
+                    await _js.Aleft("Can not be import at this time. Please contact IT support.");
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+
+        }
+    }
+
+    protected async Task HandleConfirmWL(string codeImport)
+    {
+        await _js.Loading(true);
+        try
+        {
+            switch (_type)
+            {
+                case "ETD":
+                    await _wrapper.Sales.ChangeETDToWL(codeImport);
+                    break;
+                case "Price":
+                    await _wrapper.Sales.ChangePriceToWL(codeImport);
+                    break;
+                case "PriceDN":
+                    await _wrapper.Sales.ChangePriceForDnToWL(codeImport);
+                    break;
+                default:
+                    break;
+            }
+            await _js.Notification("Import successfully.");
+            await HandleRefech();
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected bool ValidateFile(DataTable dt)
+    {
+        bool _result = true;
+
+        string[] columnNames = dt.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToArray();
+
+        if ((_type == "ETD" && !columnNames.Contains("ETDNew")) || (_type == "Price" && !columnNames.Contains("PriceNew")))
+            _result = false;
+
+        return _result;
+    }
+
+    protected List<int> ValidateData(DataTable dt)
+    {
+        List<int> val = new List<int>();
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            if (string.IsNullOrEmpty(dt.Rows[i]["OrderNo"].ToString()) ||
+                    (_type == "ETD" && string.IsNullOrEmpty(dt.Rows[i]["ETDNew"].ToString())) ||
+                        ((_type == "Price" || _type == "PriceDN") && string.IsNullOrEmpty(dt.Rows[i]["PriceNew"].ToString())))
+            {
+                val.Add(i);
+            }
+        }
+        return val;
+    }
+}

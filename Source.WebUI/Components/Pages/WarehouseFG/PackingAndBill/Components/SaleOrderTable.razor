@@ -1,0 +1,153 @@
+﻿<div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 800px);">
+    @{
+        var results = from p in objs
+                      group p by new { p.DeliveryNote, p.DeliveryDate, p.ColorName, p.ItemName, p.TitelCustomer,p.OrderNumber,p.StyleNo } into g
+                      select new
+                      {
+                          DeliveryNote = g.Key.DeliveryNote,
+                          DeliveryDate = g.Key.DeliveryDate,
+                          ColorName = g.Key.ColorName,
+                          ItemName = g.Key.ItemName,
+                          TitelCustomer = g.Key.TitelCustomer,
+                          OrderNumber = g.Key.OrderNumber,
+                          StyleNo = g.Key.StyleNo,
+                          Items = g.ToList()
+                      };
+    }
+    <BlazorTable Class="datatable w-100 mb-0" Items="results" Context="item">
+        <TableHeadTemplate>
+            <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                <th class="text-center" style="width: 20px">
+                    <input type="checkbox" class="form-check-input" checked=@((objSelecteds.Count > 0 && objSelecteds.Count == objs.Select(x => x.DeliveryNote).Distinct().Count()) ? true : false)
+                           @onchange="(EventArgs) =>  HandleCheckBoxAllClick(EventArgs.Value ?? false)" />
+                </th>
+                <th class="text-center" style="min-width: 100px">DNKV No</th>
+                <th class="text-center" style="min-width: 100px">DeliveryDate</th>
+                <th class="text-center">Cus</th>
+                <th class="text-center" style="min-width: 300px">DPO</th>
+                <th class="text-center" style="min-width: 150px">StyleNo</th>
+                <th class="text-center" style="min-width: 200px">ItemName</th>
+                <th class="text-center" style="min-width: 300px">ColorName</th>
+                <th class="text-center" style="min-width: 300px">SizeName</th>
+                <th class="text-center">Qty</th>
+                <th class="text-center" style="min-width: 100px">Ordered</th>
+                <th class="text-center" style="min-width: 300px">Customer</th>
+                <th class="text-center">BoxType</th>
+                <th class="text-center">Weight</th>
+                <th class="text-center" style="min-width: 300px">ToolingNo</th>
+                <th class="text-center">BX1</th>
+                <th class="text-center">BX2</th>
+                <th class="text-center">BX3</th>
+                <th class="text-center">BX4</th>
+                <th class="text-center">BX5</th>
+                <th class="text-center">BX6</th>
+                <th class="text-center">PPbag</th>
+                <th class="text-center">PB</th>
+            </tr>
+        </TableHeadTemplate>
+        <TableRowTemplate>
+            @{
+                var firtRow = item.Items.FirstOrDefault();
+            }
+             <tr>
+                <td class="text-center" rowspan="@item.Items.Count()">
+                    <input type="checkbox" class="form-check-input" checked=@(objSelecteds.Contains(item.DeliveryNote!) ? true : false)
+                           @onchange="(EventArgs) => HandleCheckBoxItemClick(item.DeliveryNote!,EventArgs.Value ?? false)" />
+
+                </td>
+                <td class="text-center" rowspan="@item.Items.Count()">@item.DeliveryNote</td>
+                <td class="text-center" rowspan="@item.Items.Count()">@(item.DeliveryDate != null ? item.DeliveryDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                <td class="text-center" rowspan="@item.Items.Count()">@item.TitelCustomer</td>
+                <td rowspan="@item.Items.Count()">@item.OrderNumber</td>
+                <td class="text-center" rowspan="@item.Items.Count()">@item.StyleNo</td>
+                <td rowspan="@item.Items.Count()">@item.ItemName</td>
+                <td rowspan="@item.Items.Count()">@item.ColorName</td>
+
+                <td>@firtRow?.SizeName</td>
+                <td class="text-center">@(firtRow?.QtyOrder != null ? firtRow?.QtyOrder.Value.ToString("#,##0.##") : "0")</td>   
+                <td>@firtRow?.Ordered</td>
+                <td>@firtRow?.Customer</td>
+                <td class="text-center">@firtRow?.BoxType</td>
+                <td class="text-center">@firtRow?.Weight</td>
+                <td>@firtRow?.ToolingNo</td>
+                <td class="text-center">@firtRow?.BX1</td>
+                <td class="text-center">@firtRow?.BX2</td>
+                <td class="text-center">@firtRow?.BX3</td>
+                <td class="text-center">@firtRow?.BX4</td>
+                <td class="text-center">@firtRow?.BX5</td>
+                <td class="text-center">@firtRow?.BX6</td>
+                <td class="text-center">@firtRow?.PPbag</td>
+                <td class="text-center">@firtRow?.PB</td>
+             </tr>
+            @if (item?.Items.Count > 1)
+            {
+                foreach (var child in item.Items.Skip(1))
+                {
+                    <tr>
+                        <td>@child.SizeName</td>
+                        <td class="text-center">@(child.QtyOrder != null ? child.QtyOrder.Value.ToString("#,##0.##") : "0")</td>
+                        <td>@child.Ordered</td>
+                        <td>@child.Customer</td>
+                        <td class="text-center">@child.BoxType</td>
+                        <td class="text-center">@child.Weight</td>
+                        <td>@child.ToolingNo</td>
+                        <td class="text-center">@child.BX1</td>
+                        <td class="text-center">@child.BX2</td>
+                        <td class="text-center">@child.BX3</td>
+                        <td class="text-center">@child.BX4</td>
+                        <td class="text-center">@child.BX5</td>
+                        <td class="text-center">@child.BX6</td>
+                        <td class="text-center">@child.PPbag</td>
+                        <td class="text-center">@child.PB</td>
+                    </tr>
+                }
+            }
+        </TableRowTemplate>
+        <TableFootTemplate>
+            <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                <td colspan="9"><b>Total: </b> </td>
+                <td class="text-center"><b>@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</b></td>
+                <td colspan="13"></td>
+            </tr>
+        </TableFootTemplate>
+    </BlazorTable>
+</div>
+
+@code {
+    [Parameter] public List<WHS_Packing_SaOrder> objs { get; set; } = new List<WHS_Packing_SaOrder>();
+
+    [Parameter] public List<string> objSelecteds { get; set; } = new List<string>();
+    [Parameter] public EventCallback<List<string>> OnSetSelected { get; set; }
+
+    protected async Task HandleCheckBoxAllClick(object checkValue)
+    {
+        if ((bool)checkValue)
+        {
+            foreach (var obj in objs)
+            {
+                if (!objSelecteds.Contains(obj.DeliveryNote!))
+                    objSelecteds.Add(obj.DeliveryNote!);
+            }
+        }
+        else
+        {
+            objSelecteds.Clear();
+        }
+        await OnSetSelected.InvokeAsync(objSelecteds);
+    }
+
+    protected async Task HandleCheckBoxItemClick(string source, object checkValue)
+    {
+        if ((bool)checkValue)
+        {
+            if (!objSelecteds.Contains(source))
+                objSelecteds.Add(source);
+        }
+        else
+        {
+            if (objSelecteds.Contains(source))
+                objSelecteds.Remove(source);
+        }
+        await OnSetSelected.InvokeAsync(objSelecteds);
+    }
+}

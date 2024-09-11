@@ -1,0 +1,166 @@
+﻿
+<div class="modal rounded-0" tabindex="-1">
+    <div class="modal-dialog" style="max-width:600px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa fa-file-import"></i>&ensp;
+                    Import
+                </h5>
+                <button type="button" class="btn-close" style="color: #fff" @onclick="async() =>await OnCloseForm.InvokeAsync()"></button>
+            </div>
+            <div class="modal-body rounded-0 data-scrollbar" style="max-height: calc(100vh - 160px);">
+                <div class="row g-3">
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label for="DateTransfer">
+                                Date Transfer
+                            </label>
+                            <input id="DateTransfer" class="form-control" type="date" @onchange="@((ChangeEventArgs arg) => _import.DateTransfer = arg?.Value?.ToString() ?? "")" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <label for="SubTransfer">
+                                Sub Transfer
+                            </label>
+                            <select class="form-select" value="@_import.SubTransfer" @onchange="@((ChangeEventArgs arg) => _import.SubTransfer = arg?.Value?.ToString() ?? "")">
+                                <option value="">-- None --</option>
+                                @foreach (var item in SubNames)
+                                {
+                                    <option value="@item.StrValue">@item.Label</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(_import.DateTransfer) && !string.IsNullOrEmpty(_import.SubTransfer))
+                    {
+                        <div class="col-12 col-md-12">
+                            <div class="form-group">
+                                <label for="Filedirectory">
+                                    File directory
+                                </label>
+                                <input type="file" id="Filedirectory" class="form-control" @key=@(_inputFileId) @ref="_elementReference" @onchange="async() => await HandleFileChange()" />
+                            </div>
+                        </div>
+                    }
+                    <div class="col-12 col-md-12 data-scrollbar" style="max-height: calc(100vh - 300px);">
+                        <div class="alert alert-primary" role="alert">
+                            @($"Upload total: {_import.Barcodes.Count} rows / {_message} prs")
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <button type="button" class="btn btn-dark btn-sm" @onclick="async() =>await OnCloseForm.InvokeAsync()">
+                    <i class="fa fa-ban fa-fw"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-sm btn-primary" @onclick="async () => await OnSubmitImport.InvokeAsync()">
+                    <i class="fa fa-save fa-fw"></i>
+                    Import
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public EventCallback OnCloseForm { get; set; }
+
+    [Parameter]
+    public EventCallback<SubControlImportDTO> OnSetImport { get; set; }
+
+    [Parameter]
+    public List<DropDowList> SubNames { get; set; } = new List<DropDowList>();
+
+    [Parameter]
+    public EventCallback OnSubmitImport { get; set; }
+
+    protected string _message = "";
+    protected string _inputFileId = "";
+    protected ElementReference _elementReference;
+
+    protected SubControlImportDTO _import = new SubControlImportDTO();
+
+
+    protected async Task DowloadTemplate()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var path = Path.Combine(_env.WebRootPath, "files", "SubTracking_Import_Template.xlsx");
+            var _memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(_memory);
+            }
+            _memory.Position = 0;
+
+            using var streamRef = new DotNetStreamReference(stream: _memory);
+            await _js.DownloadTemplate("SubTracking_Import_Template.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleFileChange()
+    {
+        await _js.Loading(true);
+        try
+        {
+            var _fileImport = (await _file.CreateReference(_elementReference).EnumerateFilesAsync()).FirstOrDefault();
+            if (_fileImport == null) return;
+            string[] FileExtention = { ".xls", ".xlsx" };
+            var _fileInfo = await _fileImport.ReadFileInfoAsync();
+            if (_fileImport != null && FileExtention.Contains(_fileInfo.Name.Substring(_fileInfo.Name.LastIndexOf("."))))
+            {
+                DataTable dt = await EPPlusExtensions.Read(_fileImport);
+                if (dt.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        string? Barcode = dt.Rows[i]["Barcode Header"].ToString();
+                        if (!string.IsNullOrEmpty(Barcode))
+                            _import.Barcodes.Add(Barcode);
+                    }
+                    if(_import.Barcodes.Count > 0)
+                    {
+                        var _check = await _wrapper.Deco.CheckSubTracking(string.Join(",", _import.Barcodes));
+                        if (_check.Error == 1)
+                        {
+                            _import.Barcodes = new List<string>();
+                            _inputFileId = Guid.NewGuid().ToString();
+                            await _js.Aleft(_check.Msg ?? "");
+                        }
+                        else
+                        {
+                            _message = _check.Msg!;
+                            await OnSetImport.InvokeAsync(_import);
+                        }
+
+                    }
+                }
+                else
+                {
+                    await _js.Aleft("No data.");
+                }
+            }
+            else
+            {
+                await _js.Aleft("File not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+
+        await _js.Loading(false);
+    }
+}

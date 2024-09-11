@@ -1,0 +1,212 @@
+﻿@page "/Extensions/ProdComponents"
+@using Source.WebUI.Components.Pages.Extensions.ProdComponentTracking.Components
+
+<PageTitle>Components Management</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Components Management"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "10. Extensions", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "10.6 Prod Component Tracking", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter" dropdownCompType="_dropdownCompType" dropdownItemFullCode="_dropdownItemFullCode"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((ComponentParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12 mb-1">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                </div>
+                <div class="col-12 col-lg-6 text-end">
+                    <button class="btn btn-sm btn-action" @onclick="() => {_comp = new Component();_isAddComp = true;}" style="height:28px">
+                        <i class="fas fa-sign-in-alt" style="color: #2192e8;"></i>
+                        Scan In
+                    </button>
+
+                    <button class="btn btn-sm btn-action" @onclick="() => {_compOuts = new List<Component>();_isCompOut = true;}" style="height:28px">
+                        <i class="fas fa-sign-out-alt" style="color: #d6ba00;"></i>
+                        Scan Out
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <Table objs="_objs" parameter="_parameter"
+                       page="_page" OnSetPage="(arg) => _page = (int)arg"
+                       OnOpenFormPrint="(arg) => HandleOpenFormPrint((Component)arg)" />               
+            </div> 
+        </div>
+    </div>
+</section>
+
+
+@if (_isAddComp)
+{
+    <PopUpComp comp="@_comp" dropdownCompType="_dropdownCompType" dropdownItemFullCode="_dropdownItemFullCode" OnCloseForm="() => _isAddComp = false" OnSubmitForm="async(arg) => await HandleSubmitFormAddComp((Component)arg)" />
+}
+
+@if (_isCompOut)
+{
+    <PopUpCompOut comps="@_compOuts" OnCloseForm="() => _isCompOut = false" OnSubmitForm="async(arg) => await HandleSubmitFormCompOut((List<Component>)arg)" />
+}
+
+@if (_isPrint)
+{
+    <PopUpPrintReview obj="_compPrint" OnCloseForm="() => _isPrint = false" OnSubmitForm="async(arg) => await HandleSubmitFormPrint(arg.ToString()!)" />
+}
+
+@code {
+    protected int _page = 1;
+    protected bool _isAddComp = false;
+    protected bool _isCompOut = false;
+    protected bool _isPrint = false;
+    protected List<Component> _objs = new List<Component>();
+
+    protected Component _comp = new Component();
+    protected List<Component> _compOuts = new List<Component>();
+
+    protected ComponentParameter _parameter = new ComponentParameter();
+    protected Component _compPrint = new Component();
+
+    protected List<DropDowList> _dropdownCompType = new List<DropDowList>();
+    protected List<ItemFullCodeDropdown> _dropdownItemFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter.Whs = "In";
+        Task[] tasks = new Task[]
+        {
+            Task.Run(async () => _dropdownCompType = await _wrapper.Extensions.CompTypeLoadDropdown("CompType")),
+            Task.Run(async () => _dropdownItemFullCode = await _wrapper.Extensions.CompFullCodeLoadDropdown("FullCode"))
+        };
+
+        await Task.WhenAll(tasks);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _page = 1;
+            _objs = await _wrapper.Extensions.GetListProdComp(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleChangeSearch(ComponentParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new ComponentParameter();
+        _objs = new List<Component>();
+        await _js.Loading(false);
+    }
+
+    // protected void HandleSetSelectedAll(bool Value)
+    // {
+    //     if (Value)
+    //         _objs.Where(x => x.IsSelected == false).ToList().ForEach(x => x.IsSelected = true);
+    //     else
+    //         _objs.Where(x => x.IsSelected == true).ToList().ForEach(x => x.IsSelected = false);
+    // }
+
+    // protected void HandleSetSelectedItem(Component sources)
+    // {
+    //     _objs.Where(x => x.Id == sources.Id).FirstOrDefault()!.IsSelected = sources.IsSelected;
+    // }
+
+    protected async Task HandleSubmitFormAddComp(Component comp)
+    {
+        await _js.Loading(true);
+        try
+        {
+            if (comp.CompType != null && comp.Qty >= 0 && comp.MachineNo != null)
+            {
+                var _ressult = await _wrapper.Extensions.AddProdComp(comp);
+                if (_ressult != null)
+                {
+                    _isAddComp = false;
+                    _comp = new Component();
+                    await FetchData();
+                    await HandleOpenFormPrint(_ressult);
+                }
+                else
+                {
+                    await _js.Aleft("Error!");
+                }
+            } else if(comp.Qty < 0)
+            {
+                await _js.Aleft("Giá trị không hợp lệ!");
+            } else if (comp.MachineNo == null)
+            {
+                await _js.Aleft("Chưa nhập MachineNo!");
+            }
+            else
+            {
+                await _js.Aleft("You must fill all input");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleOpenFormPrint(Component component)
+    {
+        await Task.Delay(1);
+        _compPrint = component;
+        _isPrint = true;
+    }
+
+    protected async Task HandleSubmitFormPrint(string Id)
+    {
+        await _js.Loading(true);
+        await Task.Delay(50);
+        await _js.InvokeVoidAsync("printDiv", Id);
+        await _js.Loading(false);
+        _isPrint = false;
+    }
+
+    protected async Task HandleSubmitFormCompOut(List<Component> comps)
+    {
+        await _js.Loading(true);
+        try
+        {
+            if(comps.Count > 0)
+            {              
+                foreach (var comp in comps)
+                {
+                    await _wrapper.Extensions.ProdCompOut(comp);
+                }
+                _parameter.Whs = "Out";
+                await FetchData();
+                _isCompOut = false;
+            }
+            else
+            {
+                await _js.Aleft("Error!!!");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+        await _js.Loading(false);
+    }
+}

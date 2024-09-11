@@ -1,0 +1,150 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs.Skip((page - 1) * 100).Take(100)" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center" style="width:10px">
+                        <input type="checkbox" class="form-check-input" checked=@((objSelected.Count > 0 && objSelected.Count == objs.Count) ? true : false)
+                               @onchange="(EventArgs) =>  HandleCheckBoxAllClick(EventArgs.Value ?? false)" />
+                    </th>
+                    <th style="min-width: 100px" class="text-center">ShiftDate</th>
+                    <th class="text-center">ShiftID</th>
+                    <th class="text-center">Machine</th>
+                    <th style="min-width: 300px">Item</th>
+                    <th style="min-width: 200px">Color</th>
+                    <th style="min-width: 200px">Size</th>
+                    <th style="min-width: 450px">OrderNumber</th>
+                    <th>MesOrderNumber</th>
+                    <th style="min-width: 200px">ArticleNo</th>
+                    <th style="min-width: 200px">Barcode</th>
+                    <th class="text-center">Qty</th>
+                    <th style="min-width: 200px">DateTimeScan</th>
+                    <th style="min-width: 100px">DateScan</th>
+                    <th style="min-width: 80px">TimeScan</th>
+                    <th class="text-center">ColorLevel</th>
+                    <th class="text-center">UserScan</th>
+                    <th class="text-center">InShift</th>
+                    <th class="text-center">QtyScan</th>
+                    <th class="text-center">QtyPlan</th>
+                    <th class="text-center">QtyReal</th>
+                    <th class="text-center">QtyDefect</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input" checked=@(objSelected.Contains(item) ? true : false)
+                               @onchange="(EventArgs) => HandleCheckBoxItemClick(item,EventArgs.Value ?? false)" />
+                    </td>
+                    <td class="text-center">@item.ShiftDate</td>
+                    <td class="text-center">@item.ShiftID</td>
+                    <td class="text-center" style="font-weight: bold;">@item.MachineNo</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.ColorName</td>
+                    <td>@item.SizeName</td>
+                    <td>@item.OrderNumber</td>
+                    <td>@item.MesOrderNumber</td>
+                    <td>@item.ArticleNo</td>
+                    <td style="font-weight: bold; color: forestgreen">@item.Barcode</td>
+                    <td class="text-center" style="font-weight: bold; color: blue">@((item.QtyOrder ?? 0).ToString("#,##0.##"))</td>
+                    <td>
+                        @if (item.DateScan != null)
+                        {
+                            <TEXT>@item.DateScan.Value.ToString("MM/dd/yyyy HH:mm:ss")</TEXT>
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.DateScan != null)
+                        {
+                            <TEXT>@item.DateScan.Value.ToString("MM/dd/yyyy")</TEXT>
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.DateScan != null)
+                        {
+                            <TEXT>@item.DateScan.Value.ToString("HH:mm:ss")</TEXT>
+                        }
+                    </td>
+                    <td class="text-center">@item.ColorLevel</td>
+                    <td class="text-center">@item.CreateUser</td>
+                    <td class="text-center" style="font-weight: bold">@((item.QtyInShift ?? 0).ToString("#,##0.##"))</td>
+                    <td class="text-center" style="font-weight: bold">@((item.QtyScanned ?? 0).ToString("#,##0.##"))</td>
+                    <td class="text-center" style="font-weight: bold">@((item.QtyTotal ?? 0).ToString("#,##0.##"))</td>
+                    <td class="text-center" style="font-weight: bold; color: forestgreen">@((item.QtyReal ?? 0).ToString("#,##0.##"))</td>
+                    <td class="text-center" style="font-weight: bold; color: crimson">@((item.QtyDefect ?? 0).ToString("#,##0.##"))</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <td colspan="11" class="fw-bold">Total</td>
+                    <td class="text-center fw-bold" style="background-color: #f5f5f5;">@objs.Sum(x => x.QtyOrder ?? 0).ToString("#,##0.##")</td>
+                    <td colspan="10"></td>
+                </tr>
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-12 col-md-6" style="padding-top: 1rem">
+            <span>Total <b class="text-primary">@objs.Count</b> records</span>
+        </div>
+        <div class="col-12 col-md-6">
+            <BlazorTablePagination PageChangeEvent="async(page) => await OnSetPage.InvokeAsync(page)"
+                                   Class="pagination pagination-sm float-end"
+                                   DisplayTotals="false"
+                                   PagingSize="5"
+                                   ActivePage="page"
+                                   PageSize="100"
+                                   NoOfItems="objs.Count()" />
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public List<ProdScan> objs { get; set; } = new List<ProdScan>();
+
+    [Parameter]
+    public List<ProdScan> objSelected { get; set; } = new List<ProdScan>();
+
+    [Parameter]
+    public EventCallback<List<ProdScan>> OnSetSelected { get; set; }
+
+    [Parameter] public int page { get; set; } = 1;
+
+    [Parameter] public EventCallback<int> OnSetPage { get; set; }
+
+    protected async Task HandleCheckBoxAllClick(object checkValue)
+    {
+        await Task.Delay(1);
+        if ((bool)checkValue)
+        {
+            foreach (var obj in objs)
+            {
+                if (!objSelected.Contains(obj))
+                    objSelected.Add(obj);
+            }
+        }
+        else
+        {
+            objSelected.Clear();
+        }
+        await OnSetSelected.InvokeAsync(objSelected);
+    }
+
+    protected async Task HandleCheckBoxItemClick(ProdScan source, object checkValue)
+    {
+        await Task.Delay(1);
+        if ((bool)checkValue)
+        {
+            if (!objSelected.Contains(source))
+                objSelected.Add(source);
+        }
+        else
+        {
+            if (objSelected.Contains(source))
+                objSelected.Remove(source);
+        }
+        await OnSetSelected.InvokeAsync(objSelected);
+    }
+}

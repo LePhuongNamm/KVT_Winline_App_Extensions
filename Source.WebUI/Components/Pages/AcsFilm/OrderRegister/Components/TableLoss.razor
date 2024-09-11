@@ -1,0 +1,51 @@
+﻿<div class="col-lg-12 mb-1">
+    <div id="simple-bar" class="data-scrollbar table-responsive" style="max-height: calc(100vh - 275px);">
+        <BlazorTable Class="datatable w-100 mb-0" Items="objs" Context="item">
+            <TableHeadTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;top: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <th class="text-center">ItemFullCode</th>
+                    <th class="text-center" style="width: 10%">QtyOrderOld</th>
+                    <th class="text-center" style="width: 10%">QtyOrderNew</th>
+                    <th class="text-center">SizeName</th>
+                    <th class="text-center">ItemName</th>
+                    <th class="text-center">ColorName</th>
+                </tr>
+            </TableHeadTemplate>
+            <TableRowTemplate>
+                <tr>
+                    <td>@item?.ItemFullCode</td>
+                    <td class="text-center">@(item?.OrderQty != null ? item?.OrderQty.Value.ToString("#,##0.##") : "0")</td>
+                    <td>
+                        <input type="text" value="@(item?.OrderQtyNew != null ? item?.OrderQtyNew.Value.ToString("#,##0.##") : "0")"
+                               @onchange="(ChangeEventArgs args) => HandleOrderQtyNewChange(item,args)" class="form-control form-control-sm text-center" />
+                    </td>
+                    <td>@item?.SizeName</td>
+                    <td>@item?.ItemName</td>
+                    <td>@item?.ColorName</td>
+                </tr>
+            </TableRowTemplate>
+            <TableFootTemplate>
+                <tr style="z-index: 50;background: white;position: sticky;bottom: 0;box-shadow: 0 1px 1px -1px #615A5A;">
+                    <td><b>Total: </b> </td>
+                    <td class="text-center"><b>@objs.Sum(x => x.OrderQty ?? 0).ToString("#,##0.##")</b></td>
+                    <td class="text-center"><b>@objs.Sum(x => x.OrderQtyNew ?? 0).ToString("#,##0.##")</b></td>
+                    <td colspan="3"></td>
+                </tr>
+            </TableFootTemplate>
+        </BlazorTable>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<FilmPPICOrder> objs { get; set; } = new List<FilmPPICOrder>();
+
+    protected void HandleOrderQtyNewChange(FilmPPICOrder? _source, ChangeEventArgs args)
+    {
+        if (_source != null)
+        {
+            string? value = args.Value?.ToString();
+            _source.OrderQtyNew = int.Parse(value ?? "0");
+        }
+    }
+}

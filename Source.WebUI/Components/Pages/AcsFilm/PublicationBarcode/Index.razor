@@ -1,0 +1,155 @@
+﻿@page "/ACSFilm/PublicationBarcode"
+@using Source.WebUI.Components.Pages.AcsFilm.PublicationBarcode.Components
+
+<PageTitle>Publication Barcode</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Publication Barcode"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "6. ACSFilm", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "6.2 Publication Barcode", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((FilmProdOrderParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="d-flex">
+                                    <div style="width: 6.2%" class="text-center">
+                                        <i class="icon-actions fa fa-level-down-alt" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="d-flex" style="width: 350px;">
+                                        <input type="text" style="height:28px;background-color: #f9f9f9;border: 1px solid #e2e2e2;"
+                                               value="Selected @_objSelecteds.Count rows" class="form-control form-control-sm rounded-0 w-50" readonly>
+                                        <button class="btn btn-sm btn-action rounded-0 w-75" style="height:30px" @onclick="async () => await HandlePrint()">
+                                            <i class="fas fa-print fa-fw text-warning"></i>
+                                            Print
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs" objSelected="_objSelecteds"
+                           OnOpenForm="(args) => HandleOpenForm((FilmProdOrder)args)"
+                           OnSetSelected="(arg) => _objSelecteds = (List<FilmProdOrder>)arg" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<div style="display: none">
+    <div id="printable-form">
+        @foreach (var item in _objSelecteds)
+        {
+            <Printing obj="item"/>
+        }
+    </div>
+</div>
+@if (_isShow)
+{
+    <Modal obj="_obj" OnCloseForm="() => _isShow = false" OnSubmitForm="async(args) => await HandleLabelSeparation((FilmProdOrder)args)" />
+}
+
+@code {
+    protected bool _isShow = false;
+    protected FilmProdOrder _obj = new FilmProdOrder();
+    protected List<FilmProdOrder> _objs = new List<FilmProdOrder>();
+    protected List<FilmProdOrder> _objSelecteds { get; set; } = new List<FilmProdOrder>();
+    protected FilmProdOrderParameter _parameter = new FilmProdOrderParameter();
+
+    protected async Task HandleChangeSearch(FilmProdOrderParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _objSelecteds = new List<FilmProdOrder>();
+        _parameter = new FilmProdOrderParameter();
+        _objs = new List<FilmProdOrder>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _objSelecteds.Clear();
+            _objs = await _wrapper.AcsFilm.ProdOrderLoad(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected void HandleOpenForm(FilmProdOrder source)
+    {
+        _obj = new FilmProdOrder();
+        _obj = source;
+        _isShow = true;
+    }
+
+    protected async Task HandleLabelSeparation(FilmProdOrder source)
+    {
+        if ((source.OrderQtyNew ?? 0) == 0)
+        {
+            await _js.Aleft("Q'ty has not been entered.");
+        }
+        else
+        {
+            if ((source.OrderQtyNew ?? 0) >= (source.OrderQty ?? 0))
+            {
+                await _js.Aleft("The divide Q'ty must be less than the original Q'ty");
+            }
+            else
+            {
+                var _inputM = await _user.GetUserAsync();
+                var _result = await _wrapper.AcsFilm.ProdOrderLabelDivide(source, _inputM?.UserName ?? "");
+                if ((_result?.Error ?? 0) != 0)
+                {
+                    await _js.Aleft(_result?.Msg ?? "");
+                }
+                else
+                {
+                    await FetchData();
+                    await _js.Notification("Successfully.");
+                }
+                _obj = new FilmProdOrder();
+                _isShow = false;
+            }
+        }
+    }
+
+    protected async Task HandlePrint()
+    {
+        await _js.InvokeVoidAsync("printDiv", "printable-form");
+        _objSelecteds.Clear();
+    }
+}

@@ -1,0 +1,137 @@
+﻿@page "/Reports/ProdPending"
+@attribute [Authorize]
+@using Source.WebUI.Components.Pages.Reports.ProdPending.Components
+
+<PageTitle>Prod Pending</PageTitle>
+
+<section class="content-header">
+    <Breadcrumb pageName="Prod Pending"
+                breadcrumbs="@(new List<BreadcrumbDTO> { new BreadcrumbDTO { Text = "9. Reports", IsActive = false},
+                                                         new BreadcrumbDTO { Text = "9.1 Prod Pending", IsActive = true}})" />
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12 mb-1">
+            <Filter parameter="@_parameter" dropdownItemFullCode="_dropdownFullCode"
+                    isAdvanced="_isAdvanced" OnSetAdvanced="() => _isAdvanced = !_isAdvanced"
+                    OnChangeSearch="async(arg) => await HandleChangeSearch((ProdPendingParameter)arg)"
+                    OnResetSearch="async() => await HandleResetSearch()" />
+        </div>
+        <div class="col-lg-12">
+            <div class="row">    
+                @if (_objs != null && _objs.Count > 0)
+                {
+                    <div class="col-lg-12 mb-1">
+                        <div class="row">
+                            <div class="col-12 col-lg-6"></div>
+                            <div class="col-12 col-lg-6 text-end">
+                                <button class="btn btn-sm btn-action" @onclick="async() => await HandleExportExcel()" style="height:28px">
+                                    <i class="fa fa-file-excel fa-fw text-success"></i>
+                                    Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Table objs="_objs" isAdvanced="_isAdvanced"
+                           page="_page" OnSetPage="(arg) => _page = (int)arg" />
+                }
+                else
+                {
+                    <div class="alert alert-primary mt-1" role="alert">
+                        No record found
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    protected int _page = 1;
+    protected bool _isAdvanced = false;
+
+    protected List<ProdPending> _objs = new List<ProdPending>();
+    protected ProdPendingParameter _parameter = new ProdPendingParameter();
+    protected List<ItemFullCodeDropdown> _dropdownFullCode = new List<ItemFullCodeDropdown>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _parameter.FormDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _parameter.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
+        _dropdownFullCode = await _wrapper.KVTWL.ItemFullCodeLoadDropdown();
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task HandleChangeSearch(ProdPendingParameter parameter)
+    {
+        await _js.Loading(true);
+        _parameter = parameter;
+        await FetchData();
+        await _js.Loading(false);
+    }
+
+    protected async Task HandleResetSearch()
+    {
+        await _js.Loading(true);
+        _parameter = new ProdPendingParameter();
+        _objs = new List<ProdPending>();
+        await _js.Loading(false);
+    }
+
+    protected async Task FetchData()
+    {
+        try
+        {
+            _objs = await _wrapper.Report.ProdPendingReport(_parameter);
+        }
+        catch (Exception ex)
+        {
+            await _js.Aleft(ex.Message);
+        }
+    }
+
+    protected async Task HandleExportExcel()
+    {
+        if (_objs != null && _objs.Count > 0)
+        {
+            await _js.Loading(true);
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("ScanDate", typeof(string));
+                dt.Columns.Add("Barcode", typeof(string));
+                dt.Columns.Add("Reason", typeof(string));
+                dt.Columns.Add("ScannedSource", typeof(string));
+                dt.Columns.Add("QtyOrder", typeof(string));
+                dt.Columns.Add("ItemName", typeof(string));
+                dt.Columns.Add("ColorName", typeof(string));
+                dt.Columns.Add("SizeName", typeof(string));
+                dt.Columns.Add("OrderNumber", typeof(string));
+                dt.Columns.Add("StyleNo", typeof(string));
+                foreach (var obj in _objs)
+                {
+                    DataRow row = dt.NewRow();
+                    row[0] = obj.ScanDate;
+                    row[1] = obj.Barcode;
+                    row[2] = obj.Reason;
+                    row[3] = obj.ScannedSource;
+                    row[4] = obj.QtyOrder.ToString("#,##0.##");
+                    row[5] = obj.ItemName;
+                    row[6] = obj.ColorName;
+                    row[7] = obj.SizeName;
+                    row[8] = obj.OrderNumber;
+                    row[9] = obj.StyleNo;
+                    dt.Rows.Add(row);
+                }
+                var fileStream = new MemoryStream(EPPlusExtensions.Write(dt, "Prod Pending"));
+                using var streamRef = new DotNetStreamReference(stream: fileStream);
+                await _js.InvokeVoidAsync("downloadFileFromStream", "ProdPending.xlsx", streamRef);
+            }
+            catch (Exception ex)
+            {
+                await _js.Aleft(ex.Message);
+            }
+            await _js.Loading(false);
+        }
+    }
+}
